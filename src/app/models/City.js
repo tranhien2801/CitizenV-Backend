@@ -47,4 +47,6 @@ ProvinceChema.plugin(mongooseDelete, {
     overrideMethods: 'all',
 });
 
+mongoose.model('Ward', WardShema);
+mongoose.model('District', DistrictSchema);
 module.exports = mongoose.model('City', ProvinceChema);

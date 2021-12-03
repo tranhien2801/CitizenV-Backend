@@ -22,7 +22,7 @@ class CitizenController {
             .catch(next);
     }
 
-    // [GET] /citizens?CCCD=
+    // [GET] /citizens/:CCCD
     showByCCCD(req, res, next) {
         Citizen.findOne({ CCCD: req.params.CCCD})
             .then((citizen) => {
