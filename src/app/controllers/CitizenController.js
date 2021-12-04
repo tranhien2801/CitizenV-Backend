@@ -8,7 +8,9 @@ class CitizenController {
     show(req, res, next) {
         Citizen.find({})
             .then((citizens) => {
-                res.json(multipleMongooseToObject(citizens))
+                if (citizens != null)
+                    res.json(multipleMongooseToObject(citizens))
+                else res.status(404).json( {message: "Hiện tại, hệ thống chưa có công dân nào"})
             })
             .catch(next);
     };
@@ -17,7 +19,9 @@ class CitizenController {
     find(req, res, next) {
         Citizen.find({ $or: [{CCCD: req.query.CCCD}, {firstName: req.query.firstName}, {lastName: req.query.lastName}]})
             .then((citizens) => {
-                res.json(multipleMongooseToObject(citizens))
+                if (citizens != null)
+                    res.json(multipleMongooseToObject(citizens))
+                else res.status(404).json( {message: "Không tìm thấy công dân phù hợp"})                
             })
             .catch(next);
     }
@@ -26,7 +30,9 @@ class CitizenController {
     showByCCCD(req, res, next) {
         Citizen.findOne({ CCCD: req.params.CCCD})
             .then((citizen) => {
-                res.json(mongooseToObject(citizen))
+                if (citizens != null)
+                    res.json(mongooseToObject(citizen))
+                else res.status(404).json( {message: "Không tìm thấy công dân phù hợp"})                
             })
             .catch(next);
     }

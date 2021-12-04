@@ -29,7 +29,8 @@
     "mongoose": "^6.0.13",
     "mongoose-delete": "^0.5.4",
     "mongoose-sequence": "^5.3.1",
-    "mongoose-slug-generator": "^1.0.4"
+    "mongoose-slug-generator": "^1.0.4",
+    "utf8": "^3.0.0"
   },
   "devDependencies": {
     "husky": "^7.0.0",
