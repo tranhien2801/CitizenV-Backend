@@ -15,13 +15,11 @@ const CitizenSchema = new Schema(
         addressID: { type: String },
     },
     {
-        // _id: false,
         timestamps: true,
     },
 );
 
 
-//CitizenSchema.plugin(AutoIncrement);
 CitizenSchema.plugin(mongooseDelete, {
     deletedAt: true,
     overrideMethods: 'all',

@@ -9,7 +9,7 @@ router.get('/:CCCD', citizenController.showByCCCD);
 router.delete('/:CCCD/', citizenController.destroy);
 router.delete('/:CCCD/force', citizenController.forceDestroy);
 router.patch('/:CCCD/restore', citizenController.restore);
-router.post('/store', citizenController.store);
+router.post('/store/:addressID', citizenController.store);
 router.put('/', citizenController.update)
 
 module.exports = router;

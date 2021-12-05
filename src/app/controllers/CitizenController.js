@@ -37,12 +37,15 @@ class CitizenController {
             .catch(next);
     }
 
-    // [POST] /citizens/store
-    store(req, res, next) {
+    // [POST] /citizens/store/:addressID
+    store(req, res, next) {      
         const citizen = new Citizen(req.body);
+        citizen.addressID = req.params.addressID;
         citizen.save()
-            .then(() => res.json(mongooseToObject(citizen)))
-            .catch(next);
+            .then(() => {
+                res.json(mongooseToObject(citizen))
+            })
+            .catch(next => res.status(400).json({message: "CCCD đã có trong hệ thống"}));
     }
 
     // [PUT] /citizens?CCCD=
