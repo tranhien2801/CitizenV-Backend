@@ -2,7 +2,10 @@ const { multipleMongooseToObject } = require('../../util/mongoose');
 const { mongooseToObject } = require('../../util/mongoose');
 const Citizen = require('../models/Citizen')
 
-
+// const age = (date1, date2) => {
+//     //return { $subtract: [ "$$NOW", "$date" ] };
+//     return new Year("2016-01-01");
+// }
 class CitizenController {
     // [GET] /citizens
     show(req, res, next) {
@@ -26,6 +29,24 @@ class CitizenController {
             .catch(next);
     }
 
+    // [GET] /citizens/unit/:code
+    findByUnit(req, res, next) {
+        Citizen.find({addressID: { $regex: '^' + req.params.code}})
+            .then((citizens) => {
+                res.json(citizens)
+            })
+            .catch(next => res.status(400).json({message: "Đơn vị này không tồn tại trong hệ thống"}))
+    }
+
+    // [GET] / citizens/unit/:code/filterAge
+    async filterAge(req, res, next) {
+        // Citizen.findOne({CCCD: "024826478202"})
+        //     .then(citizen => {
+        //         res.json(age(citizen.dob, Date.now))
+        //     })
+        //     .catch(next);
+    }
+
     // [GET] /citizens/:CCCD
     showByCCCD(req, res, next) {
         Citizen.findOne({ CCCD: req.params.CCCD})
@@ -38,14 +59,14 @@ class CitizenController {
     }
 
     // [POST] /citizens/store/:addressID
-    store(req, res, next) {      
+    store(req, res, next) {   
         const citizen = new Citizen(req.body);
         citizen.addressID = req.params.addressID;
         citizen.save()
             .then(() => {
                 res.json(mongooseToObject(citizen))
             })
-            .catch(next => res.status(400).json({message: "CCCD đã có trong hệ thống"}));
+            .catch(next => res.status(400).json({message: "CCCD đã có trong hệ thống hoặc ngày sinh không phù hợp"}));
     }
 
     // [PUT] /citizens?CCCD=
