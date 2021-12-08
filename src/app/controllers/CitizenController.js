@@ -1,12 +1,18 @@
 const { multipleMongooseToObject } = require('../../util/mongoose');
 const { mongooseToObject } = require('../../util/mongoose');
 const Citizen = require('../models/Citizen')
+const Unit = require('../models/Unit');
 
 // const age = (date1, date2) => {
 //     //return { $subtract: [ "$$NOW", "$date" ] };
 //     return new Year("2016-01-01");
 // }
 class CitizenController {
+
+    /*---------------------------------------------------------------------------------------------------------------------
+        Các API GET của công dân
+    ----------------------------------------------------------------------------------------------------------------------*/
+
     // [GET] /citizens
     show(req, res, next) {
         Citizen.find({})
@@ -29,16 +35,16 @@ class CitizenController {
             .catch(next);
     }
 
-    // [GET] /citizens/unit/:code
+    // [GET] /citizens/unit/:id
     findByUnit(req, res, next) {
-        Citizen.find({addressID: { $regex: '^' + req.params.code}})
+        Citizen.find({addressID: { $regex: '^' + req.params.id}})
             .then((citizens) => {
                 res.json(citizens)
             })
             .catch(next => res.status(400).json({message: "Đơn vị này không tồn tại trong hệ thống"}))
     }
 
-    // [GET] / citizens/unit/:code/filterAge
+    // [GET] / citizens/unit/:id/filterAge
     async filterAge(req, res, next) {
         // Citizen.findOne({CCCD: "024826478202"})
         //     .then(citizen => {
@@ -58,16 +64,29 @@ class CitizenController {
             .catch(next);
     }
 
+    /*---------------------------------------------------------------------------------------------------------------------
+        Các API POST của công dân
+    ----------------------------------------------------------------------------------------------------------------------*/
+
     // [POST] /citizens/store/:addressID
-    store(req, res, next) {   
+    async store(req, res, next) { 
+        const unit = await Unit.findOne({ code: req.params.addressID});
+        if (unit == null) {
+            res.status(400).json({message: "Đơn vị không tồn tại trong hệ thống"});
+            return;
+        }
         const citizen = new Citizen(req.body);
         citizen.addressID = req.params.addressID;
         citizen.save()
             .then(() => {
                 res.json(mongooseToObject(citizen))
             })
-            .catch(next => res.status(400).json({message: "CCCD đã có trong hệ thống hoặc ngày sinh không phù hợp"}));
+            .catch(next => res.status(400).json({message: "Lỗi tạo công dân do CCCD đã tồn tại hoặc ngày sinh không phù hợp"}));
     }
+
+    /*---------------------------------------------------------------------------------------------------------------------
+        Các API PUT của công dân
+    ----------------------------------------------------------------------------------------------------------------------*/
 
     // [PUT] /citizens?CCCD=
     update(req, res, next) {
@@ -75,6 +94,10 @@ class CitizenController {
             .then(() => res.json(req.body))
             .catch(next);
     }
+
+    /*---------------------------------------------------------------------------------------------------------------------
+        Các API DELETE của công dân
+    ----------------------------------------------------------------------------------------------------------------------*/
 
     // [DELETE] /citizens/:CCCD
     destroy(req, res, next) {
@@ -89,6 +112,10 @@ class CitizenController {
             .then(() => res.json({ message: "Delete Force Citizen Successfull"}))
             .catch(next);
     }
+
+    /*---------------------------------------------------------------------------------------------------------------------
+        Các API PATCH của công dân
+    ----------------------------------------------------------------------------------------------------------------------*/
 
     // [PATCH] /citizens/:CCCD/restore
     restore(req, res, next) {

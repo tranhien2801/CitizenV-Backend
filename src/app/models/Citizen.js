@@ -31,4 +31,6 @@ CitizenSchema.plugin(mongooseDelete, {
     overrideMethods: 'all',
 });
 
+
+
 module.exports = mongoose.model('Citizen', CitizenSchema);
