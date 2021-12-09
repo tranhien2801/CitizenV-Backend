@@ -13,12 +13,17 @@ class CitizenController {
         Các API GET của công dân
     ----------------------------------------------------------------------------------------------------------------------*/
 
-    // [GET] /citizens
+    // [GET] /citizens/addPerson
+    addPerson(req, res, next) {
+        res.render('citizens/addPerson');
+    }
+
+    // [GET] /citizens 
     show(req, res, next) {
         Citizen.find({})
             .then((citizens) => {
                 if (citizens != null)
-                    res.json(multipleMongooseToObject(citizens))
+                    res.json(multipleMongooseToObject(citizens));                   
                 else res.status(404).json( {message: "Hiện tại, hệ thống chưa có công dân nào"})
             })
             .catch(next);
@@ -57,7 +62,7 @@ class CitizenController {
     showByCCCD(req, res, next) {
         Citizen.findOne({ CCCD: req.params.CCCD})
             .then((citizen) => {
-                if (citizens != null)
+                if (citizen != null)
                     res.json(mongooseToObject(citizen))
                 else res.status(404).json( {message: "Không tìm thấy công dân phù hợp"})                
             })
@@ -80,6 +85,7 @@ class CitizenController {
         citizen.save()
             .then(() => {
                 res.json(mongooseToObject(citizen))
+                //res.render('addPerson');
             })
             .catch(next => res.status(400).json({message: "Lỗi tạo công dân do CCCD đã tồn tại hoặc ngày sinh không phù hợp"}));
     }

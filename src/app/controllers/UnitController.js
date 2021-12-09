@@ -118,42 +118,52 @@ class UnitController {
         Các API DELETE của đơn vị
     ----------------------------------------------------------------------------------------------------------------------*/
 
-    // Xóa đơn vị con và công dân của đơn vị con khi đơn vị cha bị xóa
-    async destroyChild(idParent) {
-        try {
-            const units = await Unit.find({idParent: idParent});
-            await Unit.delete({idParent: idParent});
-            for (var unit in units) {
-                await Citizen.delete({ addressId: unit._id});
-                destroyChild(unit._id);
-            }
-            res.json({
-                status: 200,
-                message: "Xóa đơn vị con và công dân của đơn vị con thành công",
-                idParent: idParent, 
-            });
-            
-        } catch (errorr) {
-            res.status(400).json({message: "Lỗi khi xóa công dân của đơn vị con"});
-        }
-    }
-
-
     // [DELETE] /units/:id
-    async destroy(req, res, next) {
-        // await destroyChild(req.params.id);
-        // Unit.delete({ _id: req.params.id })
-        //     .then(() => {
-        //         Citizen.delete({addressID: req.params.id})
-        //             .then(() => {
-        //                 res.json({
-        //                     status: 200,
-        //                     message: "Xóa đơn vị, công dân thành công",
-        //                     idUnit: req.params.id,
-        //                 });
-        //             })
-        //     })
-        //     .catch(next => res.status(400).json({message: "Đơn vị này không tồn tại trong hệ thống"}));
+    async destroy(req, res) {
+        try {
+            const unit = await Unit.findOne({ _id: req.params.id });
+            switch (unit.code.length) {
+                case 6:
+                    await Unit.delete({_id: req.params.id});                       
+                    await Citizen.delete({ addressID: unit.code});
+                    res.json({
+                        status: 200,
+                        message: "Xóa đơn vị và công dân của đơn vị thành công",
+                            idUnit: req.params.id,
+                    });
+                    break;
+                case 4:
+                    const units = await Unit.find({idParent: req.params.id});
+                    await Unit.delete({$or: [{_id: req.params.id}, {idParent: req.params.id}]}); 
+                    for (var u in units) {              
+                        await Citizen.delete({addressID: u.code});
+                    }
+                    res.json({
+                        status: 200,
+                        message: "Xóa đơn vị và công dân của đơn vị thành công",
+                            idUnit: req.params.id,
+                    });
+                    break;
+                case 2:
+                    const units1 = await Unit.find({idParent: req.params.id});
+                    await Unit.delete({$or: [{_id: req.params.id}, {idParent: req.params.id}]}); 
+                    for (var i = 0; i < units1.length; i++) {                    
+                        const unitChilds = await Unit.find({idParent: units1[i]._id});
+                        await Unit.delete({idParent: units1[i]._id});
+                        for ( var j = 0; j < unitChilds.length; j++) {            
+                            await Citizen.delete({addressID: unitChilds[j].code});
+                        }
+                    }
+                    res.json({
+                        status: 200,
+                        message: "Xóa đơn vị và công dân của đơn vị thành công",
+                            idUnit: req.params.id,
+                    });
+                    break;
+            }
+        } catch (error) {
+            res.status(400).json({message: "Đơn vị không có trong hệ thống"});
+        }
     }
 
     
@@ -161,17 +171,51 @@ class UnitController {
         Các API PATCH của đơn vị
     ----------------------------------------------------------------------------------------------------------------------*/
     // [PATCH] /units/:id/restore
-    restore(req, res, next) {
-        Unit.restore({$or: [{ _id: req.params.id }, {idParent: req.params.id}]})
-            .then(() => {
-                Citizen.restore({addressID: req.params.id})
-                    .then(() => res.json({ 
+    async restore(req, res, next) {
+        try {
+            await Unit.restore({ _id: req.params.id });
+            const unit = await Unit.findOne({ _id: req.params.id });
+            switch (unit.code.length) {
+                case 6:                      
+                    await Citizen.restore({ addressID: unit.code});
+                    res.json({
                         status: 200,
-                        message: "Khôi phục đơn vị, công dân thành công",
-                        idUnit: req.params.id,
-                    }))
-            })
-            .catch(next);
+                        message: "Khôi phục đơn vị và công dân của đơn vị thành công",
+                            idUnit: req.params.id,
+                    });
+                    break;
+                case 4:                  
+                    await Unit.restore({$or: [{_id: req.params.id}, {idParent: req.params.id}]}); 
+                    const units = await Unit.find({idParent: req.params.id});
+                    for (var u in units) {              
+                        await Citizen.restore({addressID: u.code});
+                    }
+                    res.json({
+                        status: 200,
+                        message: "Khôi phục đơn vị và công dân của đơn vị thành công",
+                            idUnit: req.params.id,
+                    });
+                    break;
+                case 2:                   
+                    await Unit.restore({$or: [{_id: req.params.id}, {idParent: req.params.id}]}); 
+                    const units1 = await Unit.find({idParent: req.params.id});
+                    for (var i = 0; i < units1.length; i++) {                         
+                        await Unit.restore({idParent: units1[i]._id});
+                        const unitChilds = await Unit.find({idParent: units1[i]._id});
+                        for ( var j = 0; j < unitChilds.length; j++) {            
+                            await Citizen.restore({addressID: unitChilds[j].code});
+                        }
+                    }
+                    res.json({
+                        status: 200,
+                        message: "Khôi phục đơn vị và công dân của đơn vị thành công",
+                            idUnit: req.params.id,
+                    });
+                    break;
+            }
+        } catch (error) {
+            res.status(400).json({message: "Đơn vị không có trong hệ thống"});
+        }
     }
 
 }

@@ -3,7 +3,7 @@ const router = express.Router();
 
 const citizenController = require('../app/controllers/CitizenController');
 
-
+router.get('/addPerson', citizenController.addPerson);
 router.get('/details/', citizenController.find);
 router.get('/unit/:id', citizenController.findByUnit);
 router.get('/unit/:id/filterAge', citizenController.filterAge);

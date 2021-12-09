@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 
 const CitizenSchema = new Schema(
     {
-        CCCD: { type: String, unique: true, required: true, },
+        CCCD: { type: String, unique: true, required: true },
         firstName: { type: String, required: true },
         lastName: { type: String, required: true },
         bod: { type: Date, max: Date.now},
