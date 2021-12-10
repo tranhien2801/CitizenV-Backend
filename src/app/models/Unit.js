@@ -11,10 +11,10 @@ const Schema = mongoose.Schema;
 const UnitShema = new Schema (
     {
         nameUnit: { type: String, required: true }, 
-        code: { type: String, required: true },
+        code: { type: String, required: true, unique: true, },
         password: { type: String, required: true, minLength: 7},
         population: {type: Number},
-        idParent: { type: mongoose.Types.ObjectId },
+        idParent: { type: String },
     },
     {
         timestamps: true,

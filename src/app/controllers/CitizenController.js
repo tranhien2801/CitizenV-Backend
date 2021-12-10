@@ -29,16 +29,7 @@ class CitizenController {
             .catch(next);
     };
 
-    // [GET] /citizens/details?CCCD=&firstName=&lastName=
-    find(req, res, next) {
-        Citizen.find({ $or: [{CCCD: req.query.CCCD}, {firstName: req.query.firstName}, {lastName: req.query.lastName}]})
-            .then((citizens) => {
-                if (citizens != null)
-                    res.json(multipleMongooseToObject(citizens))
-                else res.status(404).json( {message: "Không tìm thấy công dân phù hợp"})                
-            })
-            .catch(next);
-    }
+    
 
     // [GET] /citizens/unit/:id
     findByUnit(req, res, next) {
@@ -62,12 +53,12 @@ class CitizenController {
     // [GET] /citizens/:CCCD
     showByCCCD(req, res, next) {
         Citizen.findOne({ CCCD: req.params.CCCD})
-            .then((citizen) => {
-                if (citizen != null)
-                    res.json(mongooseToObject(citizen))
-                else res.status(404).json( {message: "Không tìm thấy công dân phù hợp"})                
-            })
-            .catch(next);
+            .then((citizen) =>               
+                res.render('citizens/personDetail', {
+                    citizen: mongooseToObject(citizen),
+                }),        
+            )
+            .catch(next=> res.status(404).json( {message: "Không tìm thấy công dân phù hợp"}));
     }
 
     /*---------------------------------------------------------------------------------------------------------------------
