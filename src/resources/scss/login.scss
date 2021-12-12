@@ -1,56 +1,55 @@
-// .px-4 {
-    
-//     #form-login {
-//      padding: 50px 10px;
-//      width: 500px;
-//      min-height: 100px;
-//      background: white;
-//      border: solid 1px rgb(56, 54, 54);
-//      margin: auto;
-//      margin-top: 70px;
-//      margin-bottom: 70px;
-//      border-radius: 10px;
+.wrap {
+    // background-image: url('.\\src\\public\\img\\backgroundlogin.jpg');
+    #form-login {
+     padding: 50px 10px;
+     width: 500px;
+     min-height: 100px;
+     background: rgb(167, 225, 240);
+     //background-image: url('.');
+     margin: auto;
+     margin-top: 70px;
+     border-radius: 10px;
  
-//      h2 {
-//          text-align: center;
-//          color: gray;
-//      }
+     h2 {
+         text-align: center;
+         color: gray;
+     }
  
-//      #usename {
-//          display: block;
-//          width: 80%;
-//          padding: 10px;
-//          margin: auto;
-//          margin-top: 15px;
-//          border-radius: 5px;
-//          border: 1px solid gray;
-//      }
+     #usename {
+         display: block;
+         width: 80%;
+         padding: 10px;
+         margin: auto;
+         margin-top: 15px;
+         border-radius: 5px;
+         border: 1px solid gray;
+     }
      
-//       #password {
-//          display: block;
-//          width: 80%;
-//          padding: 10px;
-//          margin: auto;
-//          margin-top: 15px;
-//          border-radius: 5px;
-//          border: 1px solid gray;
-//      }
+      #password {
+         display: block;
+         width: 80%;
+         padding: 10px;
+         margin: auto;
+         margin-top: 15px;
+         border-radius: 5px;
+         border: 1px solid gray;
+     }
      
-//      #btn-login {
-//          background: rgb(50, 166, 219);
-//          color: white;
-//          border: 0px;
-//          //padding: 10px 20px;
-//          display: block;
-//          margin: auto;
-//          margin-top: 15px;
-//          width: 80%;
-//      }
+     #btn-login {
+         background: rgb(50, 166, 219);
+         color: white;
+         border: 0px;
+         //padding: 10px 20px;
+         display: block;
+         margin: auto;
+         margin-top: 15px;
+         width: 80%;
+     }
      
-//       #btn-login:hover {
-//          font-size: 15px;
-//          cursor: pointer;
-//      }
-//  }
+      #btn-login:hover {
+         font-size: 15px;
+         cursor: pointer;
+     }
+ }
  
-//  }
+ }

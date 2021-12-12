@@ -1,28 +1,27 @@
-// //@import '_variables';
-// .app {
-//     header {
-//         background-color: white;
-//         #top {
-//             #left {
-//                 float: left;
-//                 img {
-//                     max-height: 100px;
-//                 }
-//             }
-//             #right {
-//                 float: right;
-//             }
-//         }
-//     }
 
-//     .container {
-//         background-color: white;
-//     }
+.app {
+    header {
+        background-color: white;
+        #top {
+            #left {
+                float: left;
+                img {
+                    max-height: 100px;
+                }
+            }
+            #right {
+                float: right;
+            }
+        }
+    }
 
-//     footer div{
-//         background-color: rgb(75, 45, 45);
-//     }
-// }
+    .container {
+        background-color: white;
+    }
 
+    footer div{
+        background-color: rgb(75, 45, 45);
+    }
+}
 
 
