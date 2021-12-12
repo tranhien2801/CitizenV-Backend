@@ -1,0 +1,130 @@
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<div>
+
+    <select id="bieudo">
+        <option value="1">Mật độ dân số</option>
+        <option value="2">Tháp tuổi</option>
+        <option value="3">Tỉ lệ nghề nghiệp</option>
+        <option value="4">Trình độ văn hóa</option>
+        <option value="5">Tỉ lệ giới tính</option>
+    </select>
+    <button onclick="thongKe">Thống kê</button>
+
+    <div id="myChart" style="width:100%; max-width:600px; height:500px;"></div>
+
+</div>
+
+<script>
+    google.charts.load('current', { 'packages': ['corechart'] });
+    google.charts.setOnLoadCallback(drawGender);
+
+    function drawGender() {
+        const path = "/statistic" + {{code}}  + "gender";
+        fetch(path)
+            .then(response => response.json())
+            .then(data => {
+                var nameUnit = data.nameUnit;
+                var male = data.male;
+                var female = data.female;
+                var data = new google.visualization.DataTable();
+
+                var dataArray = [['Gender', 'Male', 'Female'],];
+                
+                for (var i = 0; i < nameUnit.length; i++) {
+                    subArray = [nameUnit[i], male[i], female[i]];
+                    dataArray.push(subArray);
+                }
+
+                var data = google.visualization.arrayToDataTable(dataArray);
+
+                var options = {
+                    'width': 800,
+                    'height': 500,
+                    title: 'Tháp dân số Việt Nam',
+                };
+
+                var chart = new google.visualization.ColumnChart(document.getElementById('myChart'));
+                chart.draw(data, options);
+            });          
+    }
+    
+    function drawPopulation() {
+        const path = "/statistic" + {{code}}  + "population";
+        fetch(path)
+            .then(response => response.json())
+            .then(data => {
+                var nameUnit = data.nameUnit;
+                var population = data.population;
+                var data = new google.visualization.DataTable();
+
+                var dataArray = [['Population', 'Tổng dân'],];
+                
+                for (var i = 0; i < population.length; i++) {
+                    subArray = [nameUnit[i], population[i]];
+                    dataArray.push(subArray);
+                }
+
+                var data = google.visualization.arrayToDataTable(dataArray);
+
+                var options = {
+                    'width': 800,
+                    'height': 500,
+                    title: 'Tháp dân số Việt Nam',
+                };
+
+                var chart = new google.visualization.ColumnChart(document.getElementById('myChart'));
+                chart.draw(data, options);
+            });          
+    }
+
+    function drawAgeTower() {
+        const path = "/statistic" + {{code}}  + "ageTower";
+        fetch(path)
+            .then(response => response.json())
+            .then(data => {
+                var male = data.male;
+                var female = data.female;
+                var data = new google.visualization.DataTable();
+
+                var dataArray = [['Age', 'Male', 'Female'],];
+                
+                var subArray = [];
+
+                for (var i = 0; i < male.length - 1; i++) {
+                    var x1 = 5 * i;
+                    var x2 = 5 * i + 4;
+                    var st = "" + x1 + "-" + x2 + "";
+                    subArray = [st, male[i], -female[i]];
+                    dataArray.push(subArray);
+                }
+                subArray = ['80+', male[male.length - 1], -female[female.length - 1]];
+               
+                dataArray.push(subArray);
+
+                var data = google.visualization.arrayToDataTable(dataArray);
+
+                var options = {
+                    isStacked: true,
+                    'width': 800,
+                    'height': 500,
+                    title: 'Tháp dân số Việt Nam',
+                    hAxis: {
+                        format: ';'
+                    },
+                    vAxis: {
+                        direction: -1
+                    }
+                };
+
+                var chart = new google.visualization.BarChart(document.getElementById('myChart'));
+
+                var formatter = new google.visualization.NumberFormat({
+                    pattern: ';'
+                });
+
+                formatter.format(data, 2)
+                chart.draw(data, options);
+            });          
+    }
+</script>

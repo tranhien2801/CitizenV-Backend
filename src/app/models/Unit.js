@@ -13,8 +13,11 @@ const UnitShema = new Schema (
         nameUnit: { type: String, required: true }, 
         code: { type: String, required: true, unique: true, },
         password: { type: String, required: true, minLength: 7},
-        population: {type: Number},
         idParent: { type: String },
+        timeStart: { type: Date },
+        timeEnd: { type: Date},
+        area: {type: Number},
+        progress: { type: String},
     },
     {
         timestamps: true,
@@ -54,7 +57,7 @@ UnitShema.methods.generateAuthToken = async function() {
             break;    
     }
     // Mã hóa code và role thành token hợp lệ trong 30ph
-    const token = jwt.sign({_id: unit._id, role: role}, JWT_KEY, {expiresIn: 60*30});
+    const token = jwt.sign({code: unit.code, role: role}, JWT_KEY, {expiresIn: 60*30});
     return token;
 }
 

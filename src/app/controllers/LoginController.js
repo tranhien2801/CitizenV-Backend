@@ -11,7 +11,7 @@ class LoginController {
     
     // [GET] /login
     g_login(req, res) {
-        res.render('units/login');
+        res.render('units/login', {layout: 'loginLayout'});
     }
 
     // [GET] /allocate
@@ -27,20 +27,24 @@ class LoginController {
     async login(req, res, next) {
         try {
             const { code, password } = req.body;
-            const unit = await Unit.findByCredentials(code, password)
+            const unit = await Unit.findByCredentials(code.trim(), password.trim());
             if (!unit) {
-                return res.status(401).send({error: 'Login failed! Check authentication credentials'})
+                return res.status(401).send({error: 'Tài khoản đăng nhập hoặc mật khẩu không chính xác'});
             }
-            const token = await unit.generateAuthToken()
-            res.send({ unit, token })
+            const token = await unit.generateAuthToken();
+            res.send({ 
+                code: unit.code, 
+                token 
+            })
         } catch (next) {
-            res.status(400).send(next)
+            res.status(401).send({error: 'Tài khoản đăng nhập hoặc mật khẩu không chính xác'});
         }
     }
 
     // [POST] /allocate?idParent= 
     async allocate(req, res, next) {
         try {
+            if (req.body.password) await req.body.password.trim();
             const unit = new Unit(req.body);
             if (req.query.idParent == "") req.query.idParent = null;
             const checkExist = await Unit.findOne({idParent: req.query.idParent, nameUnit: req.body.nameUnit});

@@ -4,8 +4,8 @@ const router = express.Router();
 const citizenController = require('../app/controllers/CitizenController');
 
 router.get('/addPerson', citizenController.addPerson);
-router.get('/unit/:id', citizenController.findByUnit);
-router.get('/unit/:id/filterAge', citizenController.filterAge);
+router.get('/unit/:code', citizenController.findByUnit);
+router.get('/unit/:code/filterAge', citizenController.filterAge);
 router.get('/', citizenController.show);
 router.get('/:CCCD', citizenController.showByCCCD);
 router.delete('/:CCCD/', citizenController.destroy);

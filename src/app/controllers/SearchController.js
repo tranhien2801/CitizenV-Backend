@@ -1,15 +1,13 @@
 const { multipleMongooseToObject } = require('../../util/mongoose');
 const { mongooseToObject } = require('../../util/mongoose');
 const Unit = require('../models/Unit');
-const Citizen = require('../models/Citizen')
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const Citizen = require('../models/Citizen');
+
 
 class SearchController {
 
     // [GET] /search/citizens?CCCD=&firstName=&lastName=
-    async find(req, res, next) {
-        
+    async find(req, res, next) {    
         try {
             const citizen = await Citizen.findOne({CCCD: req.query.CCCD});
             if (citizen != null) {

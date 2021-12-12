@@ -31,22 +31,23 @@ class CitizenController {
 
     
 
-    // [GET] /citizens/unit/:id
+    // [GET] /citizens/unit/:code
     findByUnit(req, res, next) {
-        Citizen.find({addressID: { $regex: '^' + req.params.id}})
+        Citizen.find({addressID: { $regex: '^' + req.params.code}})
             .then((citizens) => {
                 res.json(citizens)
             })
             .catch(next => res.status(400).json({message: "Đơn vị này không tồn tại trong hệ thống"}))
     }
 
-    // [GET] / citizens/unit/:id/filterAge
+    // [GET] /citizens/unit/:code/filterAge
     async filterAge(req, res, next) {
-        // Citizen.findOne({CCCD: "024826478202"})
-        //     .then(citizen => {
-        //         res.json(age(citizen.dob, Date.now))
-        //     })
-        //     .catch(next);
+        const citizen  = await Citizen.findOne({CCCD: "014826478201"});
+        
+        const year = parseInt(citizen.dob);
+
+        res.json(citizen.dob.getFullYear());
+
     }
 
 
@@ -54,9 +55,10 @@ class CitizenController {
     showByCCCD(req, res, next) {
         Citizen.findOne({ CCCD: req.params.CCCD})
             .then((citizen) =>               
-                res.render('citizens/personDetail', {
-                    citizen: mongooseToObject(citizen),
-                }),        
+                // res.render('citizens/personDetail', {
+                //     citizen: mongooseToObject(citizen),
+                // }),   
+                res.json(citizen)     
             )
             .catch(next=> res.status(404).json( {message: "Không tìm thấy công dân phù hợp"}));
     }
@@ -72,6 +74,7 @@ class CitizenController {
             res.status(400).json({message: "Đơn vị không tồn tại trong hệ thống"});
             return;
         }
+      
         const citizen = new Citizen(req.body);
         citizen.addressID = req.params.addressID;
         citizen.save()

@@ -1,0 +1,39 @@
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<div id="myChart" style="width:100%; max-width:600px; height:500px;"></div>
+
+<script>
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawChart);
+
+function drawChart() {
+var data = new google.visualization.DataTable();
+
+var male = [{{male}}];
+var female = [{{female}}];
+
+var dataArray = [['Age', 'Male', 'Female'],];
+var subArray = ['80+', male[male.length - 1], -female[female.length - 1]];
+
+dataArray.push(subArray);
+
+for (var i = male.length - 2; i >= 0; i--) {
+    var x1 = 5*i;
+    var x2 = 5*i + 4;
+    var st = "" +  x1 + "-" + x2 + "";
+    subArray = [st, male[i], -female[i]];
+    dataArray.push(subArray);
+}
+
+var data = google.visualization.arrayToDataTable(dataArray);
+
+var options = {
+  'width':800,
+  'height':500,
+  title:'Tháp dân số Việt Nam',
+};
+
+var chart = new google.visualization.BarChart(document.getElementById('myChart'));
+  chart.draw(data, options);
+}
+</script>
