@@ -16,7 +16,7 @@ class LoginController {
 
     // [GET] /allocate
     g_allocate(req, res) {
-        res.render('allocate');
+        res.render('units/addUnit');
     }
 
     /*---------------------------------------------------------------------------------------------------------------------
@@ -28,10 +28,9 @@ class LoginController {
         try {
             const { code, password } = req.body;
             const unit = await Unit.findByCredentials(code.trim(), password.trim());
-            if (!unit) {
-                return res.status(401).send({error: 'Tài khoản đăng nhập hoặc mật khẩu không chính xác'});
-            }
             const token = await unit.generateAuthToken();
+            localStorage.setItem("token", token);
+            localStorage.setItem("code", res.code);
             res.send({ 
                 code: unit.code, 
                 token 

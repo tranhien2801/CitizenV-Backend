@@ -1,8 +1,6 @@
-const { multipleMongooseToObject } = require('../../util/mongoose');
-const { mongooseToObject } = require('../../util/mongoose');
+
 const Unit = require('../models/Unit');
 const Citizen = require('../models/Citizen')
-const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 
@@ -15,11 +13,7 @@ class UnitController {
     show(req, res, next) {
         Unit.findOne({code: req.params.code})
             .then((unit) => {
-                Citizen.count({addressID: { $regex: '^' + unit.code}})
-                    .then((totalPopulation) => {
-                        unit.population = totalPopulation;
-                        res.json(unit);
-                    })                     
+                res.json({nameUnit: unit.nameUnit, code: unit.code})            
             })
             .catch(next => res.status(400).json({message: "Đơn vị này không tồn tại trong hệ thống"}))
     }

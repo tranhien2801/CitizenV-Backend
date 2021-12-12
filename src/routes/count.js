@@ -7,6 +7,7 @@ router.get('/:code', countController.statistic);
 router.get('/:code/population', countController.filterPopulation);
 router.get('/:code/ageTower', countController.filterAge);
 router.get('/:code/gender', countController.filterGender);
+router.get('/:code/career', countController.filterCareer);
 
 
 

@@ -2,22 +2,76 @@
 
 <div>
 
-    <select id="bieudo">
-        <option value="1">Mật độ dân số</option>
-        <option value="2">Tháp tuổi</option>
-        <option value="3">Tỉ lệ nghề nghiệp</option>
+    <select id="chart">
+        <option value="population">Dân số</option>
+        <option value="ageTower">Tháp tuổi</option>
+        <option value="career">Tỉ lệ nghề nghiệp</option>
         <option value="4">Trình độ văn hóa</option>
-        <option value="5">Tỉ lệ giới tính</option>
+        <option value="gender">Tỉ lệ giới tính</option>
     </select>
-    <button onclick="thongKe">Thống kê</button>
+    <button onclick="statistic()">Thống kê</button>
 
     <div id="myChart" style="width:100%; max-width:600px; height:500px;"></div>
 
 </div>
 
 <script>
+
+    
+    
+
     google.charts.load('current', { 'packages': ['corechart'] });
-    google.charts.setOnLoadCallback(drawGender);
+    google.charts.setOnLoadCallback(drawPopulation);
+
+    function statistic() {
+        var chart = document.getElementById("chart").value;
+        switch (chart) {
+            case 'population':
+                google.charts.setOnLoadCallback(drawPopulation);
+                break;
+            case 'ageTower':
+                google.charts.setOnLoadCallback(drawAgeTower);
+                break;
+            case 'career':
+                google.charts.setOnLoadCallback(drawCareer);
+                break;
+            case 'gender':
+                google.charts.setOnLoadCallback(drawGender);
+                break;
+        }
+    }
+
+    async function drawCareer() {
+        
+        const path = "/statistic" + {{code}}  + "career";
+        fetch(path)
+            .then(response => response.json())
+            .then(data => {
+                var career = data.career;
+                var number = data.number;
+                var name = data.name;
+                var data = new google.visualization.DataTable();
+
+                var dataArray = [['Career', '%'],];
+                
+                for (var i = 0; i < career.length; i++) {
+                    subArray = [career[i], number[i]];
+                    dataArray.push(subArray);
+                }
+
+                var data = google.visualization.arrayToDataTable(dataArray);
+
+                var options = {
+                    'width': 800,
+                    'height': 500,
+                    title: 'Tỉ lệ nghề nghiệp ' + name,
+                };
+
+                var chart = new google.visualization.PieChart(document.getElementById('myChart'));
+                chart.draw(data, options);
+            });          
+    }
+    
 
     function drawGender() {
         const path = "/statistic" + {{code}}  + "gender";
@@ -27,6 +81,7 @@
                 var nameUnit = data.nameUnit;
                 var male = data.male;
                 var female = data.female;
+                var name = data.name;
                 var data = new google.visualization.DataTable();
 
                 var dataArray = [['Gender', 'Male', 'Female'],];
@@ -41,7 +96,7 @@
                 var options = {
                     'width': 800,
                     'height': 500,
-                    title: 'Tháp dân số Việt Nam',
+                    title: 'Tỉ lệ giới tính ' + name,
                 };
 
                 var chart = new google.visualization.ColumnChart(document.getElementById('myChart'));
@@ -56,6 +111,7 @@
             .then(data => {
                 var nameUnit = data.nameUnit;
                 var population = data.population;
+                var name = data.name;
                 var data = new google.visualization.DataTable();
 
                 var dataArray = [['Population', 'Tổng dân'],];
@@ -70,7 +126,7 @@
                 var options = {
                     'width': 800,
                     'height': 500,
-                    title: 'Tháp dân số Việt Nam',
+                    title: 'Tháp dân số ' + name,
                 };
 
                 var chart = new google.visualization.ColumnChart(document.getElementById('myChart'));
@@ -85,6 +141,7 @@
             .then(data => {
                 var male = data.male;
                 var female = data.female;
+                var name = data.name;
                 var data = new google.visualization.DataTable();
 
                 var dataArray = [['Age', 'Male', 'Female'],];
@@ -108,7 +165,7 @@
                     isStacked: true,
                     'width': 800,
                     'height': 500,
-                    title: 'Tháp dân số Việt Nam',
+                    title: 'Tháp tuổi ' + name,
                     hAxis: {
                         format: ';'
                     },

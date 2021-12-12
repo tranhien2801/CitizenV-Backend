@@ -10,10 +10,64 @@ class CountController {
         res.render('statistic/statistic', {code: "/" + req.params.code + "/"});
     }
 
+    // [GET] /statistic/:code/career
+    async filterCareer(req, res) {
+        try {
+            var career = [];
+            var number = [];
+            const unit = await Unit.findOne({code: req.params.code});
+            const numberCareer2 = await Citizen.count({
+                addressID: { $regex: '^' + req.params.code },
+                job: 'Công nhân',
+            });
+            number.push(numberCareer2);
+            career.push('Công nhân');
+
+            const numberCareer3 = await Citizen.count({
+                addressID: { $regex: '^' + req.params.code },
+                job: 'Nông dân',
+            });
+            number.push(numberCareer3);
+            career.push('Nông dân');
+
+            const numberCareer4 = await Citizen.count({
+                addressID: { $regex: '^' + req.params.code },
+                job: 'Công chức',
+            });
+            number.push(numberCareer4);
+            career.push('Công chức');
+
+            const numberCareer5 = await Citizen.count({
+                addressID: { $regex: '^' + req.params.code },
+                job: 'Kỹ sư',
+            });
+            number.push(numberCareer5);
+            career.push('Kỹ sư');
+
+            const numberCareer6 = await Citizen.count({
+                addressID: { $regex: '^' + req.params.code },
+                job: 'Học sinh/ Sinh viên',
+            });
+            number.push(numberCareer6);
+            career.push('Học sinh/ Sinh viên');
+
+            const numberCareer1 = await Citizen.count({
+                addressID: { $regex: '^' + req.params.code },
+                job: 'Tự do',               
+            });
+            number.push(numberCareer1);
+            career.push('Tự do');
+            
+            res.json({name: unit.nameUnit, career, number});
+        } catch(err) {
+            res.render(err);
+        }
+    }
+
     // [GET] /statistic/:code/gender
     async filterGender(req, res) {
         try {
-
+            const unitParent = await Unit.findOne({code: req.params.code});
             const units = await Unit.find({idParent: req.params.code});
             var male = [];
             var female = [];
@@ -31,7 +85,7 @@ class CountController {
                 });
                 female.push(totalFemale);
             }
-             res.json({nameUnit, male, female});
+             res.json({nameUnit, male, female, name: unitParent.nameUnit});
         } catch(err) {
             res.render(err);
         }
@@ -40,7 +94,7 @@ class CountController {
     // [GET] /statistic/:code/population
     async filterPopulation(req, res) {
         try {
-
+            const unitParent = await Unit.findOne({code: req.params.code});
             const units = await Unit.find({idParent: req.params.code});
             var population = [];
             var nameUnit = [];
@@ -49,7 +103,7 @@ class CountController {
                 const popu = await Citizen.count({addressID: { $regex: '^' + units[i].code}});
                 population.push(popu);
             }
-             res.json({nameUnit, population});
+             res.json({nameUnit, population, name: unitParent.nameUnit});
 
         } catch(err) {
             res.render(err);
@@ -59,6 +113,7 @@ class CountController {
     // [GET] /statistic/:code/ageTower
     async filterAge(req, res) {
         try {
+            const unitParent = await Unit.findOne({code: req.params.code});
             const yearNow = new Date(Date.now()).getFullYear();
             var male = [];
             var female = [];
@@ -103,7 +158,7 @@ class CountController {
                 }
             });
             female.push(femaleAge);      
-           res.json({male, female});  
+           res.json({male, female, name: unitParent.nameUnit});  
         } catch (error) {
             res.status(400).json(error);
         }
