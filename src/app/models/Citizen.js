@@ -7,18 +7,19 @@ const Schema = mongoose.Schema;
 const CitizenSchema = new Schema(
     {
         CCCD: { type: String, unique: true, required: true,  },
-        firstName: { type: String, required: true },
-        lastName: { type: String, required: true },
+        name: { type: String, required: true },
         dob: { type: Date, max: Date.now},
         sex: { type: String},
-        hometown: { type: String},
         perResidence: { type: String},
         curResidence: { type: String},
+        ethnic: { type: String},
         religion: { type: String},
         eduLevel: { type: String},
         job: { type: String},
         phone: { type: String},
         addressID: { type: String },
+        date: { type: String },
+        dateDeleted: { type: String},
     },
     {
         timestamps: true,

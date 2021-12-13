@@ -11,7 +11,7 @@
     <div>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">CitizenV</a>
+                <a class="navbar-brand" href="/">CitizenV</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
@@ -25,9 +25,9 @@
                                 Xem thông tin
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="/add/addSurvey">Tổng hợp, phân tích số liệu</a>
-                                <a class="dropdown-item" href="/add/addPerson">Xem danh sách</a>
-                                <a class="dropdown-item" href="#">Tìm kiếm người cụ thể</a>
+                                <a class="dropdown-item" href="/statistic/01">Tổng hợp, phân tích số liệu</a>
+                                <a class="dropdown-item" href="/citizens">Xem danh sách</a>
+                                <a class="dropdown-item" href="/search/citizens">Tìm kiếm người cụ thể</a>
                             </div>
                         </li>
                         <li class="nav-item dropdown">
@@ -36,7 +36,7 @@
                                 Thêm thông tin
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="/add/addSurvey">Thêm cuộc khảo sát</a>
+                                <a class="dropdown-item" href="/citizens/addSurvey">Thêm cuộc khảo sát</a>
                                 <a class="dropdown-item" href="/citizens/addPerson">Thêm người</a>
                             </div>
                         </li>
@@ -44,7 +44,7 @@
                             <a class="nav-link active" aria-current="page" href="/addUnit">Cấp tài khoản</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">In phiếu khảo sát</a>
+                            <a class="nav-link active" aria-current="page" href="/citizens/:model">In phiếu khảo sát</a>
                         </li>
 
                     </ul>

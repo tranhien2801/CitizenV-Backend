@@ -1,0 +1,58 @@
+<form class="mt-4" name="container-form" method="POST" action="/courses/handle-form-action">
+    <table class="table mt-4">
+        <thead>
+            <tr>
+                <th scope="col">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="checkbox-all">
+                    <label class="form-check-label" for="checkbox-all">
+                      Chọn tất cả
+                    </label>
+                  </div>
+                </th>
+                <th scope="col">ID</th>
+                <th scope="col">
+                  Tên khóa học
+                  {{{sortable 'name' _sort}}}
+                </th>
+                <th scope="col" colspan="2">
+                  Thời gian tạo
+                  {{{sortable 'createdAt' _sort}}}
+                  </th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each data}}
+            <tr>
+                <td>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="courseIds[]" value="{{this._id}}">
+                    
+                  </div>
+                </td>
+                <th scope="row">{{sum @index 1}}</th>
+                <td>{{this}}</td>
+                <td>
+                    <a href="/courses/{{this._id}}/edit" class="btn btn-link">Sửa</a>
+                    <a href="" class="btn btn-link" data-toggle="modal" data-id="{{this._id}}" data-target="#delete-course-modal">Xóa</a>
+                </td>
+            </tr>
+            {{ else}}
+            <tr>
+              <td colspan="5" class="text-center">
+                Bạn chưa đăng khóa học nào.
+                <a href="/courses/create">Đăng khóa học</a>
+              </td>
+            </tr>
+            {{/data}}
+        </tbody>
+    </table>
+</form>
+
+<script>
+    const response = await fetch('/test/01');
+    const data = await response.json();
+
+
+
+</script>

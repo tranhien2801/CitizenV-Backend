@@ -1,0 +1,96 @@
+<h1 class="mt-4 mb-4">Danh sách người dân</h1>
+<div>
+    <h3>Người dân đã xóa</h3>
+    <a href="/citizens/trash">Thùng rác ({{deletedCount}})</a>
+</div>
+<table class="table mt-4 mb-4">
+    <thead>
+        <tr>
+            <th>Số CCCD {{{sortable 'CCCD' _sort}}}</th>
+            <th>Họ và tên{{{sortable 'name' _sort}}}</th>
+            <th>Ngày sinh</th>
+            <th>Giới tính</th>
+            <th>Nơi thường trú</th>
+            <th colspan="3">Edit</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr> 
+            <form action="/search/citizens">
+            <td>
+                <input type="text" class="form-control" name="CCCD" placeholder="035301002587"/>
+            </td>
+            <td>
+                <input type="text" class="form-control" name="name" placeholder="Nguyễn Văn A"/>
+            </td>
+            <td>
+                <input type="text" class="form-control" name="dob" placeholder="29/02/2001"/>
+            </td>
+            <td>
+                <input type="text" class="form-control" name="sex" placeholder="Nam"/>
+            </td>
+            <td>
+                <input type="text" class="form-control" name="perResidence" placeholder="Việt Nam, Trái Đất"/>
+            </td>
+            <td colspan="3"><button type="submit" class="btn btn-primary">Tìm kiếm</button></td>
+            </form>
+        </tr>
+        {{#each citizen}}
+        <tr>
+            <td>{{this.CCCD}}</td>
+            <td>{{this.name}}</td>
+            <td>{{this.date}}</td>
+            <td>{{this.sex}}</td>
+            <td>{{this.perResidence}}</td>
+            <td><a href="citizens/{{this.CCCD}}">Xem</a>
+            <td><a href="" class="btn btn-link" data-toggle="modal" data-id="{{this.CCCD}}" data-target="#delete-citizen-modal">Xóa</a></td>
+            <td><a href="/citizens/{{this.CCCD}}/edit">Sửa</a></td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+
+{{!-- confirm --}}
+<div id="delete-citizen-modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xóa người dân?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Bạn chắc chắn muốn xóa người dân này?</p>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-delete-citizen" type="button" class="btn btn-danger">Xóa bỏ</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{!-- Delete hidden form --}}
+<form name="delete-citizen-form" method="POST"></form>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+        var CCCD;
+        var deleteForm = document.forms['delete-citizen-form'];
+        var btnDeleteCitizen = document.getElementById('btn-delete-citizen');
+
+        // when dialog confirm clicked
+      $('#delete-citizen-modal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget)
+      CCCD = button.data('id') 
+  });
+
+  //when delete citizen btn clicked
+  btnDeleteCitizen.onclick = function () {
+      deleteForm.action = '/citizens/' + CCCD + '?_method=DELETE';
+      deleteForm.submit();
+  };
+});
+</script>

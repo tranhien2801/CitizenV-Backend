@@ -11,10 +11,16 @@ class SearchController {
         try {
             const citizen = await Citizen.findOne({CCCD: req.query.CCCD});
             if (citizen != null) {
-                res.json(mongooseToObject(citizen));
+                res.render('citizens/listPerson', {
+                    citizen: mongooseToObject(citizen),
+                });
+                //res.json(mongooseToObject(citizen));
             } else {
                 const citizens = await Citizen.find({ $and: [{firstName: req.query.firstName}, {lastName: req.query.lastName}]});
-                res.json(multipleMongooseToObject(citizens));
+                //res.json(multipleMongooseToObject(citizens));
+                res.render('citizens/listPerson', {
+                    citizen: mongooseToObject(citizen),
+                });
             }
         } catch (error) {
             res.status(404).json( error, {message: "Không tìm thấy công dân phù hợp"});

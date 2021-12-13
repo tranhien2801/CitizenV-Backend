@@ -1,48 +1,50 @@
-<form class='mt-4 mb-4' method="POST" action="../citizens/store/010101"> 
+<form class='mt-4 mb-4' method="POST" action="/citizens/{{citizen.CCCD}}?_method=PUT"> 
     <fieldset>
         <legend>Thông tin chi tiết</legend>
         <div class="form-group mt-4">
+            <label for="CCCD">Số CCCD/CMND</label>
+            <input type="text" class="form-control" value="{{citizen.CCCD}}" id="CCCD" name="CCCD" >
+        </div>
+        <div class="form-group mt-4">
             <label for="name">Họ tên</label>
-            <input type="text" class="form-control" id="name" name="name" placeholder="Nguyễn Văn A">
+            <input type="text" class="form-control" value="{{citizen.name}}" id="name" name="name">
         </div>
         <div class="form-group mt-4">
             <label for="dob">Ngày sinh</label>
-            <input type="date" class="form-control" id="dob" name="dob">
+            <input type="date" class="form-control" value="{{date}}" id="dob" name="dob">
         </div>
         <div class="form-group mt-4">
             <label for="sex">Giới tính</label>
             <select class="form-control" id='sex' name="sex">
-                <option>Nam</option>
+                <option>{{citizen.sex}}</option>
+                if ({{citizen.sex}} <option>Nam</option>
                 <option>Nữ</option>
             </select>
         </div>
         <div class="form-group mt-4">
-            <label for="CCCD">Số CCCD/CMND</label>
-            <input type="text" class="form-control" id="CCCD" name="CCCD" placeholder="">
-        </div>
-        <div class="form-group mt-4">
             <label for="phone">Số điện thoại</label>
-            <input type="text" class="form-control" id="phone" name="phone" placeholder="">
+            <input type="text" class="form-control" value="{{citizen.phone}}" id="phone" name="phone" >
         </div>
         <div class="form-group mt-4">
             <label for="perResidence">Địa chỉ thường trú</label>
-            <input type="text" class="form-control" id="perResidence" name="perResidence" placeholder="">
+            <input type="text" class="form-control" value="{{citizen.perResidence}}" id="perResidence" name="perResidence">
         </div>
         <div class="form-group mt-4">
             <label for="curResidence">Địa chỉ tạm trú</label>
-            <input type="text" class="form-control" id="curResidence" name="curResidence" placeholder="">
+            <input type="text" class="form-control" value="{{citizen.curResidence}}" id="curResidence" name="curResidence">
         </div>
         <div class="form-group mt-4">
             <label for="ethnic">Dân tộc</label>
-            <input type="text" class="form-control" id="ethnic" name="ethnic" placeholder="">
+            <input type="text" class="form-control" value="{{citizen.ethnic}}" id="ethnic" name="ethnic">
         </div>
         <div class="form-group mt-4">
             <label for="religion">Tôn giáo</label>
-            <input type="text" class="form-control" id="religion" name="religion" placeholder="">
+            <input type="text" class="form-control" value="{{citizen.religion}}" id="religion" name="religion">
         </div>
         <div class="form-group mt-4">
             <label for="eduLevel">Trình độ văn hóa</label>
             <select class="form-control" id='eduLevel' name='eduLevel'>
+                <option>{{citizen.eduLevel}}</option> 
                 <option>6/12</option>
                 <option>10/12</option>
                 <option>12/12</option>
@@ -51,13 +53,13 @@
         <div class="form-group mt-4">
             <label for="job">Nghề nghiệp</label>
             <select class="form-control" id='job' name='job'>
+                <option>{{citizen.job}}</option>
                 <option value="Công chức">Công chức</option>
                 <option value="Công nhân">Công nhân</option>
                 <option value="Học sinh/ Sinh viên">Học sinh/ Sinh viên</option>
                 <option value="Kỹ sư">Kỹ sư</option>
                 <option value="Nông dân">Nông dân</option>
-                <option value="Tự do">Tự do</option>
-                
+                <option value="Tự do">Tự do</option>   
             </select>
         </div>
         <button type="submit" class="btn btn-primary mt-4">Hoàn thành</button>

@@ -1,0 +1,127 @@
+<div class="mt-4">
+    <div>
+      <h3>Người dân đã xóa</h3>
+      <a href="/citizens">Danh sách người dân</a>
+    </div>
+
+    <table class="table mt-4">
+        <thead>
+            <tr>
+                <th>Số CCCD {{{sortable 'CCCD' _sort}}}</th>
+                <th>Họ và tên</th>
+                <th>Ngày sinh</th>
+                <th>Giới tính</th>
+                <th>Nơi thường trú</th>
+                <th>Ngày xóa</th>
+                <th colspan="2">Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr> 
+                <form action="/search/citizens">
+                <td>
+                    <input type="text" class="form-control" name="CCCD" placeholder="035301002587"/>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="name" placeholder="Nguyễn Văn A"/>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="dob" placeholder="29/02/2001"/>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="sex" placeholder="Nam"/>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="perResidence" placeholder="Việt Nam, Trái Đất"/>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="dateDeleted" placeholder="dd/mm/yyyy"/>
+                </td>
+                <td colspan="2"><button type="submit" class="btn btn-primary">Tìm kiếm</button></td>
+                </form>
+            </tr>
+            {{#each citizens}}
+            <tr>
+               
+                <td>{{this.CCCD}}</td>
+                <td>{{this.name}}</td>
+                <td>{{this.date}}</td>
+                <td>{{this.sex}}</td>
+                <td>{{this.perResidence}}</td>
+                <td>{{this.dateDeleted}}</td>
+                <td>
+                    <a href="" class="btn btn-link btn-restore" data-id="{{this.CCCD}}">Khôi phục</a>
+                    <a href="" class="btn btn-link" data-toggle="modal" data-id="{{this.CCCD}}" data-target="#delete-citizen-modal">Xóa vĩnh viễn</a>
+                </td>
+            </tr>
+            {{ else}}
+            <tr>
+              <td colspan="5" class="text-center">
+                Thùng rác trống
+                <a href="/citizens">Danh sách người dân</a>
+              </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+</div>
+
+{{!-- confirm --}}
+<div id="delete-citizen-modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xóa người dân?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Hành động này không thể khôi phục. Bạn vẫn muốn xóa người dân này?</p>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-delete-citizen" type="button" class="btn btn-danger">Xóa vĩnh viễn</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form name="delete-citizen-form" method="POST"></form>
+<form name="restore-citizen-form" method="POST"></form>
+
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      var CCCD;
+      var deleteForm = document.forms['delete-citizen-form'];
+      var restoreForm = document.forms['delete-citizen-form'];
+      var btnDeletecitizen = document.getElementById('btn-delete-citizen');
+      var btnRestorecitizen = $('.btn-restore');
+
+      // when dialog confirm clicked
+      $('#delete-citizen-modal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget)
+      CCCD = button.data('id') 
+      
+  });
+  
+  //when delete citizen btn clicked
+  btnDeletecitizen.onclick = function () {
+      deleteForm.action = '/citizens/' + CCCD + '/force?_method=DELETE';
+      deleteForm.submit();
+  }
+
+  // Restore btn clicked
+  btnRestorecitizen.click(function (e) {
+      e.preventDefault();
+
+      var citizenId = $(this).data('id');
+      restoreForm.action = '/citizens/' + citizenId + '/restore?_method=PATCH';
+      restoreForm.submit();
+  })
+
+})
+</script>

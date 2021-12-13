@@ -19,19 +19,24 @@ class LoginController {
         res.render('units/addUnit');
     }
 
+    // [GET] /
+    home(req, res) {
+        res.render('home')
+    }
+
     /*---------------------------------------------------------------------------------------------------------------------
         Các API POST của đơn vị
     ----------------------------------------------------------------------------------------------------------------------*/
 
-    // [POST] /login
+    // [POST] /
     async login(req, res, next) {
         try {
             const { code, password } = req.body;
             const unit = await Unit.findByCredentials(code.trim(), password.trim());
             const token = await unit.generateAuthToken();
-            localStorage.setItem("token", token);
-            localStorage.setItem("code", res.code);
-            res.send({ 
+            // localStorage.setItem("token", token);
+            // localStorage.setItem("code", res.code);
+            res.render('home',{ 
                 code: unit.code, 
                 token 
             })

@@ -10,7 +10,7 @@ const filterItems = (arr, query) => {
 
 class CityController {
   
-    // [GET] /test/:code
+    // [GET] /test/:code   -- Trả về tên các đơn vị cấp dưới
     async showUnit(req, res) {
         try {
             switch(req.params.code.length) {
@@ -21,7 +21,7 @@ class CityController {
                     for (var i = 0; i < city2.Districts.length; i++ ) {
                         districtName.push(city2.Districts[i].Name);
                     }
-                    res.json(districtName);
+                    res.json({code: req.params.code, listName: districtName});
                     break;
                 case 4:
                     const unit4 = await Unit.findOne({code: req.params.code});
@@ -31,7 +31,7 @@ class CityController {
                     for (var i = 0; i < disFilter[disFilter.length - 1].Wards.length; i++ ) {
                         wardName.push(disFilter[disFilter.length - 1].Wards[i].Name);
                     }
-                    res.json(wardName);
+                    res.json({code: req.params.code, listName: wardName});
                     break;
                 case 6:
                     res.status(400).json({message: "Hệ thống hiện chưa có dữ liệu các thôn của xã"});
@@ -43,7 +43,7 @@ class CityController {
                         for (var i = 0; i < cities.length; i++) {
                             cityName.push(cities[i].Name);
                         }
-                        res.json(cityName);
+                        res.json({code: req.params.code, listName: cityName});
                     } else res.status(400).json({message: "Tài khoản A1 này không đúng"});
                     break;
                 default:
