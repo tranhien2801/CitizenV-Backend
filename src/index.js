@@ -11,9 +11,9 @@ const hbs = handlebars.create({
             const sortType = field === sort.column ? sort.type : 'default';
 
             const icons = {
-                default: 'oi oi-elevator',
-                asc: 'oi oi-sort-ascending',
-                desc: 'oi oi-sort-descending',
+                default: 'fas fa-sort',
+                asc: 'fas fa-sort-amount-up',
+                desc: 'fas fa-sort-amount-down',
             };
             const types = {
                 default: 'desc',

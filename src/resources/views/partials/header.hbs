@@ -1,38 +1,34 @@
 <header>
-    <div id="top">
-        <div id="left"><a href='/'>
-                <img src='/img/logo.jpg' alt='logo' id='logo' />
-            </a></div>
-        <div id="right">
-            <a href="/login">Đăng nhập</a>
-            <a href="#">Đăng xuất</a>
-        </div>
-    </div>
     <div>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg sticky-top bg-light navbar-light shadow">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/">CitizenV</a>
+                <a class="navbar-brand" href="/">
+                    <img src="/img/logo.jpg" alt="Avatar Logo" style="width:40px;" class="rounded-pill"> 
+                </a>
+                <a class="navbar-brand" href="/" style="color: #400485">CitizenV</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">                       
-                        <li class="nav-item dropdown">
+                    <ul class="navbar-nav justify-content-center me-auto mb-2 mb-lg-0">                       
+                        {{!-- <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #400485">
                                 Xem thông tin
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="/statistic/01">Tổng hợp, phân tích số liệu</a>
+                                <a class="dropdown-item" href="/statistic/">Tổng hợp, phân tích số liệu</a>
                                 <a class="dropdown-item" href="/citizens">Xem danh sách</a>
-                                <a class="dropdown-item" href="/search/citizens">Tìm kiếm người cụ thể</a>
                             </div>
+                        </li> --}}
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/citizens" style="color: #400485">Danh sách người dân</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #400485">
                                 Thêm thông tin
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -40,14 +36,17 @@
                                 <a class="dropdown-item" href="/citizens/addPerson">Thêm người</a>
                             </div>
                         </li>
+                        {{!-- <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/addUnit" style="color: #400485">Cấp tài khoản</a>
+                        </li> --}}
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/addUnit">Cấp tài khoản</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/citizens/:model">In phiếu khảo sát</a>
+                            <a class="nav-link active" aria-current="page" href="/citizens/:model" style="color: #400485">In phiếu khảo sát</a>
                         </li>
 
                     </ul>
+                    <div id="right">
+                        <a href="#"><i class="fas fa-sign-out-alt" style="color: #400485"></i></a>
+                    </div>
 
                 </div>
             </div>

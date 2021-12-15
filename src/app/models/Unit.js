@@ -14,9 +14,9 @@ const UnitShema = new Schema (
         code: { type: String, required: true, unique: true, },
         password: { type: String, required: true, minLength: 7},
         idParent: { type: String },
-        timeStart: { type: Date },
-        timeEnd: { type: Date},
-        area: {type: Number},
+        timeStart: { type: Date, min: Date.now },
+        timeEnd: { type: Date },
+        active: { type: String },
         progress: { type: String},
     },
     {

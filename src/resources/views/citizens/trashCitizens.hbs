@@ -1,18 +1,20 @@
 <div class="mt-4">
     <div>
+      <a href="/citizens" type="button" class="btn btn-outline-info">
+        Danh sách người dân
+      </a>
       <h3>Người dân đã xóa</h3>
-      <a href="/citizens">Danh sách người dân</a>
     </div>
 
     <table class="table mt-4">
         <thead>
             <tr>
                 <th>Số CCCD {{{sortable 'CCCD' _sort}}}</th>
-                <th>Họ và tên</th>
-                <th>Ngày sinh</th>
-                <th>Giới tính</th>
-                <th>Nơi thường trú</th>
-                <th>Ngày xóa</th>
+                <th>Họ và tên {{{sortable 'name' _sort}}}</th>
+                <th>Ngày sinh {{{sortable 'dob' _sort}}}</th>
+                <th>Giới tính {{{sortable 'sex' _sort}}}</th>
+                <th>Nơi thường trú {{{sortable 'perResidence' _sort}}}</th>
+                <th>Ngày xóa {{{sortable 'deletedAt' _sort}}}</th>
                 <th colspan="2">Edit</th>
             </tr>
         </thead>
@@ -37,7 +39,7 @@
                 <td>
                     <input type="text" class="form-control" name="dateDeleted" placeholder="dd/mm/yyyy"/>
                 </td>
-                <td colspan="2"><button type="submit" class="btn btn-primary">Tìm kiếm</button></td>
+                <td colspan="2"><button type="submit" class="btn btn-outline-primary"><i class="fas fa-search"></i></button></td>
                 </form>
             </tr>
             {{#each citizens}}
@@ -49,9 +51,9 @@
                 <td>{{this.sex}}</td>
                 <td>{{this.perResidence}}</td>
                 <td>{{this.dateDeleted}}</td>
-                <td>
-                    <a href="" class="btn btn-link btn-restore" data-id="{{this.CCCD}}">Khôi phục</a>
-                    <a href="" class="btn btn-link" data-toggle="modal" data-id="{{this.CCCD}}" data-target="#delete-citizen-modal">Xóa vĩnh viễn</a>
+                <td class="list-group list-group-horizontal">
+                    <a href="" class="btn btn-link btn-restore" data-id="{{this.CCCD}}" data-bs-toggle="tooltip" data-bs-placement="top" title="Khôi phục"><i class="fas fa-trash-restore text-success"></i></a>
+                    <a href="" class="btn btn-link" data-toggle="modal" data-id="{{this.CCCD}}" data-target="#delete-citizen-modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa vĩnh viễn"><i class="fas fa-user-slash text-danger"></i></a>
                 </td>
             </tr>
             {{ else}}
@@ -117,7 +119,6 @@
   // Restore btn clicked
   btnRestorecitizen.click(function (e) {
       e.preventDefault();
-
       var citizenId = $(this).data('id');
       restoreForm.action = '/citizens/' + citizenId + '/restore?_method=PATCH';
       restoreForm.submit();

@@ -1,64 +1,63 @@
 <form class='mt-4 mb-4' method="POST" action="../citizens/store/010101"> 
     <fieldset>
         <legend>Thông tin chi tiết</legend>
-        <div class="form-group mt-4">
+        <div class="form-floating mb-4 mt-4">
+            <input type="text" class="form-control" id="name" name="name" placeholder="Họ tên">
             <label for="name">Họ tên</label>
-            <input type="text" class="form-control" id="name" name="name" placeholder="Nguyễn Văn A">
         </div>
-        <div class="form-group mt-4">
+        <div class="form-floating mb-4 mt-4">
+            <input type="date" class="form-control" id="dob" name="dob" placeholder="Ngày sinh">
             <label for="dob">Ngày sinh</label>
-            <input type="date" class="form-control" id="dob" name="dob">
         </div>
-        <div class="form-group mt-4">
-            <label for="sex">Giới tính</label>
+        <div class="form-floating mb-4 mt-4">
             <select class="form-control" id='sex' name="sex">
                 <option>Nam</option>
                 <option>Nữ</option>
             </select>
+            <label for="sex">Giới tính</label>
         </div>
-        <div class="form-group mt-4">
+        <div class="form-floating mb-4 mt-4">
+            <input type="text" class="form-control" id="CCCD" name="CCCD" placeholder="Số CCCD/CMND">
             <label for="CCCD">Số CCCD/CMND</label>
-            <input type="text" class="form-control" id="CCCD" name="CCCD" placeholder="">
         </div>
-        <div class="form-group mt-4">
+        <div class="form-floating mb-4 mt-4">
+            <input type="text" class="form-control" id="phone" name="phone" placeholder="Số điện thoại">
             <label for="phone">Số điện thoại</label>
-            <input type="text" class="form-control" id="phone" name="phone" placeholder="">
         </div>
-        <div class="form-group mt-4">
+        <div class="form-floating mb-4 mt-4">        
+            <input type="text" class="form-control" id="perResidence" name="perResidence" placeholder="Địa chỉ thường trú">
             <label for="perResidence">Địa chỉ thường trú</label>
-            <input type="text" class="form-control" id="perResidence" name="perResidence" placeholder="">
         </div>
-        <div class="form-group mt-4">
+        <div class="form-floating mb-4 mt-4">        
+            <input type="text" class="form-control" id="curResidence" name="curResidence" placeholder="Địa chỉ tạm trú">
             <label for="curResidence">Địa chỉ tạm trú</label>
-            <input type="text" class="form-control" id="curResidence" name="curResidence" placeholder="">
         </div>
-        <div class="form-group mt-4">
+        <div class="form-floating mb-4 mt-4">
+            <input type="text" class="form-control" id="ethnic" name="ethnic" placeholder="Dân tộc">
             <label for="ethnic">Dân tộc</label>
-            <input type="text" class="form-control" id="ethnic" name="ethnic" placeholder="">
         </div>
-        <div class="form-group mt-4">
+        <div class="form-floating mb-4 mt-4">
+            <input type="text" class="form-control" id="religion" name="religion" placeholder="Tôn giáo">
             <label for="religion">Tôn giáo</label>
-            <input type="text" class="form-control" id="religion" name="religion" placeholder="">
         </div>
-        <div class="form-group mt-4">
-            <label for="eduLevel">Trình độ văn hóa</label>
+        <div class="form-floating mb-4 mt-4">
             <select class="form-control" id='eduLevel' name='eduLevel'>
                 <option>6/12</option>
                 <option>10/12</option>
                 <option>12/12</option>
             </select>
+            <label for="eduLevel">Trình độ văn hóa</label>
         </div>
-        <div class="form-group mt-4">
-            <label for="job">Nghề nghiệp</label>
+        <div class="form-floating mb-4 mt-4">
             <select class="form-control" id='job' name='job'>
                 <option value="Công chức">Công chức</option>
                 <option value="Công nhân">Công nhân</option>
                 <option value="Học sinh/ Sinh viên">Học sinh/ Sinh viên</option>
                 <option value="Kỹ sư">Kỹ sư</option>
                 <option value="Nông dân">Nông dân</option>
-                <option value="Tự do">Tự do</option>
-                
+                <option value="Tự do">Tự do</option>    
             </select>
+            <label for="job">Nghề nghiệp</label>
         </div>
         <button type="submit" class="btn btn-primary mt-4">Hoàn thành</button>
     </fieldset>

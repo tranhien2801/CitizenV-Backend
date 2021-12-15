@@ -1,58 +1,112 @@
-<h1 class="mt-4 mb-4">Danh sách người dân</h1>
-<div>
-    <h3>Người dân đã xóa</h3>
-    <a href="/citizens/trash">Thùng rác ({{deletedCount}})</a>
+<div class="row">
+  <div class="col-sm-9 p-3 shadow">
+    <h4 class="mt-4 mb-4">Danh sách người dân</h4>
+<div class="end">
+  <h5>Người dân đã xóa</h5>
+  <a href="/citizens/trash" type="button" class="btn btn-outline-info" >
+    Thùng rác <span class="badge bg-info">{{deletedCount}}</span>
+  </a>
 </div>
-<table class="table mt-4 mb-4">
-    <thead>
-        <tr>
-            <th>Số CCCD {{{sortable 'CCCD' _sort}}}</th>
-            <th>Họ và tên{{{sortable 'name' _sort}}}</th>
-            <th>Ngày sinh</th>
-            <th>Giới tính</th>
-            <th>Nơi thường trú</th>
-            <th colspan="3">Edit</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr> 
-            <form action="/search/citizens">
-            <td>
-                <input type="text" class="form-control" name="CCCD" placeholder="035301002587"/>
-            </td>
-            <td>
-                <input type="text" class="form-control" name="name" placeholder="Nguyễn Văn A"/>
-            </td>
-            <td>
-                <input type="text" class="form-control" name="dob" placeholder="29/02/2001"/>
-            </td>
-            <td>
-                <input type="text" class="form-control" name="sex" placeholder="Nam"/>
-            </td>
-            <td>
-                <input type="text" class="form-control" name="perResidence" placeholder="Việt Nam, Trái Đất"/>
-            </td>
-            <td colspan="3"><button type="submit" class="btn btn-primary">Tìm kiếm</button></td>
-            </form>
-        </tr>
-        {{#each citizen}}
-        <tr>
-            <td>{{this.CCCD}}</td>
-            <td>{{this.name}}</td>
-            <td>{{this.date}}</td>
-            <td>{{this.sex}}</td>
-            <td>{{this.perResidence}}</td>
-            <td><a href="citizens/{{this.CCCD}}">Xem</a>
-            <td><a href="" class="btn btn-link" data-toggle="modal" data-id="{{this.CCCD}}" data-target="#delete-citizen-modal">Xóa</a></td>
-            <td><a href="/citizens/{{this.CCCD}}/edit">Sửa</a></td>
-        </tr>
-        {{/each}}
-    </tbody>
+<table class="table mt-3 mb-3 table-striped table-hover">
+  <thead>
+    <tr>
+      <th>Số CCCD {{{sortable 'CCCD' _sort}}}</th>
+      <th>Họ và tên{{{sortable 'name' _sort}}}</th>
+      <th>Ngày sinh {{{sortable 'dob' _sort}}}</th>
+      <th>Giới tính {{{sortable 'sex' _sort}}}</th>
+      <th>Nơi thường trú {{{sortable 'perResidence' _sort}}}</th>
+      <th colspan="2">Edit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <form action="/search/citizens">
+        <td>
+          <input type="text" class="form-control" name="CCCD" placeholder="035301002587" />
+        </td>
+        <td>
+          <input type="text" class="form-control" name="name" placeholder="Nguyễn Văn A" />
+        </td>
+        <td>
+          <input type="text" class="form-control" name="dob" placeholder="29/02/2001" />
+        </td>
+        <td>
+          <input type="text" class="form-control" name="sex" placeholder="Nam" />
+        </td>
+        <td>
+          <input type="text" class="form-control" name="perResidence" placeholder="Việt Nam, Trái Đất" />
+        </td>
+        <td colspan="2"><button type="submit" class="btn btn-outline-primary"><i class="fas fa-search"></i></button>
+        </td>
+      </form>
+    </tr>
+    {{#each citizen}}
+    <tr>
+      <td>{{this.CCCD}}</td>
+      <td>{{this.name}}</td>
+      <td>{{this.date}}</td>
+      <td>{{this.sex}}</td>
+      <td>{{this.perResidence}}</td>
+      <td>
+        <div class="list-group list-group-horizontal">
+          <a href="citizens/{{this.CCCD}}" class="list-group-item border-primary" data-id="{{this.CCCD}}"
+            data-bs-toggle="modal" data-bs-target="#myModal" data-bs-toggle="tooltip" data-bs-placement="top" title="Xem chi tiết"><i class="far fa-eye text-primary"></i></a>
+          <a href="" class="list-group-item border-danger" data-toggle="modal" data-id="{{this.CCCD}}"
+            data-target="#delete-citizen-modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa"><i class="fas fa-trash text-danger"></i></a>
+          <a href="/citizens/{{this.CCCD}}/edit" class="list-group-item border-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Sửa"><i
+              class="far fa-edit text-success"></i></a>
+        </div>
+      </td>
+    </tr>
+    {{/each}}
+  </tbody>
 </table>
+  </div>
+  <div class="col-sm-3 p-3">
+      <div class="toast show m-4">
+        <div class="toast-header">
+        </div>
+        <div class="toast-body">
+        </div>
+        <div class="toast-footer list-group list-group-horizontal">
+          <a href="/statistic/" class="list-group-item border-success text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Thống kê"><i class="far fa-chart-bar"></i></a>
+          <a href="" class="list-group-item border-primary text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Chỉnh sửa"><i class="far fa-edit"></i></a>
+          <a href="" class="list-group-item border-danger text-danger" data-toggle="modal" data-id=""
+            data-target="#delete-citizen-modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa"><i class="fas fa-trash text-danger"></i></a>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+<!-- The Modal View Details Person -->
+<div class="modal fade" id="myModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title"></h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 
 {{!-- confirm --}}
-<div id="delete-citizen-modal" class="modal" tabindex="-1" role="dialog">
+<div id="delete-citizen-modal" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -62,7 +116,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Bạn chắc chắn muốn xóa người dân này?</p>
+        Bạn chắc chắn muốn xóa người dân này?
       </div>
       <div class="modal-footer">
         <button id="btn-delete-citizen" type="button" class="btn btn-danger">Xóa bỏ</button>
@@ -76,21 +130,60 @@
 <form name="delete-citizen-form" method="POST"></form>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-        var CCCD;
-        var deleteForm = document.forms['delete-citizen-form'];
-        var btnDeleteCitizen = document.getElementById('btn-delete-citizen');
+document.addEventListener('DOMContentLoaded', function () {
+    var CCCD;
+    var deleteForm = document.forms['delete-citizen-form'];
+    var btnDeleteCitizen = document.getElementById('btn-delete-citizen');
 
-        // when dialog confirm clicked
-      $('#delete-citizen-modal').on('show.bs.modal', function (event) {
-      var button = $(event.relatedTarget)
-      CCCD = button.data('id') 
-  });
+    $('#myModal').on('show.bs.modal', async function (event) {
+      var button = $(event.relatedTarget);
+      CCCD = button.data('id');
+      let myObject = await fetch('/citizens/' + CCCD);
+      let myText = await myObject.json();
+      $('.modal-title').children().remove();
+      $('.modal-body').children().remove();
+      $('.modal-title').append('<p class="h4">Thông tin người dân chi tiết</p>');
+      $('.modal-body').append('<p class="h6">CCCD: ' + myText.CCCD + '</p>');
+      $('.modal-body').append('<p>Họ tên: ' + myText.name + '</p>');
+      $('.modal-body').append('<p>SĐT: ' + myText.phone + '</p>');
+      $('.modal-body').append('<p>Ngày sinh: ' + myText.date + '</p>');
+      $('.modal-body').append('<p>Giới tính: ' + myText.sex + '</p>');
+      $('.modal-body').append('<p>Nơi thường trú: ' + myText.perResidence + '</p>');
+      $('.modal-body').append('<p>Nơi tạm trú: ' + myText.curResidence + '</p>');
+      $('.modal-body').append('<p>Dân tộc: ' + myText.ethnic + '</p>');
+      $('.modal-body').append('<p>Tôn giáo: ' + myText.religion + '</p>');
+      $('.modal-body').append('<p>Trình độ văn hóa: ' + myText.eduLevel + '</p>');
+      $('.modal-body').append('<p>Nghề nghiệp: ' + myText.job + '</p>');
+      $('.modal-body').append('<p>Giới tính: ' + myText.sex + '</p>');
+    });
+    // when dialog confirm clicked
+    $('#delete-citizen-modal').on('show.bs.modal', function (event) {
+      $('.modal-title').children().remove();
+      $('.modal-body').children().remove();
+      var button = $(event.relatedTarget);
+      CCCD = button.data('id');
+    });
 
-  //when delete citizen btn clicked
-  btnDeleteCitizen.onclick = function () {
+    //when delete citizen btn clicked
+    btnDeleteCitizen.onclick = function () {
       deleteForm.action = '/citizens/' + CCCD + '?_method=DELETE';
       deleteForm.submit();
-  };
-});
+    };
+
+    getText();
+
+    async function getText() {
+      var code = localStorage.getItem('code');
+      let myObject = await fetch('/declare/progress?code=' + code);
+      let data = await myObject.json();
+      var rate = data.declared * 100/ (data.declared + data.declaring) 
+      $('.toast-header').append("<p>Mã địa phương " + data.unit.code + '</p>');
+      $('.toast-body').append('<p class="h5" style="color: #400485">' + data.unit.nameUnit + '</p>');
+      $('.toast-body').append('<p>Hạn cuối: ' + data.date + '</p>')
+      $('.toast-body').append('<p>Tiến độ: ' + rate + '%</p>');
+      $('.toast-body').append('<p>Trạng thái: ' + data.unit.progress + '</p>');
+    }
+
+
+  });
 </script>

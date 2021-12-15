@@ -1,25 +1,78 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-<div>
+<div class="row">
 
-    <select id="chart">
+    {{!-- <select id="chart">
         <option value="population">Dân số</option>
         <option value="ageTower">Tháp tuổi</option>
         <option value="career">Tỉ lệ nghề nghiệp</option>
         <option value="4">Trình độ văn hóa</option>
         <option value="gender">Tỉ lệ giới tính</option>
     </select>
-    <button onclick="statistic()">Thống kê</button>
+    <button onclick="statistic()">Thống kê</button> --}}
 
-    <div id="myChart" class='mt-4 mb-4'></div>
+    <div id="myChart" class='col-sm-9 p-3 shadow mt-4 mb-4'></div>
+    <div class="col-sm-3 p-3">
+      <div class="toast show m-4">
+        <div class="toast-header">
+        </div>
+        <div class="toast-body">
+        </div>
+        {{!-- <div class="toast-footer list-group list-group-horizontal">
+          <a href="/statistic/" class="list-group-item border-success text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Thống kê"><i class="far fa-chart-bar"></i></a>
+          <a href="" class="list-group-item border-primary text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Chỉnh sửa"><i class="far fa-edit"></i></a>
+          <a href="" class="list-group-item border-danger text-danger" data-toggle="modal" data-id=""
+            data-target="#delete-citizen-modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa"><i class="fas fa-trash text-danger"></i></a>
+        </div> --}}
+            <select id="chart">
+            <option value="population">Dân số</option>
+            <option value="ageTower">Tháp tuổi</option>
+            <option value="career">Tỉ lệ nghề nghiệp</option>
+            <option value="4">Trình độ văn hóa</option>
+            <option value="gender">Tỉ lệ giới tính</option>
+        </select>
+        <button onclick="statistic()">Thống kê</button>
+      </div>
+      {{!-- <div class="toast show">
+        <div class="toast-header">
+            Thống kế
+        </div>
+        <div class="toast-body">
+            <select id="chart">
+                <option value="population">Dân số</option>
+                <option value="ageTower">Tháp tuổi</option>
+                <option value="career">Tỉ lệ nghề nghiệp</option>
+                <option value="4">Trình độ văn hóa</option>
+                <option value="gender">Tỉ lệ giới tính</option>
+            </select>
+        </div>
+        <div class="toast-footer">
+            <button onclick="statistic()">Thống kê</button>
+        </div> --}}
+        </div>
+    </div>
 
 </div>
 
-<script>
+<script> 
 
-    
-    
+      getText();
 
+        async function getText() {
+            var code = localStorage.getItem('code');
+            let myObject = await fetch('/declare/progress?code=' + code);
+            let data = await myObject.json();
+            var rate = data.declared * 100/ (data.declared + data.declaring) 
+            $('.toast-header').append("<p>Mã địa phương " + data.unit.code + '</p>');
+            $('.toast-body').append('<p class="h5" style="color: #400485">' + data.unit.nameUnit + '</p>');
+            $('.toast-body').append('<p>Hạn cuối: ' + data.date + '</p>')
+            $('.toast-body').append('<p>Tiến độ: ' + rate + '%</p>');
+            $('.toast-body').append('<p>Trạng thái: ' + data.unit.progress + '</p>');
+            
+            
+        }
+
+    var code = localStorage.getItem('code');
     google.charts.load('current', { 'packages': ['corechart'] });
     google.charts.setOnLoadCallback(drawPopulation);
 
@@ -43,7 +96,7 @@
 
     async function drawCareer() {
         
-        const path = "/statistic" + {{code}}  + "career";
+        const path = "/statistic/" +  code  + "/career";
         fetch(path)
             .then(response => response.json())
             .then(data => {
@@ -74,7 +127,7 @@
     
 
     function drawGender() {
-        const path = "/statistic" + {{code}}  + "gender";
+        const path = "/statistic/" + code  + "/gender";
         fetch(path)
             .then(response => response.json())
             .then(data => {
@@ -105,7 +158,7 @@
     }
     
     function drawPopulation() {
-        const path = "/statistic" + {{code}}  + "population";
+        const path = "/statistic/" + code  + "/population";
         fetch(path)
             .then(response => response.json())
             .then(data => {
@@ -135,7 +188,7 @@
     }
 
     function drawAgeTower() {
-        const path = "/statistic" + {{code}}  + "ageTower";
+        const path = "/statistic/" + code  + "/ageTower";
         fetch(path)
             .then(response => response.json())
             .then(data => {

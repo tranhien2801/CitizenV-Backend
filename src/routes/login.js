@@ -4,6 +4,7 @@ const auth = require('../app/middleware/Auth');
 const loginController = require('../app/controllers/LoginController');
 const allocateController = require('../app/controllers/CityController');
 
+
 router.get('/test/:code', allocateController.showUnit);
 router.get('/login', loginController.g_login);
 router.get('/', loginController.home);

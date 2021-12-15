@@ -6,21 +6,22 @@ const Citizen = require('../models/Citizen');
 
 class SearchController {
 
-    // [GET] /search/citizens?CCCD=&firstName=&lastName=
+    // [GET] /search/citizens?CCCD=&name=
     async find(req, res, next) {    
         try {
-            const citizen = await Citizen.findOne({CCCD: req.query.CCCD});
+            const citizen = await Citizen.findOne({CCCD: req.query.CCCD.trim()});
             if (citizen != null) {
-                res.render('citizens/listPerson', {
-                    citizen: mongooseToObject(citizen),
-                });
-                //res.json(mongooseToObject(citizen));
+                // res.render('citizens/listPerson', {
+                //     citizen: mongooseToObject(citizen),
+                // });
+                res.json(req.query.CCCD)
+                res.json(mongooseToObject(citizen));
             } else {
-                const citizens = await Citizen.find({ $and: [{firstName: req.query.firstName}, {lastName: req.query.lastName}]});
-                //res.json(multipleMongooseToObject(citizens));
-                res.render('citizens/listPerson', {
-                    citizen: mongooseToObject(citizen),
-                });
+                const citizens = await Citizen.find({name: req.query.name.trim()});
+                res.json(multipleMongooseToObject(citizens));
+                // res.render('citizens/listPerson', {
+                //     citizen: multipleMongooseToObject(citizens),
+                // });
             }
         } catch (error) {
             res.status(404).json( error, {message: "Không tìm thấy công dân phù hợp"});

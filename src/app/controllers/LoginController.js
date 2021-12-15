@@ -34,14 +34,12 @@ class LoginController {
             const { code, password } = req.body;
             const unit = await Unit.findByCredentials(code.trim(), password.trim());
             const token = await unit.generateAuthToken();
-            // localStorage.setItem("token", token);
-            // localStorage.setItem("code", res.code);
             res.render('home',{ 
                 code: unit.code, 
                 token 
             })
         } catch (next) {
-            res.status(401).send({error: 'Tài khoản đăng nhập hoặc mật khẩu không chính xác'});
+            res.status(401).redirect('back');
         }
     }
 

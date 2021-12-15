@@ -21,47 +21,59 @@ class CitizenController {
     
 
     // [GET] /citizens 
-    // show(req, res, next) {
-    //     let citizenQuery = Citizen.find({});
+    show(req, res, next) {
+        let citizenQuery = Citizen.find({}, {CCCD: 1, name: 1, dob: 1, sex: 1, phone: 1, perResidence: 1, 
+            curResidence: 1, ethnic: 1, religion: 1, eduLevel: 1, job: 1});
 
-    //     if (req.query.hasOwnProperty('_sort')) {
-    //         citizenQuery = citizenQuery.sort({
-    //             [req.query.column]: req.query.type,
-    //         });
-    //     }
+        if (req.query.hasOwnProperty('_sort')) {
+            citizenQuery = citizenQuery.sort({
+                [req.query.column]: req.query.type,
+            });
+        }
 
-    //     Promise.all([citizenQuery, Citizen.countDocumentsDeleted()])
-    //         .then(([citizens, deletedCount]) =>
-    //             res.render('citizens/listPerson', {
-    //                 citizen: multipleMongooseToObject(citizens),
-    //                 deletedCount
-    //             }),
-    //         )
-    //         .catch(next);
-    // }
-    async show(req, res, next) {
-        const deletedCount = await Citizen.countDocumentsDeleted();
-        Citizen.find({}, {CCCD: 1, name: 1, dob: 1, sex: 1, phone: 1, perResidence: 1, curResidence: 1,
-            ethnic: 1, religion: 1, eduLevel: 1, job: 1})
-            .then((citizens) => {
-                if (citizens != null) {                    
-                    for ( var i = 0; i < citizens.length; i++) {
-                        var day = citizens[i].dob.getDate();
-                        if (day < 10) day = '0' + day;
-                        var month = citizens[i].dob.getMonth() + 1;
-                        if ( month < 10) month = '0' + month;
-                        var year = citizens[i].dob.getFullYear();
-                        var date = day + '/' + month + '/' + year;              
-                        citizens[i].date = date;
-                    }                  
-                    res.render('citizens/listPerson', {
-                        citizen: multipleMongooseToObject(citizens),
-                        deletedCount
-                    });                                
-                } else res.status(404).json( {message: "Hiện tại, hệ thống chưa có công dân nào"})
+        Promise.all([citizenQuery, Citizen.countDocumentsDeleted()])
+            .then(([citizens, deletedCount]) => {
+                for ( var i = 0; i < citizens.length; i++) {
+                    var day = citizens[i].dob.getDate();
+                    if (day < 10) day = '0' + day;
+                    var month = citizens[i].dob.getMonth() + 1;
+                    if ( month < 10) month = '0' + month;
+                    var year = citizens[i].dob.getFullYear();
+                    var date = day + '/' + month + '/' + year;              
+                    citizens[i].date = date;
+                }   
+                res.render('citizens/listPerson', {
+                    citizen: multipleMongooseToObject(citizens),
+                    deletedCount
+                })           
             })
             .catch(next);
-    };
+    }
+
+
+    // async show(req, res, next) {
+    //     const deletedCount = await Citizen.countDocumentsDeleted();
+    //     Citizen.find({}, {CCCD: 1, name: 1, dob: 1, sex: 1, phone: 1, perResidence: 1, curResidence: 1,
+    //         ethnic: 1, religion: 1, eduLevel: 1, job: 1})
+    //         .then((citizens) => {
+    //             if (citizens != null) {                    
+    //                 for ( var i = 0; i < citizens.length; i++) {
+    //                     var day = citizens[i].dob.getDate();
+    //                     if (day < 10) day = '0' + day;
+    //                     var month = citizens[i].dob.getMonth() + 1;
+    //                     if ( month < 10) month = '0' + month;
+    //                     var year = citizens[i].dob.getFullYear();
+    //                     var date = day + '/' + month + '/' + year;              
+    //                     citizens[i].date = date;
+    //                 }                  
+    //                 res.render('citizens/listPerson', {
+    //                     citizen: multipleMongooseToObject(citizens),
+    //                     deletedCount
+    //                 });                                
+    //             } else res.status(404).json( {message: "Hiện tại, hệ thống chưa có công dân nào"})
+    //         })
+    //         .catch(next);
+    // };
 
     // [GET] /citizens/trash
     trashCitizens(req, res, next) {
@@ -134,12 +146,16 @@ class CitizenController {
     // [GET] /citizens/:CCCD
     showByCCCD(req, res, next) {
         Citizen.findOne({ CCCD: req.params.CCCD})
-            .then((citizen) =>               
-                res.render('citizens/personDetail', {
-                    citizen: mongooseToObject(citizen),
-                }),   
-                //res.json(citizen)     
-            )
+            .then((citizen) =>   {            
+                var day = citizen.dob.getDate();
+                if (day < 10) day = '0' + day;
+                var month = citizen.dob.getMonth() + 1;
+                if ( month < 10) month = '0' + month;
+                var year = citizen.dob.getFullYear();
+                var date = day + '/' + month + '/' + year;              
+                citizen.date = date;
+                res.json(citizen);     
+            })
             .catch(next=> res.status(404).json( {message: "Không tìm thấy công dân phù hợp"}));
     }
 

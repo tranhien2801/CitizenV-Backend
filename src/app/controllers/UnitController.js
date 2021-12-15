@@ -13,7 +13,7 @@ class UnitController {
     show(req, res, next) {
         Unit.findOne({code: req.params.code})
             .then((unit) => {
-                res.json({nameUnit: unit.nameUnit, code: unit.code})            
+                res.json({unit})            
             })
             .catch(next => res.status(400).json({message: "Đơn vị này không tồn tại trong hệ thống"}))
     }
@@ -38,7 +38,7 @@ class UnitController {
     
     // [PUT] /units/:code
     async update(req, res, next) {
-        req.body.password = await bcrypt.hash(req.body.password, 8);
+        if (req.body.password != null) req.body.password = await bcrypt.hash(req.body.password, 8);
         Unit.updateOne({code: req.params.code}, req.body)
             .then(() => {
                 res.json(req.body);

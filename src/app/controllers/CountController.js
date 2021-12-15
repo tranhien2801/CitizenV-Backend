@@ -5,9 +5,9 @@ const Citizen = require('../models/Citizen');
 
 class CountController {
 
-    // [GET] /statistic/code
+    // [GET] /statistic
     statistic(req, res) {
-        res.render('statistic/statistic', {code: "/" + req.params.code + "/"});
+        res.render('statistic/statistic');
     }
 
     // [GET] /statistic/:code/career
