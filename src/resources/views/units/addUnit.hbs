@@ -1,29 +1,111 @@
-<form class='mt-4 mb-4' method=""> 
-    <fieldset>
-        <h2>Cấp tài khoản tới đơn vị khác</h2>
-         <div class="form-group mt-4">
-            <label for="userID">Mã tài khoản của bạn</label>
-            <input type="text" class="form-control" id="userID" placeholder="Mời nhập mã tài khoản">
+<h1 class="mt-4 bt-4">Danh sách đơn vị</h1>
+<div class="col-md-8">
+    <table class="table  mt-4">
+        <thead>
+            <tr>
+                <th scope="col">Số thứ tự</th>
+                <th scope="col">Tên địa phương</th>
+                <th scope="col">Cấp phát</th>
+            </tr>
+        </thead>
+        <tbody id='tbody'>
+            {{#each listName}}
+            <tr>
+                <th scope="row">{{sum @index 1}}</th>
+                <td>{{this}}</td>
+                <td><button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal"
+                        data-target="{{sum '#' @index}}">Thêm</button></td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+
+<!-- Scrollable modal -->
+
+{{#each listName}}
+<div class="modal" tabindex="-1" role="dialog" id="{{@index}}" aria-hidden="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form action="#" name="add-unit-form" class="mt-4 mb-4" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm tài khoản cho đơn vị</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body mt-4 mb-4">
+                    <label for="">Tên đăng nhập là mã địa phương</label>
+                    <input type="text" class="form-control" id="nameUnit" name='nameUnit' value="{{this}}">
+                    <div class="form-floating mb-4 mt-4">
+                        <input type="password" class="form-control mt-4 mb-4" id="password" name='password'
+                        placeholder="Mật khẩu" required="true">
+                        <label for="password">Mật khẩu</label>
+                    </div>
+                    <label for="timeStart">Thời gian bắt đầu</label>
+                    <input type="date" class="form-control mb-4" id="timeStart" name="timeStart">
+                    <label for="timeEnd">Thời gian kết thúc</label>
+                    <input type="date" class="form-control mb-4" id="timeEnd" name="timeEnd">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="inputGroupSelect01">Trạng thái</label>
+                        </div>
+                        <select class="form-control custom-select" id="progress" name="progress">
+                            <option selected></option>
+                            <option>Chưa khai báo</option>
+                            <option>Đang khai báo</option>
+                            <option>Đã khai báo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-add-unit" type="submit" class="btn btn-primary" onclick="" data-dismiss="modal">Thêm
+                        tài khoản</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
+                </div>
+            </form>
+            
         </div>
-        <label for="instruction">Thông tin cơ sở được cấp tài khoản</label>
-        <div class="form-group">
-                <label for="city_1">Tỉnh/Thành phố</label>
-                <select id="city_1" class="form-control" >
-                    <option value="0"></option>
-                </select>
-        </div>
-            <div class="form-group">
-                <label for="district_1">Quận/Huyện</label>
-                <select id="district_1" class="form-control">
-                     <option value="0"></option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="commune_1">Xã/Thị trấn</label>
-                <select id="commune_1" class="form-control">
-                     <option value="0"></option>
-                </select>
-            </div>
-        <button type="submit" class="btn btn-primary mt-4">Tiếp tục</button>
-    </fieldset>
-</form>
+    </div>
+</div>
+{{/each}}
+
+
+<script>
+    
+
+    /*function createAccount() {
+        var password = document.getElementById('password').value;
+        var timeStart = document.getElementById('timeStart').value;
+        var timeEnd = document.getElementById('timeEnd').value;
+    }
+    fetch('#', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            code: code,
+            password: password,
+            timeStart: timeStart,
+            timeEnd: timeEnd
+        })
+    }).then(response => response.json()).then(res => {
+
+    });*/
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var code = localStorage.getItem('code');
+        var addForm = document.forms['add-unit-form'];
+        var btnAddUnit = document.getElementById('btn-add-unit');
+    
+        btnAddUnit.onclick = function () {
+            addForm.action = '/allocate?idParent=' + code;
+            addForm.submit();
+        };
+
+
+    })
+
+
+
+</script>

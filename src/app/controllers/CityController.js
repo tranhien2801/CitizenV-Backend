@@ -10,9 +10,10 @@ const filterItems = (arr, query) => {
 
 class CityController {
   
-    // [GET] /test/:code   -- Trả về tên các đơn vị cấp dưới
+    // [GET] /allocate/:code   -- Trả về tên các đơn vị cấp dưới
     async showUnit(req, res) {
         try {
+           // var code = localStorage.getItem('code');
             switch(req.params.code.length) {
                 case 2:
                     const unit2 = await Unit.findOne({code: req.params.code});
@@ -21,7 +22,8 @@ class CityController {
                     for (var i = 0; i < city2.Districts.length; i++ ) {
                         districtName.push(city2.Districts[i].Name);
                     }
-                    res.json({code: req.params.code, listName: districtName});
+                   res.render('units/addUnit',{code: req.params.code, listName: districtName, length: city2.Districts.length});
+                //    res.json({code: req.params.code, listName: districtName});
                     break;
                 case 4:
                     const unit4 = await Unit.findOne({code: req.params.code});

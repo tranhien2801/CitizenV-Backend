@@ -9,6 +9,11 @@ class LoginController {
         Các API GET của đơn vị
     ----------------------------------------------------------------------------------------------------------------------*/
     
+    // [GET] /register    : hiển thị đăng kí
+    g_register(req, res) {
+        res.render('units/register', {layout: 'loginLayout'});
+    }
+
     // [GET] /login
     g_login(req, res) {
         res.render('units/login', {layout: 'loginLayout'});
@@ -27,6 +32,23 @@ class LoginController {
     /*---------------------------------------------------------------------------------------------------------------------
         Các API POST của đơn vị
     ----------------------------------------------------------------------------------------------------------------------*/
+
+    // [POST] /signup
+    async signup(req, res) {
+        try {
+            if (req.body.code == 'A01') {
+                const unit = Unit.findOne({code: req.body.code});
+                if (unit != null) {
+                    unit.idParent = 'A01';
+                    await unit.save();
+                    res.redirect('units/login', {layout: 'loginLayout'});
+                } 
+            } 
+            res.redirect('units/register', {layout: 'loginLayout'});
+        } catch (error) {
+            res.status(400).json({message: error.message});
+        }
+    }
 
     // [POST] /
     async login(req, res, next) {
