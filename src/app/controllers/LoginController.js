@@ -39,7 +39,6 @@ class LoginController {
             if (req.body.code == 'A01') {
                 const unit = Unit.findOne({code: req.body.code});
                 if (unit != null) {
-                    unit.idParent = 'A01';
                     await unit.save();
                     res.redirect('units/login', {layout: 'loginLayout'});
                 } 

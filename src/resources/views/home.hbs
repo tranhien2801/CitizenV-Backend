@@ -1,8 +1,22 @@
 <div class="row">
-    <div class="col-sm-9 p-3 shadow">
-     
+    <div id="info" class="col-md-9 shadow">
+     <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Mã đơn vị</th>
+          <th>Tên đơn vị</th>
+          <th>Hạn cuối</th>
+          <th>Tiến độ</th>
+          <th>Trạng thái</th>
+          <th>Quyền</th>
+        </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+     </table>
     </div>
-    <div class="col-sm-3 p-3">
+    <div class="col-md-3">
       <div class="toast show m-4">
         <div class="toast-header">
         </div>
@@ -10,21 +24,19 @@
         </div>
         <div class="toast-footer list-group list-group-horizontal">
           <a href="/statistic/" class="list-group-item border-success text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Thống kê"><i class="far fa-chart-bar"></i></a>
-          <a href="" class="list-group-item border-primary text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Chỉnh sửa"><i class="far fa-edit"></i></a>
-          <a href="" class="list-group-item border-danger text-danger" data-toggle="modal" data-id=""
-            data-target="#delete-citizen-modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa"><i class="fas fa-trash text-danger"></i></a>
+          <button type="button" id="allocate" class="list-group-item border-primary text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Chỉnh sửa"><i class="far fa-edit"></i></button>
         </div>
       </div>
     </div>
 </div>
 
-
+<form name="allocate-unit-form" method="GET"></form>
 
 
 <script>
-  getText();
-
-  async function getText() {
+  getData();
+  
+  async function getData() {
     var code = localStorage.getItem('code');
     let myObject = await fetch('/declare/progress?code=' + code);
     let data = await myObject.json();
@@ -34,7 +46,18 @@
     $('.toast-body').append('<p>Hạn cuối: ' + data.date + '</p>')
     $('.toast-body').append('<p>Tiến độ: ' + rate + '%</p>');
     $('.toast-body').append('<p>Trạng thái: ' + data.unit.progress + '</p>');
-    
-    
+
   }
+
+
+  var code = localStorage.getItem('code');
+  var allocateForm = document.forms['allocate-unit-form'];
+  var btnAllocateUnit = document.getElementById('allocate');
+
+  btnAllocateUnit.onclick = function () {
+    var code = localStorage.getItem('code');
+    allocateForm.action = '/allocate/' + code;
+    allocateForm.submit();
+  }
+
 </script>

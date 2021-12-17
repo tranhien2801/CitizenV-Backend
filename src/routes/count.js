@@ -8,6 +8,7 @@ router.get('/:code/population', countController.filterPopulation);
 router.get('/:code/ageTower', countController.filterAge);
 router.get('/:code/gender', countController.filterGender);
 router.get('/:code/career', countController.filterCareer);
+router.get('/:code/birthRate', countController.filterBirthRate);
 
 
 

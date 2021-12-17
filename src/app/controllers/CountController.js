@@ -10,6 +10,32 @@ class CountController {
         res.render('statistic/statistic');
     }
 
+    // [GET] /statistic/:code/birthRate
+    async filterBirthRate(req, res) {
+        try {
+            const unitParent = await Unit.findOne({code: req.params.code});
+            const yearNow = new Date(Date.now()).getFullYear();
+            var years = [];
+            var numbers = [];
+            for (var i = 0; i < 30; i=i+5) {
+                const number = await Citizen.count({
+                    addressID: { $regex: '^' + req.params.code },
+                    dob: {
+                        $gte: new Date(yearNow - i - 4, 1, 1),
+                        $lt: new Date(yearNow - i + 1, 1, 1)
+                    }
+                });
+                numbers.push(number);
+                var x1 = yearNow - i - 4;
+                var x2 = yearNow - i;
+                years.push(x1 + '-' + x2);
+            }
+            res.json({name: unitParent.nameUnit, years, numbers});
+        } catch (error) {
+            res.status(400).json({message: error});
+        }
+    }
+
     // [GET] /statistic/:code/career
     async filterCareer(req, res) {
         try {

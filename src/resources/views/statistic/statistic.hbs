@@ -1,60 +1,51 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 <div class="row">
-
-    {{!-- <select id="chart">
-        <option value="population">Dân số</option>
-        <option value="ageTower">Tháp tuổi</option>
-        <option value="career">Tỉ lệ nghề nghiệp</option>
-        <option value="4">Trình độ văn hóa</option>
-        <option value="gender">Tỉ lệ giới tính</option>
-    </select>
-    <button onclick="statistic()">Thống kê</button> --}}
-
-    <div id="myChart" class='col-sm-9 p-3 shadow mt-4 mb-4'></div>
-    <div class="col-sm-3 p-3">
+    <div id="myChart" class='col-md-9 shadow mt-4 mb-4'></div>
+    <div class="col-md-3">
       <div class="toast show m-4">
-        <div class="toast-header">
-        </div>
-        <div class="toast-body">
-        </div>
-        {{!-- <div class="toast-footer list-group list-group-horizontal">
-          <a href="/statistic/" class="list-group-item border-success text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Thống kê"><i class="far fa-chart-bar"></i></a>
-          <a href="" class="list-group-item border-primary text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Chỉnh sửa"><i class="far fa-edit"></i></a>
-          <a href="" class="list-group-item border-danger text-danger" data-toggle="modal" data-id=""
-            data-target="#delete-citizen-modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa"><i class="fas fa-trash text-danger"></i></a>
-        </div> --}}
-            <select id="chart">
-            <option value="population">Dân số</option>
-            <option value="ageTower">Tháp tuổi</option>
-            <option value="career">Tỉ lệ nghề nghiệp</option>
-            <option value="4">Trình độ văn hóa</option>
-            <option value="gender">Tỉ lệ giới tính</option>
-        </select>
-        <button onclick="statistic()">Thống kê</button>
-      </div>
-      {{!-- <div class="toast show">
-        <div class="toast-header">
-            Thống kế
-        </div>
-        <div class="toast-body">
-            <select id="chart">
+        <div class="toast-header"></div>
+        <div class="toast-body"></div>
+        <div class="toast-footer list-group list-group-horizontal toast-footer-sm">
+            <select id="chart" class="form-select list-group-item form-select-sm">
                 <option value="population">Dân số</option>
                 <option value="ageTower">Tháp tuổi</option>
                 <option value="career">Tỉ lệ nghề nghiệp</option>
                 <option value="4">Trình độ văn hóa</option>
                 <option value="gender">Tỉ lệ giới tính</option>
+                <option value="birthRate">Tỉ suất sinh</option>
             </select>
+            <button type="button" class="btn btn-outline-success list-group-item btn-sm border-success" data-bs-placement="top" title="Thống kê" onclick="statistic()"><i class="far fa-chart-bar"></i></button>
         </div>
-        <div class="toast-footer">
-            <button onclick="statistic()">Thống kê</button>
-        </div> --}}
-        </div>
+      </div>
     </div>
-
 </div>
 
 <script> 
+
+    $(window).resize(function(){
+        var chart = document.getElementById("chart").value;
+        switch (chart) {
+            case 'population':
+                google.charts.setOnLoadCallback(drawPopulation);
+                break;
+            case 'ageTower':
+                google.charts.setOnLoadCallback(drawAgeTower);
+                break;
+            case 'career':
+                google.charts.setOnLoadCallback(drawCareer);
+                break;
+            case 'gender':
+                google.charts.setOnLoadCallback(drawGender);
+                break;
+            case 'birthRate':
+                google.charts.setOnLoadCallback(drawBirthRate);
+                break;
+            default:
+                google.charts.setOnLoadCallback(drawPopulation);
+                break;
+        }
+    });
 
       getText();
 
@@ -91,7 +82,45 @@
             case 'gender':
                 google.charts.setOnLoadCallback(drawGender);
                 break;
+            case 'birthRate':
+                google.charts.setOnLoadCallback(drawBirthRate);
+                break;
+            default:
+                google.charts.setOnLoadCallback(drawPopulation);
+                break;
         }
+    }
+
+    async function drawBirthRate() {
+        const path = "/statistic/" + code  + "/birthRate";
+        fetch(path)
+            .then(response => response.json())
+            .then(data => {
+                var name = data.name;
+                var years = data.years;
+                var numbers = data.numbers;
+                var data = new google.visualization.DataTable();
+
+                var dataArray = [['Price', 'Size'],];
+                
+                for (var i = 0; i < years.length; i++) {
+                    subArray = [years[i], numbers[i]];
+                    dataArray.push(subArray);
+                }
+
+                var data = google.visualization.arrayToDataTable(dataArray);
+
+                var options = {
+                    'height': 500,
+                    title: 'Tỉ suất sinh của ' + name,
+                    hAxis: {title: 'Năm sinh'},
+                    vAxis: {title: 'Số lượng'},
+                    legend: 'none'
+                };
+
+                var chart = new google.visualization.LineChart(document.getElementById('myChart'));
+                chart.draw(data, options);
+            });
     }
 
     async function drawCareer() {
@@ -115,9 +144,9 @@
                 var data = google.visualization.arrayToDataTable(dataArray);
 
                 var options = {
-                    'width': 800,
                     'height': 500,
                     title: 'Tỉ lệ nghề nghiệp ' + name,
+                    is3D: true
                 };
 
                 var chart = new google.visualization.PieChart(document.getElementById('myChart'));
@@ -147,7 +176,6 @@
                 var data = google.visualization.arrayToDataTable(dataArray);
 
                 var options = {
-                    'width': 800,
                     'height': 500,
                     title: 'Tỉ lệ giới tính ' + name,
                 };
@@ -177,7 +205,6 @@
                 var data = google.visualization.arrayToDataTable(dataArray);
 
                 var options = {
-                    'width': 800,
                     'height': 500,
                     title: 'Tháp dân số ' + name,
                 };
@@ -216,7 +243,6 @@
 
                 var options = {
                     isStacked: true,
-                    'width': 800,
                     'height': 500,
                     title: 'Tháp tuổi ' + name,
                     hAxis: {

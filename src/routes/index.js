@@ -1,6 +1,5 @@
 const citizenRouter = require('./citizens');
 const unitRouter = require('./unit');
-const homeRouter = require('./home');
 const loginRouter = require('./login');
 const searchRouter = require('./search');
 const countRouter = require('./count');

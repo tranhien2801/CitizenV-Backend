@@ -7,6 +7,7 @@ const allocateController = require('../app/controllers/CityController');
 
 router.get('/allocate/:code', allocateController.showUnit);
 router.get('/login', loginController.g_login);
+router.get('/signup', loginController.signup);
 router.get('/', loginController.home);
 router.post('/', loginController.login);
 router.get('/allocate', loginController.g_allocate);
