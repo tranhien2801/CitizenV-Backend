@@ -3,10 +3,15 @@ const { mongooseToObject } = require('../../util/mongoose');
 const Citizen = require('../models/Citizen')
 const Unit = require('../models/Unit');
 
-// const age = (date1, date2) => {
-//     //return { $subtract: [ "$$NOW", "$date" ] };
-//     return new Year("2016-01-01");
-// }
+const dateFormat = (date) => {
+    var day = date.getDate();
+    if (day < 10) day = '0' + day;
+    var month = date.getMonth() + 1;
+    if ( month < 10) month = '0' + month;
+    var year = date.getFullYear();
+    const dateFormat = day + '/' + month + '/' + year;
+    return dateFormat;
+}
 class CitizenController {
 
     /*---------------------------------------------------------------------------------------------------------------------
@@ -18,11 +23,19 @@ class CitizenController {
         res.render('citizens/addPerson');
     }
 
-    
+    show(req, res) {
+        res.render('citizens/listPerson');
+    }
 
-    // [GET] /citizens 
-    show(req, res, next) {
-        let citizenQuery = Citizen.find({}, {CCCD: 1, name: 1, dob: 1, sex: 1, phone: 1, perResidence: 1, 
+    // [GET] /citizens/survey-card
+    surveyCard(req, res, next) {
+        res.render('citizens/sheet');
+    }
+
+    // [GET] /citizens/:code 
+    showByUnit(req, res, next) {
+        let citizenQuery = Citizen.find({addressID: { $regex: '^' + req.params.code}}, 
+            {CCCD: 1, name: 1, dob: 1, sex: 1, phone: 1, perResidence: 1, 
             curResidence: 1, ethnic: 1, religion: 1, eduLevel: 1, job: 1});
 
         if (req.query.hasOwnProperty('_sort')) {
@@ -31,71 +44,31 @@ class CitizenController {
             });
         }
 
-        Promise.all([citizenQuery, Citizen.countDocumentsDeleted()])
+        Promise.all([citizenQuery, Citizen.countDocumentsDeleted({addressID: { $regex: '^' + req.params.code}})])
             .then(([citizens, deletedCount]) => {
-                for ( var i = 0; i < citizens.length; i++) {
-                    var day = citizens[i].dob.getDate();
-                    if (day < 10) day = '0' + day;
-                    var month = citizens[i].dob.getMonth() + 1;
-                    if ( month < 10) month = '0' + month;
-                    var year = citizens[i].dob.getFullYear();
-                    var date = day + '/' + month + '/' + year;              
-                    citizens[i].date = date;
+                for ( var i = 0; i < citizens.length; i++) {              
+                    citizens[i].date = dateFormat(citizens[i].dob);
                 }   
                 res.render('citizens/listPerson', {
                     citizen: multipleMongooseToObject(citizens),
                     deletedCount
-                })           
+                })   
+                // res.json({citizens, deletedCount})        
             })
             .catch(next);
     }
 
 
-    // async show(req, res, next) {
-    //     const deletedCount = await Citizen.countDocumentsDeleted();
-    //     Citizen.find({}, {CCCD: 1, name: 1, dob: 1, sex: 1, phone: 1, perResidence: 1, curResidence: 1,
-    //         ethnic: 1, religion: 1, eduLevel: 1, job: 1})
-    //         .then((citizens) => {
-    //             if (citizens != null) {                    
-    //                 for ( var i = 0; i < citizens.length; i++) {
-    //                     var day = citizens[i].dob.getDate();
-    //                     if (day < 10) day = '0' + day;
-    //                     var month = citizens[i].dob.getMonth() + 1;
-    //                     if ( month < 10) month = '0' + month;
-    //                     var year = citizens[i].dob.getFullYear();
-    //                     var date = day + '/' + month + '/' + year;              
-    //                     citizens[i].date = date;
-    //                 }                  
-    //                 res.render('citizens/listPerson', {
-    //                     citizen: multipleMongooseToObject(citizens),
-    //                     deletedCount
-    //                 });                                
-    //             } else res.status(404).json( {message: "Hiện tại, hệ thống chưa có công dân nào"})
-    //         })
-    //         .catch(next);
-    // };
-
-    // [GET] /citizens/trash
+    // [GET] /citizens/trash/:code
     trashCitizens(req, res, next) {
-        Citizen.findDeleted({}, {CCCD: 1, name: 1, dob: 1, sex: 1, phone: 1, perResidence: 1, curResidence: 1,
+        Citizen.findDeleted({addressID: { $regex: '^' + req.params.code}}, {CCCD: 1, name: 1, dob: 1, sex: 1, phone: 1, perResidence: 1, curResidence: 1,
             ethnic: 1, religion: 1, eduLevel: 1, job: 1, deletedAt: 1})
             .then((citizens) => {
             if (citizens != null) {               
                 for ( var i = 0; i < citizens.length; i++) {
-                    var day = citizens[i].dob.getDate();
-                    if (day < 10) day = '0' + day;
-                    var month = citizens[i].dob.getMonth() + 1;
-                    if ( month < 10) month = '0' + month;
-                    var year = citizens[i].dob.getFullYear();
-                    var date = day + '/' + month + '/' + year;              
+                    var date = dateFormat(citizens[i].dob);              
                     citizens[i].date = date;
-
-                    var dayDeleted = citizens[i].deletedAt.getDate();
-                    if (dayDeleted < 10) dayDeleted = '0' + dayDeleted;
-                    var monthDeleted = citizens[i].deletedAt.getMonth() + 1;
-                    if ( monthDeleted < 10) monthDeleted = '0' + monthDeleted;
-                    var yearDeleted = citizens[i].deletedAt.getFullYear();
-                    var dateDeleted = dayDeleted + '/' + monthDeleted + '/' + yearDeleted;              
+                    var dateDeleted = dateFormat(citizens[i].deletedAt);              
                     citizens[i].dateDeleted = dateDeleted;
                 }
                 res.render('citizens/trashCitizens', {
@@ -143,21 +116,6 @@ class CitizenController {
             .catch(next=> res.status(404).json( {message: "Không tìm thấy công dân phù hợp"}));
     }
 
-    // [GET] /citizens/:CCCD
-    showByCCCD(req, res, next) {
-        Citizen.findOne({ CCCD: req.params.CCCD})
-            .then((citizen) =>   {            
-                var day = citizen.dob.getDate();
-                if (day < 10) day = '0' + day;
-                var month = citizen.dob.getMonth() + 1;
-                if ( month < 10) month = '0' + month;
-                var year = citizen.dob.getFullYear();
-                var date = day + '/' + month + '/' + year;              
-                citizen.date = date;
-                res.json(citizen);     
-            })
-            .catch(next=> res.status(404).json( {message: "Không tìm thấy công dân phù hợp"}));
-    }
 
 
 

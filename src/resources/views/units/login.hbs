@@ -3,7 +3,7 @@
 <div class="wrapper bg-white">
     <div class="text-h2 text-center">CitizenV</div>
     <div class="text-h4 text-muted text-center pt-2">Hệ thống điều tra dân số</div>
-    <form id="login-form" class='mt-4 mb-4' method="POST" action="/">
+    <form id="login-form" class='mt-4 mb-4'>
         <div class="form-floating mb-4 mt-4">
             <input type="text" class="form-control" id="code"  name='code' placeholder="Mã đơn vị">
         </div>
@@ -18,14 +18,33 @@
     </form>
 </div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-window.onload = function() {
-	if (localStorage) {
-	  document.getElementById('login-form').addEventListener('submit', function() {
-          var code = document.getElementById('code').value;
-	      localStorage.setItem('code', code);
-          console.log(localStorage.getItem('code'));
-	  });
-    }
-}
+
+$("#login-form").submit(function( event ) {
+  event.preventDefault();
+  var code1 = document.getElementById('code').value;
+  var password1 = document.getElementById('password').value;
+  fetch("/",
+    {   method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body : JSON.stringify({ 'code': code1, 'password': password1}),
+    })
+    .then(response=> response.json()).then(res => {
+            if (res.status == 'Success') {
+                localStorage.setItem("token", res.token);
+                localStorage.setItem("code", res.code);
+                document.location.pathname = "/"
+            } else {
+                alert(res.status)
+                localStorage.setItem("token", '');
+            };
+    });  
+
+});
+
+
+    
+
+
 </script>

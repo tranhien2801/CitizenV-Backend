@@ -1,12 +1,12 @@
 <div class="row">
   <div class="col-md-9 shadow">
-    <h4 class="mt-4 mb-4">Danh sách người dân</h4>
     <div class="end">
       <h5>Người dân đã xóa</h5>
-      <a href="/citizens/trash" type="button" class="btn btn-outline-info">
+      <a id="citizens-deleted" class="btn btn-outline-info">
         Thùng rác <span class="badge bg-info">{{deletedCount}}</span>
       </a>
     </div>
+    <h4 class="mt-4 mb-4 text-center">Danh sách người dân</h4>
     <table class="table table-striped table-hover">
       <thead>
         <tr>
@@ -49,14 +49,14 @@
           <td>{{this.perResidence}}</td>
           <td>
             <div class="list-group list-group-horizontal">
-              <a href="citizens/{{this.CCCD}}" class="list-group-item border-primary" data-id="{{this.CCCD}}"
+              <a href="citizens/{{this.CCCD}}" data-id="{{this.CCCD}}"
                 data-bs-toggle="modal" data-bs-target="#myModal" data-bs-toggle="tooltip" data-bs-placement="top"
-                title="Xem chi tiết"><i class="far fa-eye text-primary"></i></a>
-              <a href="" class="list-group-item border-danger" data-toggle="modal" data-id="{{this.CCCD}}"
+                title="Xem chi tiết"><i class="far fa-eye text-primary" style="padding: 5px;"></i></a>
+              <a href=""  data-toggle="modal" data-id="{{this.CCCD}}"
                 data-target="#delete-citizen-modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa"><i
-                  class="fas fa-trash text-danger"></i></a>
-              <a href="/citizens/{{this.CCCD}}/edit" class="list-group-item border-success" data-bs-toggle="tooltip"
-                data-bs-placement="top" title="Sửa"><i class="far fa-edit text-success"></i></a>
+                  class="fas fa-trash text-danger" style="padding: 5px;"></i></a>
+              <a href="/citizens/{{this.CCCD}}/edit"  data-bs-toggle="tooltip"
+                data-bs-placement="top" title="Sửa"><i class="far fa-edit text-success" style="padding: 5px;"></i></a>
             </div>
           </td>
         </tr>
@@ -71,13 +71,8 @@
       <div class="toast-body">
       </div>
       <div class="toast-footer list-group list-group-horizontal">
-        <a href="/statistic/" class="list-group-item border-success text-success" data-bs-toggle="tooltip"
-          data-bs-placement="top" title="Thống kê"><i class="far fa-chart-bar"></i></a>
-        <a href="" class="list-group-item border-primary text-primary" data-bs-toggle="tooltip" data-bs-placement="top"
-          title="Chỉnh sửa"><i class="far fa-edit"></i></a>
-        <a href="" class="list-group-item border-danger text-danger" data-toggle="modal" data-id=""
-          data-target="#delete-citizen-modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa"><i
-            class="fas fa-trash text-danger"></i></a>
+          <a href="/statistic" class="list-group-item border-success text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Thống kê"><i class="far fa-chart-bar"></i></a>
+          <button type="button" id="allocate" class="list-group-item border-primary text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Chỉnh sửa"><i class="far fa-edit"></i></button>
       </div>
     </div>
   </div>
@@ -139,28 +134,9 @@
     var CCCD;
     var deleteForm = document.forms['delete-citizen-form'];
     var btnDeleteCitizen = document.getElementById('btn-delete-citizen');
+    var code = localStorage.getItem('code');
 
-    $('#myModal').on('show.bs.modal', async function (event) {
-      var button = $(event.relatedTarget);
-      CCCD = button.data('id');
-      let myObject = await fetch('/citizens/' + CCCD);
-      let myText = await myObject.json();
-      $('.modal-title').children().remove();
-      $('.modal-body').children().remove();
-      $('.modal-title').append('<p class="h4">Thông tin người dân chi tiết</p>');
-      $('.modal-body').append('<p class="h6">CCCD: ' + myText.CCCD + '</p>');
-      $('.modal-body').append('<p>Họ tên: ' + myText.name + '</p>');
-      $('.modal-body').append('<p>SĐT: ' + myText.phone + '</p>');
-      $('.modal-body').append('<p>Ngày sinh: ' + myText.date + '</p>');
-      $('.modal-body').append('<p>Giới tính: ' + myText.sex + '</p>');
-      $('.modal-body').append('<p>Nơi thường trú: ' + myText.perResidence + '</p>');
-      $('.modal-body').append('<p>Nơi tạm trú: ' + myText.curResidence + '</p>');
-      $('.modal-body').append('<p>Dân tộc: ' + myText.ethnic + '</p>');
-      $('.modal-body').append('<p>Tôn giáo: ' + myText.religion + '</p>');
-      $('.modal-body').append('<p>Trình độ văn hóa: ' + myText.eduLevel + '</p>');
-      $('.modal-body').append('<p>Nghề nghiệp: ' + myText.job + '</p>');
-      $('.modal-body').append('<p>Giới tính: ' + myText.sex + '</p>');
-    });
+   
     // when dialog confirm clicked
     $('#delete-citizen-modal').on('show.bs.modal', function (event) {
       $('.modal-title').children().remove();
@@ -175,13 +151,18 @@
       deleteForm.submit();
     };
 
+    var trashCitizens = document.getElementById('citizens-deleted');
+    trashCitizens.href = '/citizens/trash/' + code;    
+
     getText();
 
     async function getText() {
-      var code = localStorage.getItem('code');
-      let myObject = await fetch('/declare/progress?code=' + code);
+      var codeUnit = localStorage.getItem('code');
+      let myObject = await fetch('/declare/progress?code=' + codeUnit);
       let data = await myObject.json();
-      var rate = data.declared * 100 / (data.declared + data.declaring)
+      var rate = 0;
+      if (data.declared + data.declaring != 0)
+        rate = data.declared * 100/ (data.declared + data.declaring); 
       $('.toast-header').append("<p>Mã địa phương " + data.unit.code + '</p>');
       $('.toast-body').append('<p class="h5" style="color: #400485">' + data.unit.nameUnit + '</p>');
       $('.toast-body').append('<p>Hạn cuối: ' + data.date + '</p>')
@@ -189,6 +170,29 @@
       $('.toast-body').append('<p>Trạng thái: ' + data.unit.progress + '</p>');
     }
 
+     $('#myModal').on('show.bs.modal', async function (event) {
+      var button = $(event.relatedTarget);
+      CCCD = button.data('id');
+      let myObject = await fetch('/search/' + CCCD);
+      let myText = await myObject.json();
+    
+      $('.modal-title').children().remove();
+      $('.modal-body').children().remove();
+      $('.modal-title').append('<p class="h4">Thông tin người dân chi tiết</p>');
+      $('.modal-body').append('<p class="h6">CCCD: ' + myText.CCCD + '</p>');
+      $('.modal-body').append('<p>Họ tên: ' + myText.name + '</p>');
+      if (myText.phone != null)  $('.modal-body').append('<p>SĐT: ' + myText.phone + '</p>');
+      if (myText.date != null) $('.modal-body').append('<p>Ngày sinh: ' + myText.date + '</p>');
+      if (myText.sex != null) $('.modal-body').append('<p>Giới tính: ' + myText.sex + '</p>');
+      if (myText.perResidence != null) $('.modal-body').append('<p>Nơi thường trú: ' + myText.perResidence + '</p>');
+      if (myText.curResidence != null) $('.modal-body').append('<p>Nơi tạm trú: ' + myText.curResidence + '</p>');
+      if (myText.ethnic != null) $('.modal-body').append('<p>Dân tộc: ' + myText.ethnic + '</p>');
+      if (myText.religion != null) $('.modal-body').append('<p>Tôn giáo: ' + myText.religion + '</p>');
+      if (myText.eduLevel != null) $('.modal-body').append('<p>Trình độ văn hóa: ' + myText.eduLevel + '</p>');
+      if (myText.job != null) $('.modal-body').append('<p>Nghề nghiệp: ' + myText.job + '</p>');
+      if (myText.sex != null) $('.modal-body').append('<p>Giới tính: ' + myText.sex + '</p>');
+    });        
+    
 
   });
 </script>

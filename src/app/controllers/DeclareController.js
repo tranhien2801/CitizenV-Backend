@@ -1,6 +1,17 @@
 
 const Unit = require('../models/Unit');
 
+const dateFormat = (date) => {
+    if (date == null)   return "00/00/0000";
+    var day = date.getDate();
+    if (day < 10) day = '0' + day;
+    var month = date.getMonth() + 1;
+    if ( month < 10) month = '0' + month;
+    var year = date.getFullYear();
+    const dateFormat = day + '/' + month + '/' + year;
+    return dateFormat;
+}
+
 class DeclareController {
 
 
@@ -17,43 +28,57 @@ class DeclareController {
             .catch((error) => res.status(400).json(error));
     }
 
-    /* Cái này làm ở trang home nhá Lụa, dữ liệu trả về dạng json
+    /* Cái này làm ở trang home nhá, dữ liệu trả về dạng json
      unit, date là của đơn vị đang đăng nhập
      unleaded, declaring, declared là số lượng đơn vị con đang trong trạng thái nào đó
      units, dateEnds là của các đơn vị con */
     // [GET] /declare/progress?code=
     async progress(req, res) {
-        try {
+        
             if (req.query.code == '') req.query.code = null;
             const unit = await Unit.findOne({ code: req.query.code});
-            const dayEnd = unit.timeEnd.getDate();
-            if (dayEnd < 10) dayEnd = '0' + dayEnd;
-            const monthEnd = unit.timeEnd.getMonth() + 1;
-            if ( monthEnd < 10) monthEnd = '0' + monthEnd;
-            const yearEnd = unit.timeEnd.getFullYear();
-            const date = dayEnd + '/' + monthEnd + '/' + yearEnd;
+            const date = dateFormat(unit.timeEnd);
+            Unit.find({idParent: req.query.code})
+                .then(units => {
+                    var dateEnds = [];
+                    var declared = 0;
+                    var declaring = 0;
+                    var unleaded = 0;
+                    for (var i = 0; i < units.length; i++) {
+                        const temp = dateFormat(units[i].timeEnd);
+                        dateEnds.push(temp);
+                        switch (units[i].progress) {
+                            case "Đã khai báo":
+                                declared++;
+                                break;
+                            case "Đang khai báo":
+                                declaring++;
+                                break;
+                            case "Chưa khai báo":
+                                unleaded++;
+                                break;
+                        }
+                    }
+                    res.json({unit, date, unleaded, declaring, declared,  units, dateEnds});
+                })
+                .catch(() => res.json({unit, date, unleaded: 0, declaring: 0, declared: 0,  units: null, dateEnds: null}))
             
-            const declared = await Unit.count({idParent: req.query.code, progress: "Đã khai báo"});
-            const declaring = await Unit.count({idParent: req.query.code, progress: "Đang khai báo"});
-            const unleaded = await Unit.count({idParent: req.query.code, progress: "Chưa khai báo"});
             
-            const units = await Unit.find({idParent: req.query.code});
-            var dateEnds = [];
-            for (var i = 0; i < units.length; i++) {
-                const day = units[i].timeEnd.getDate();
-                if (day < 10) day = '0' + day;
-                const month = units[i].timeEnd.getMonth() + 1;
-                if ( month < 10) month = '0' + month;
-                const year = units[i].timeEnd.getFullYear();
-                const temp = day + '/' + month + '/' + year;
-                dateEnds.push(temp);
-            }
-            res.json({unit, date, unleaded, declaring, declared,  units, dateEnds});
-        } catch (error) {
-            res.status(400).json({message: "Đơn vị không tồn tại trong hệ thống"});
-        }
+            
+            // const declared = await Unit.count({idParent: req.query.code, progress: "Đã khai báo"});
+            // if (declared == null) declared = 0;
+            // const declaring = await Unit.count({idParent: req.query.code, progress: "Đang khai báo"});
+            // if (declaring == null) declaring = 0;
+            // const unleaded = await Unit.count({idParent: req.query.code, progress: "Chưa khai báo"});
+            // if (unleaded == null) unleaded = 0;
+            
+            // res.json({unit, date, unleaded, declaring, declared,  units, dateEnds});
+        // } catch (error) {
+        //     res.status(400).json({message: "Đơn vị không tồn tại trong hệ thống"});
+        // }
 
     }
+
 
     // [PUT] /declare/:code
     async complete(req, res) {

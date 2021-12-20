@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const slug = require('mongoose-slug-generator');
 const mongooseDelete = require('mongoose-delete');
 const JWT_KEY = "UETcitizenV";
 const bcrypt = require('bcryptjs');
@@ -53,11 +52,14 @@ UnitShema.methods.generateAuthToken = async function() {
         case 6:
             role = 'B1';
             break;
+        case 8:
+            role = 'B2';
+            break;
         default:
             break;    
     }
-    // Mã hóa code và role thành token hợp lệ trong 30ph
-    const token = jwt.sign({code: unit.code, role: role}, JWT_KEY, {expiresIn: 60*30});
+    // Mã hóa code và role thành token hợp lệ trong 5h
+    const token = jwt.sign({code: unit.code, role: role}, JWT_KEY, {expiresIn: 60*60*5});
     return token;
 }
 
@@ -65,11 +67,13 @@ UnitShema.statics.findByCredentials = async (code, password) => {
     // Search for a unit by code and password.
     const unit = await Unit.findOne({ code } );
     if (!unit) {
-        throw new Error({ error: 'Invalid login credentials' });
+       // throw new Error({ error: 'Invalid login credentials' });
+       return null;
     }
     const isPasswordMatch = await bcrypt.compare(password, unit.password);
     if (!isPasswordMatch) {
-        throw new Error({ error: 'Invalid login credentials' });
+        //throw new Error({ error: 'Invalid login credentials' });
+        return null;
     }
     return unit;
 }

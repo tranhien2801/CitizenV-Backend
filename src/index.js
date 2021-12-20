@@ -3,6 +3,7 @@ const express = require('express');
 const morgan = require('morgan');
 const methodOverride = require('method-override');
 const handlebars = require('express-handlebars');
+const session = require('express-session');
 const hbs = handlebars.create({
     extname: 'hbs',
     helpers: {
@@ -63,6 +64,12 @@ app.use(SortMiddleware);
 app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'resources', 'views'));
+
+app.use(session({
+    resave: true, 
+    saveUninitialized: true, 
+    secret: 'UETcitizenV', 
+    cookie: { maxAge: 5 * 3600 * 1000 }}));
 
 // Routes init
 route(app);

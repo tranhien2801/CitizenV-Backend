@@ -1,6 +1,6 @@
 <div class="mt-4">
     <div>
-      <a href="/citizens" type="button" class="btn btn-outline-info">
+      <a id="list-citizens-1" class="btn btn-outline-info">
         Danh sách người dân
       </a>
       <h3>Người dân đã xóa</h3>
@@ -51,16 +51,18 @@
                 <td>{{this.sex}}</td>
                 <td>{{this.perResidence}}</td>
                 <td>{{this.dateDeleted}}</td>
-                <td class="list-group list-group-horizontal">
+                <td>
+                  <div class="list-group list-group-horizontal">
                     <a href="" class="btn btn-link btn-restore" data-id="{{this.CCCD}}" data-bs-toggle="tooltip" data-bs-placement="top" title="Khôi phục"><i class="fas fa-trash-restore text-success"></i></a>
                     <a href="" class="btn btn-link" data-toggle="modal" data-id="{{this.CCCD}}" data-target="#delete-citizen-modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa vĩnh viễn"><i class="fas fa-user-slash text-danger"></i></a>
+                  </div>
                 </td>
             </tr>
             {{ else}}
             <tr>
               <td colspan="5" class="text-center">
                 Thùng rác trống
-                <a href="/citizens">Danh sách người dân</a>
+                <a id="list-citizens-2">Danh sách người dân</a>
               </td>
             </tr>
             {{/each}}
@@ -102,13 +104,19 @@
       var restoreForm = document.forms['delete-citizen-form'];
       var btnDeletecitizen = document.getElementById('btn-delete-citizen');
       var btnRestorecitizen = $('.btn-restore');
+      var code = localStorage.getItem('code');
+
+      var listCitizens1 = document.getElementById('list-citizens-1');
+      listCitizens1.href = '/citizens/' + code;   
+    var listCitizens2 = document.getElementById('list-citizens-2');
+      listCitizens2.href = '/citizens/' + code;   
 
       // when dialog confirm clicked
       $('#delete-citizen-modal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget)
       CCCD = button.data('id') 
       
-  });
+      });
   
   //when delete citizen btn clicked
   btnDeletecitizen.onclick = function () {
@@ -123,6 +131,8 @@
       restoreForm.action = '/citizens/' + citizenId + '/restore?_method=PATCH';
       restoreForm.submit();
   })
+
+
 
 })
 </script>

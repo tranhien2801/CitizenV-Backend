@@ -27,7 +27,7 @@
 <div class="modal" tabindex="-1" role="dialog" id="{{@index}}" aria-hidden="false">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <form action="#" name="add-unit-form" class="mt-4 mb-4" method="POST">
+            <form name="add-unit-form" class="mt-4 mb-4" method="POST">
                 <div class="modal-header">
                     <h5 class="modal-title">Thêm tài khoản cho đơn vị</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -36,35 +36,37 @@
                 </div>
                 <div class="modal-body mt-4 mb-4">
                     <label for="">Tên đăng nhập là mã địa phương</label>
-                    <input type="text" class="form-control" id="nameUnit" name='nameUnit' value="{{this}}">
+                    <input type="text" class="form-control" id="{{sum 'nameUnit' @index}}" name='nameUnit'
+                        value="{{this}}">
                     <div class="form-floating mb-4 mt-4">
-                        <input type="password" class="form-control mt-4 mb-4" id="password" name='password'
-                        placeholder="Mật khẩu" required="true">
+                        <input type="password" class="form-control mt-4 mb-4" id="{{sum 'password' @index}}"
+                            name='password' placeholder="Mật khẩu" required="true">
                         <label for="password">Mật khẩu</label>
                     </div>
                     <label for="timeStart">Thời gian bắt đầu</label>
-                    <input type="date" class="form-control mb-4" id="timeStart" name="timeStart">
+                    <input type="date" class="form-control mb-4" id="{{sum 'timeStart' @index}}" name="timeStart">
                     <label for="timeEnd">Thời gian kết thúc</label>
-                    <input type="date" class="form-control mb-4" id="timeEnd" name="timeEnd">
+                    <input type="date" class="form-control mb-4" id="{{sum 'timeEnd' @index}}" name="timeEnd">
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <label class="input-group-text" for="inputGroupSelect01">Trạng thái</label>
                         </div>
-                        <select class="form-control custom-select" id="progress" name="progress">
+                        <select class="form-control custom-select" id="{{sum 'progress' @index}}" name="progress">
                             <option selected></option>
-                            <option>Chưa khai báo</option>
-                            <option>Đang khai báo</option>
-                            <option>Đã khai báo</option>
+                            <option value="chua-khai-bao">Chưa khai báo</option>
+                            <option value="dang-khai-bao">Đang khai báo</option>
+                            <option value="da-khai-bao">Đã khai báo</option>
                         </select>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="btn-add-unit" type="submit" class="btn btn-primary" onclick="" data-dismiss="modal">Thêm
+                    <button id="{{sum 'btn-add-unit' @index}}" type="button" class="btn btn-primary"
+                        onclick="addUnit({{@index}})" data-dismiss="modal">Thêm
                         tài khoản</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
                 </div>
             </form>
-            
+
         </div>
     </div>
 </div>
@@ -72,40 +74,39 @@
 
 
 <script>
-    
-
-    /*function createAccount() {
-        var password = document.getElementById('password').value;
-        var timeStart = document.getElementById('timeStart').value;
-        var timeEnd = document.getElementById('timeEnd').value;
-    }
-    fetch('#', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            code: code,
-            password: password,
-            timeStart: timeStart,
-            timeEnd: timeEnd
-        })
-    }).then(response => response.json()).then(res => {
-
-    });*/
-
-
-    document.addEventListener('DOMContentLoaded', function () {
+    function addUnit(a) {
         var code = localStorage.getItem('code');
-        var addForm = document.forms['add-unit-form'];
-        var btnAddUnit = document.getElementById('btn-add-unit');
-    
-        btnAddUnit.onclick = function () {
-            addForm.action = '/allocate?idParent=' + code;
-            addForm.submit();
-        };
+        var nameUnit = document.getElementById('nameUnit' + a).value
+        var password = document.getElementById('password' + a).value;
+        var timeStart = document.getElementById('timeStart' + a).value;
+        var timeEnd = document.getElementById('timeEnd' + a).value;
+        var progress = document.getElementById('progress' + a).value;
+
+        console.log(nameUnit + ' ' + password + ' ' + timeStart + ' ' + timeEnd + ' ' + progress);
 
 
-    })
+        var url_post = '/allocate?idParent=' + code;
 
-
-
+            fetch(url_post, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', },
+                body: JSON.stringify({
+                    nameUnit: nameUnit,
+                    password: password,
+                    timeStart: timeStart,
+                    timeEnd: timeEnd,
+                    progress: progress
+                })
+            })
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.status == 'Success') console.log("success");
+                else if (data.status == 'Mật khẩu không đúng định dạng') alert("Mật khẩu phải có độ dài ngắn nhất là 7");
+                else if (data.status == 'Đơn vị này không có trong hệ thống') alert("Đơn vị này không có trong hệ thống");
+            })
+            .catch((error) => {
+                console.log('Error: ', error);
+            })
+            ;
+    }
 </script>

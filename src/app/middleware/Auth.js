@@ -4,19 +4,23 @@ const JWT_KEY = "UETcitizenV";
 
 class Auth {
     async auth (req, res, next) {
-        const token = req.header('Authorization').replace('Bearer ', ''); // Lấy token từ header
-        const data = jwt.verify(token, JWT_KEY);
+        if (!req.session.token) { 
+           // return res.status(400).json('Chưa có token');
+           return res.redirect('/login');
+        }
         try {
-            const unit = await Unit.findOne({ _id: data._id });
+            var token = req.session.token; 
+            const data = jwt.verify(token, JWT_KEY);
+            const unit = await Unit.findOne({ code: data.code });
             if (!unit) {
                 throw new Error();
             }
             req.unit = unit;
             req.token = token;
-
-            next()
+            req.role = data.role;
+            next();
         } catch (error) {
-            res.status(401).send({ error: 'Not authorized to access this resource' });
+            res.status(401).send({ error: 'Bạn không có quyền truy cập vào trang này' });
         }
 
     }
@@ -31,7 +35,7 @@ class Auth {
     // Phân quyền của tài khoản được phép nhập liệu
     authB1B2 (req, res, next) {
         if (['B1', 'B2'].includes(req.role))
-            next;
+            next();
         else res.status(401).json("Bạn không phải là B1 hoặc B2");
     }
 }

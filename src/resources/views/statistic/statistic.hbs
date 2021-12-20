@@ -11,8 +11,8 @@
                 <option value="population">Dân số</option>
                 <option value="ageTower">Tháp tuổi</option>
                 <option value="career">Tỉ lệ nghề nghiệp</option>
-                <option value="4">Trình độ văn hóa</option>
-                <option value="gender">Tỉ lệ giới tính</option>
+                {{!-- <option value="4">Trình độ văn hóa</option> --}}
+                <option value="gender">Giới tính</option>
                 <option value="birthRate">Tỉ suất sinh</option>
             </select>
             <button type="button" class="btn btn-outline-success list-group-item btn-sm border-success" data-bs-placement="top" title="Thống kê" onclick="statistic()"><i class="far fa-chart-bar"></i></button>
@@ -21,7 +21,9 @@
     </div>
 </div>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script> 
+    var token = localStorage.getItem("token");
 
     $(window).resize(function(){
         var chart = document.getElementById("chart").value;
@@ -53,7 +55,8 @@
             var code = localStorage.getItem('code');
             let myObject = await fetch('/declare/progress?code=' + code);
             let data = await myObject.json();
-            var rate = data.declared * 100/ (data.declared + data.declaring) 
+            if (data.declared + data.declaring != 0)
+                rate = data.declared * 100/ (data.declared + data.declaring);  
             $('.toast-header').append("<p>Mã địa phương " + data.unit.code + '</p>');
             $('.toast-body').append('<p class="h5" style="color: #400485">' + data.unit.nameUnit + '</p>');
             $('.toast-body').append('<p>Hạn cuối: ' + data.date + '</p>')
@@ -166,7 +169,7 @@
                 var name = data.name;
                 var data = new google.visualization.DataTable();
 
-                var dataArray = [['Gender', 'Male', 'Female'],];
+                var dataArray = [['Gender', 'Nam', 'Nữ'],];
                 
                 for (var i = 0; i < nameUnit.length; i++) {
                     subArray = [nameUnit[i], male[i], female[i]];
@@ -185,8 +188,10 @@
             });          
     }
     
+
     function drawPopulation() {
         const path = "/statistic/" + code  + "/population";
+        
         fetch(path)
             .then(response => response.json())
             .then(data => {
@@ -224,7 +229,7 @@
                 var name = data.name;
                 var data = new google.visualization.DataTable();
 
-                var dataArray = [['Age', 'Male', 'Female'],];
+                var dataArray = [['Age', 'Nam', 'Nữ'],];
                 
                 var subArray = [];
 

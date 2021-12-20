@@ -24,7 +24,7 @@
                             </div>
                         </li> --}}
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/citizens" style="color: #400485">Danh sách người dân</a>
+                            <a id="list-citizens" class="nav-link active" aria-current="page"  style="color: #400485">Danh sách người dân</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -40,12 +40,12 @@
                             <a class="nav-link active" aria-current="page" href="/addUnit" style="color: #400485">Cấp tài khoản</a>
                         </li> --}}
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/citizens/:model" style="color: #400485">In phiếu khảo sát</a>
+                            <a class="nav-link active" aria-current="page" href="/citizens/survey-card" style="color: #400485">In phiếu khảo sát</a>
                         </li>
 
                     </ul>
                     <div id="right">
-                        <a href="#"><i class="fas fa-sign-out-alt" style="color: #400485"></i></a>
+                        <a id="logout" ><i class="fas fa-sign-out-alt" style="color: #400485">Đăng suất</i></a>
                     </div>
 
                 </div>
@@ -53,3 +53,12 @@
         </nav>
     </div>
 </header>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    var code = localStorage.getItem('code');
+    var listCitizens = document.getElementById('list-citizens');
+    listCitizens.href = "/citizens/" + code;
+    var logout = document.getElementById('logout');
+    logout.href = "/logout";
+</script>
