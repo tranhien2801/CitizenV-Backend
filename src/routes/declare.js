@@ -6,8 +6,10 @@ const declareController = require('../app/controllers/DeclareController');
 
 
 router.get('/progress', Auth.auth, declareController.progress);
-router.put('/:code', Auth.auth, Auth.authA123B1, declareController.complete);
-router.get('/', Auth.auth, Auth.authA123B1, declareController.activate);
+router.put('/:code', declareController.complete);
+router.put('/close/:code', declareController.closeDeclaration);
+router.get('/activate', Auth.auth, Auth.authA123B1, declareController.activate);
+
 
 
 

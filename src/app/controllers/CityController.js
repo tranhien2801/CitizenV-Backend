@@ -23,7 +23,7 @@ class CityController {
                         districtName.push(city2.Districts[i].Name);
                     }
                    res.render('units/addUnit',{code: req.params.code, listName: districtName, length: city2.Districts.length});
-                //    res.json({code: req.params.code, listName: districtName});
+                
                     break;
                 case 4:
                     const unit4 = await Unit.findOne({code: req.params.code});
@@ -33,10 +33,10 @@ class CityController {
                     for (var i = 0; i < disFilter[disFilter.length - 1].Wards.length; i++ ) {
                         wardName.push(disFilter[disFilter.length - 1].Wards[i].Name);
                     }
-                    res.json({code: req.params.code, listName: wardName});
+                    res.render('units/addUnit',{code: req.params.code, listName: wardName});
                     break;
                 case 6:
-                    res.status(400).json({message: "Hệ thống hiện chưa có dữ liệu các thôn của xã"});
+                    res.render('units/addUnit',{});
                     break;
                 case 3:
                     if (req.params.code === 'A01') {
@@ -45,7 +45,7 @@ class CityController {
                         for (var i = 0; i < cities.length; i++) {
                             cityName.push(cities[i].Name);
                         }
-                        res.json({code: req.params.code, listName: cityName});
+                        res.render('units/addUnit',{code: req.params.code, listName: cityName});
                     } else res.status(400).json({message: "Tài khoản A1 này không đúng"});
                     break;
                 default:

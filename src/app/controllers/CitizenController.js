@@ -127,16 +127,16 @@ class CitizenController {
     async store(req, res, next) { 
         const unit = await Unit.findOne({ code: req.params.addressID});
         if (unit == null) {
-            res.status(400).json({message: "Đơn vị không tồn tại trong hệ thống"});
-            return;
+            return res.status(400).json({message: "Đơn vị không tồn tại trong hệ thống"});
         }
+        if (unit.timeEnd < Date.now())  return res.status(400).json({message: "Đã hết thời hạn khai báo"});
         console.log(req.body);
         const citizen = new Citizen(req.body);
         citizen.addressID = req.params.addressID;
         citizen.save()
             .then(() => {
-                res.json(mongooseToObject(citizen))
-                //res.render('addPerson');
+               // res.json(mongooseToObject(citizen))
+                res.redirect('/citizens/' + addressID);
             })
             .catch(next => res.status(400).json({message: "Lỗi tạo công dân do CCCD đã tồn tại hoặc ngày sinh không phù hợp"}));
     }

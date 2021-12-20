@@ -64,11 +64,6 @@ class LoginController {
                         .then(token => {
                             req.session.token = token;
                             res.json({status:"Success", code: unit.code, token});
-                            // res.render('home',{ 
-                            //     status:"Success",
-                            //     code: unit.code, 
-                            //     token 
-                            // })
                         })
                 })
         } catch (error) {

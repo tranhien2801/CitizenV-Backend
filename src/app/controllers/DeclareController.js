@@ -15,10 +15,10 @@ const dateFormat = (date) => {
 class DeclareController {
 
 
-    // [GET] /declare?code=
+    // [GET] /declare/activate?code=
     activate(req, res) {
         if (req.query.code == '') req.query.code = null;
-        Unit.count({idParent: req.query.code, active: "Yes"})
+        Unit.count({idParent: req.query.code, active: "Có"})
             .then(countYes => {
                 Unit.count({idParent: req.query.code})
                     .then(count => {
@@ -28,10 +28,7 @@ class DeclareController {
             .catch((error) => res.status(400).json(error));
     }
 
-    /* Cái này làm ở trang home nhá, dữ liệu trả về dạng json
-     unit, date là của đơn vị đang đăng nhập
-     unleaded, declaring, declared là số lượng đơn vị con đang trong trạng thái nào đó
-     units, dateEnds là của các đơn vị con */
+    
     // [GET] /declare/progress?code=
     async progress(req, res) {
         
@@ -61,22 +58,48 @@ class DeclareController {
                     }
                     res.json({unit, date, unleaded, declaring, declared,  units, dateEnds});
                 })
-                .catch(() => res.json({unit, date, unleaded: 0, declaring: 0, declared: 0,  units: null, dateEnds: null}))
-            
-            
-            
-            // const declared = await Unit.count({idParent: req.query.code, progress: "Đã khai báo"});
-            // if (declared == null) declared = 0;
-            // const declaring = await Unit.count({idParent: req.query.code, progress: "Đang khai báo"});
-            // if (declaring == null) declaring = 0;
-            // const unleaded = await Unit.count({idParent: req.query.code, progress: "Chưa khai báo"});
-            // if (unleaded == null) unleaded = 0;
-            
-            // res.json({unit, date, unleaded, declaring, declared,  units, dateEnds});
-        // } catch (error) {
-        //     res.status(400).json({message: "Đơn vị không tồn tại trong hệ thống"});
-        // }
+                .catch(() => res.json({unit, date, unleaded: 0, declaring: 0, declared: 0,  units: null, dateEnds: null}));
+    }
 
+    // [PUT] /declare/close/:code
+    async closeDeclaration(req, res) {
+        try {
+            switch(req.params.code.length) {
+                case 8: // B2
+                    await Unit.updateOne({code: req.params.code}, 
+                        {$set: {progress: "Đã khai báo", active: "Không", timeEnd: Date.now()}});
+                    break;
+                case 6: // B1
+                    await Unit.updateMany({$or: [{code: req.params.code}, {idParent: req.params.code}]}, 
+                        {$set: {progress: "Đã khai báo", active: "Không", timeEnd: Date.now()}});
+                    break;
+                case 4: // A3
+                    const unit6 = await Unit.findOne({idParent: req.params.code});
+                    // update A3, B1
+                    await Unit.updateMany({$or: [{code: req.params.code}, {idParent: req.params.code}]}, 
+                        {$set: {progress: "Đã khai báo", active: "Không", timeEnd: Date.now()}});
+                    // update B2
+                    await Unit.updateMany({idParent: unit6.code}, 
+                        {$set: {progress: "Đã khai báo", active: "Không", timeEnd: Date.now()}});
+                    break;
+                case 2: // A2
+                    const unitA3 = await Unit.findOne({idParent: req.params.code});
+                    const unitB1 = await Unit.findOne({idParent: unitA3.code});
+                    // update A2, A3
+                    await Unit.updateMany({$or: [{code: req.params.code}, {idParent: req.params.code}]}, 
+                        {$set: {progress: "Đã khai báo", active: "Không", timeEnd: Date.now()}});
+                    // update B1, B2
+                    await Unit.updateMany({$or: [{code: unitB1.code}, {idParent: unitB1.code}]}, 
+                        {$set: {progress: "Đã khai báo", active: "Không", timeEnd: Date.now()}});
+                    break;
+            }
+            res.json({
+                status: "Success", 
+                code: req.params.code,
+            })
+        } catch (error) {
+            res.status(400).json({message: error.message});
+        }
     }
 
 
@@ -86,15 +109,21 @@ class DeclareController {
             switch(req.params.code.length) {
                 case 8:
                     const unit8 = await Unit.findOne({code: req.params.code});
-                    await Unit.updateOne({code: req.params.code}, {$set: {progress: "Đã khai báo"}});               
+                    await Unit.updateOne({code: req.params.code}, {$set: {progress: "Đã khai báo"}});  
+                    // Kiểm tra xem các tài khoản B2 đã khai báo xong chưa, nếu tất cả đều "Đã khai báo"
+                    // thì chuyển progress của B1 thành "Đã khai báo"             
                     const count8 = await Unit.count({idParent: unit8.idParent, progress: "Đang khai báo"});
                     if (count8 == 0) {
                         const unitParent6 = await Unit.findOne({code: unit8.idParent});
                         await Unit.updateOne({code: unit8.idParent}, {$set: {progress: "Đã khai báo"}});
+                        // Kiểm tra xem các tài khoản B1 đã khai báo xong chưa, nếu tất cả đều "Đã khai báo"
+                        // thì chuyển progress của A3 thành "Đã khai báo"  
                         const count6 = await Unit.count({idParent: unitParent6.idParent, progress: "Đang khai báo"});
                         if (count6 == 0) {
                             const unitParent4 = await Unit.findOne({code: unitParent6.idParent});
                             await Unit.updateOne({code: unitParent6.idParent}, {$set: {progress: "Đã khai báo"}});
+                            // Kiểm tra xem các tài khoản A3 đã khai báo xong chưa, nếu tất cả đều "Đã khai báo"
+                            // thì chuyển progress của A2 thành "Đã khai báo"  
                             const count4 = await Unit.count({idParent: unitParent4.idParent, progress: "Đang khai báo"}); 
                             if (count4 == 0) {
                                 await Unit.updateOne({code: unitParent4.idParent}, {$set: {progress: "Đã khai báo"}});
@@ -105,11 +134,15 @@ class DeclareController {
                     break;
                 case 6:
                     const unit = await Unit.findOne({code: req.params.code});
-                    await Unit.updateOne({code: req.params.code}, {$set: {progress: "Đã khai báo"}});               
+                    await Unit.updateOne({code: req.params.code}, {$set: {progress: "Đã khai báo"}});   
+                    // Kiểm tra xem các tài khoản B1 đã khai báo xong chưa, nếu tất cả đều "Đã khai báo"
+                    // thì chuyển progress của A3 thành "Đã khai báo"              
                     const countDeclaring = await Unit.count({idParent: unit.idParent, progress: "Đang khai báo"});
                     if (countDeclaring == 0) {
                         const unitParent1 = await Unit.findOne({code: unit.idParent});
                         await Unit.updateOne({code: unit.idParent}, {$set: {progress: "Đã khai báo"}});
+                        // Kiểm tra xem các tài khoản A3 đã khai báo xong chưa, nếu tất cả đều "Đã khai báo"
+                        // thì chuyển progress của A2 thành "Đã khai báo"  
                         const count = await Unit.count({idParent: unitParent1.idParent, progress: "Đang khai báo"});
                         if (count == 0) {
                             await Unit.updateOne({code: unitParent1.idParent}, {$set: {progress: "Đã khai báo"}});
@@ -119,7 +152,9 @@ class DeclareController {
                     break;
                 case 4:
                     const unit4 = await Unit.findOne({code: req.params.code});
-                    await Unit.updateOne({code: req.params.code}, {$set: {progress: "Đã khai báo"}});               
+                    await Unit.updateOne({code: req.params.code}, {$set: {progress: "Đã khai báo"}});    
+                    // Kiểm tra xem các tài khoản A3 đã khai báo xong chưa, nếu tất cả đều "Đã khai báo"
+                    // thì chuyển progress của A2 thành "Đã khai báo"             
                     const countDeclaring4 = await Unit.count({idParent: unit4.idParent, progress: "Đang khai báo"});
                     if (countDeclaring4 == 0) {
                         await Unit.updateOne({code: unit4.idParent}, {$set: {progress: "Đã khai báo"}});
@@ -139,6 +174,8 @@ class DeclareController {
             res.status(400).json({message: error.message});
         }
     }
+
+    
 
 }
 

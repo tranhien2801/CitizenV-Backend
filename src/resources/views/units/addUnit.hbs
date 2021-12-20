@@ -1,26 +1,46 @@
-<h1 class="mt-4 bt-4">Danh sách đơn vị</h1>
-<div class="col-md-8">
-    <table class="table  mt-4">
-        <thead>
-            <tr>
-                <th scope="col">Số thứ tự</th>
-                <th scope="col">Tên địa phương</th>
-                <th scope="col">Cấp phát</th>
-            </tr>
-        </thead>
-        <tbody id='tbody'>
-            {{#each listName}}
-            <tr>
-                <th scope="row">{{sum @index 1}}</th>
-                <td>{{this}}</td>
-                <td><button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal"
-                        data-target="{{sum '#' @index}}">Thêm</button></td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
-</div>
+<div class="row">
 
+    <div class="col-md-9 mt-4 mb-4">
+        <h1 class="mt-4 bt-4">Danh sách đơn vị</h1>
+        <table class="table  mt-4">
+            <thead>
+                <tr>
+                    <th scope="col">Số thứ tự</th>
+                    <th scope="col">Tên địa phương</th>
+                    <th scope="col">Cấp phát</th>
+                </tr>
+            </thead>
+            <tbody id='tbody'>
+                {{#each listName}}
+                <tr>
+                    <th scope="row">{{sum @index 1}}</th>
+                    <td>{{this}}</td>
+                    <td><button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal"
+                            data-target="{{sum '#' @index}}">Thêm</button></td>
+                </tr>
+                {{else}}
+                <tr>
+                    <p class="mt-4 bt-4">Hiện chưa có dữ liệu về thôn/ xóm, mời nhập thông tin thủ công</p>
+                    <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal"
+                                data-target="#-1">Thêm đơn vị</button>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-3">
+      <div class="toast show m-4">
+        <div class="toast-header">
+        </div>
+        <div class="toast-body">
+        </div>
+        <div class="toast-footer list-group list-group-horizontal">
+          <a href="/statistic" class="list-group-item border-success text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Thống kê"><i class="far fa-chart-bar"></i></a>
+          <button type="button" id="allocate" class="list-group-item border-primary text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Chỉnh sửa"><i class="far fa-edit"></i></button>
+        </div>
+      </div>
+    </div>
+</div>
 <!-- Scrollable modal -->
 
 {{#each listName}}
@@ -52,11 +72,17 @@
                             <label class="input-group-text" for="inputGroupSelect01">Trạng thái</label>
                         </div>
                         <select class="form-control custom-select" id="{{sum 'progress' @index}}" name="progress">
-                            <option selected></option>
-                            <option value="chua-khai-bao">Chưa khai báo</option>
                             <option value="dang-khai-bao">Đang khai báo</option>
+                            <option value="chua-khai-bao">Chưa khai báo</option>
                             <option value="da-khai-bao">Đã khai báo</option>
                         </select>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="inputGroupSelect01">Quyền</label>
+                        </div>
+                        <input type="text" class="form-control" id="{{sum 'active' @index}}" name='active'
+                        value="Có">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -70,6 +96,60 @@
         </div>
     </div>
 </div>
+{{else}}
+
+<div class="modal" tabindex="-1" role="dialog" id="-1" aria-hidden="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form name="add-unit-form" class="mt-4 mb-4" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm tài khoản cho đơn vị</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body mt-4 mb-4">
+                    <label for="">Tên đăng nhập là mã địa phương</label>
+                    <input type="text" class="form-control" id="{{sum 'nameUnit' '-1'}}" name='nameUnit'>
+                    <div class="form-floating mb-4 mt-4">
+                        <input type="password" class="form-control mt-4 mb-4" id="{{sum 'password' '-1'}}"
+                            name='password' placeholder="Mật khẩu" required="true">
+                        <label for="password">Mật khẩu</label>
+                    </div>
+                    <label for="timeStart">Thời gian bắt đầu</label>
+                    <input type="date" class="form-control mb-4" id="{{sum 'timeStart' '-1'}}" name="timeStart" required="true">
+                    <label for="timeEnd">Thời gian kết thúc</label>
+                    <input type="date" class="form-control mb-4" id="{{sum 'timeEnd' '-1'}}" name="timeEnd" required="true">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="inputGroupSelect01">Trạng thái</label>
+                        </div>
+                        <select class="form-control custom-select" id="{{sum 'progress' '-1'}}" name="progress">
+                            <option>Đang khai báo</option>
+                            <option>Chưa khai báo</option>
+                            <option>Đã khai báo</option>
+                        </select>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="inputGroupSelect01">Quyền</label>
+                        </div>
+                        <input type="text" class="form-control" id="{{sum 'active' '-1'}}" name='active'
+                        value="Có">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="{{sum 'btn-add-unit' '-1'}}" type="button" class="btn btn-primary"
+                        onclick="addUnit(-1)" data-dismiss="modal">Thêm
+                        tài khoản</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
 {{/each}}
 
 
@@ -81,7 +161,7 @@
         var timeStart = document.getElementById('timeStart' + a).value;
         var timeEnd = document.getElementById('timeEnd' + a).value;
         var progress = document.getElementById('progress' + a).value;
-
+        var active = document.getElementById('active' + a).value;
         console.log(nameUnit + ' ' + password + ' ' + timeStart + ' ' + timeEnd + ' ' + progress);
 
 
@@ -95,12 +175,13 @@
                     password: password,
                     timeStart: timeStart,
                     timeEnd: timeEnd,
-                    progress: progress
+                    progress: progress,
+                    active: active,
                 })
             })
             .then((res) => res.json())
             .then((data) => {
-                if (data.status == 'Success') console.log("success");
+                if (data.status == 'Success') alert("Thêm đơn vị con thành công!");
                 else if (data.status == 'Mật khẩu không đúng định dạng') alert("Mật khẩu phải có độ dài ngắn nhất là 7");
                 else if (data.status == 'Đơn vị này không có trong hệ thống') alert("Đơn vị này không có trong hệ thống");
             })
@@ -109,4 +190,21 @@
             })
             ;
     }
+
+    getData();
+  
+  async function getData() {
+    var code = localStorage.getItem('code');
+    var path = '/declare/progress?code=' + code;
+    let myObject = await fetch(path);
+    let data = await myObject.json();
+    var rate = 0;
+    if (data.declared + data.declaring != 0)
+       rate = data.declared * 100/ (data.declared + data.declaring); 
+    $('.toast-header').append("<p>Mã địa phương " + data.unit.code + '</p>');
+    $('.toast-body').append('<p class="h5" style="color: #400485">' + data.unit.nameUnit + '</p>');
+    $('.toast-body').append('<p>Hạn cuối: ' + data.date + '</p>')
+    $('.toast-body').append('<p>Tiến độ: ' + rate + '%</p>');
+    $('.toast-body').append('<p>Trạng thái: ' + data.unit.progress + '</p>');
+  }
 </script>

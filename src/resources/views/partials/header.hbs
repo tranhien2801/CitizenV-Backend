@@ -13,27 +13,14 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav justify-content-center me-auto mb-2 mb-lg-0">                       
-                        {{!-- <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #400485">
-                                Xem thông tin
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="/statistic/">Tổng hợp, phân tích số liệu</a>
-                                <a class="dropdown-item" href="/citizens">Xem danh sách</a>
-                            </div>
-                        </li> --}}
-                        <li class="nav-item">
-                            <a id="list-citizens" class="nav-link active" aria-current="page"  style="color: #400485">Danh sách người dân</a>
-                        </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #400485">
-                                Thêm thông tin
+                                Người dân
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="/citizens/addSurvey">Thêm cuộc khảo sát</a>
-                                <a class="dropdown-item" href="/citizens/addPerson">Thêm người</a>
+                                <a id="list-citizens" class="dropdown-item" aria-current="page"  style="color: #400485"><i class="fas fa-list-ul"></i> Danh sách người dân</a>
+                                <a class="dropdown-item" href="/citizens/addPerson" style="color: #400485"><i class="fas fa-user-plus"></i> Thêm người dân</a>
                             </div>
                         </li>
                         {{!-- <li class="nav-item">
