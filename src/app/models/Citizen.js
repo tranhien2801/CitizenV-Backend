@@ -10,6 +10,7 @@ const CitizenSchema = new Schema(
         name: { type: String, required: true },
         dob: { type: Date, max: Date.now},
         sex: { type: String},
+        homeTown: { type: String },
         perResidence: { type: String},
         curResidence: { type: String},
         ethnic: { type: String},

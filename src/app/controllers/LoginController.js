@@ -100,9 +100,9 @@ class LoginController {
             unit.save()
                 .then(() => res.json({
                     unit,
-                    status: "Success",
+                    status: "Thêm đơn vị con thành công!",
                 }))
-                .catch(() => res.status(400).json({status: "Mật khẩu không đúng định dạng"}))
+                .catch(() => res.status(400).json({status: "Mật khẩu phải có độ dài ngắn nhất là 7"}))
         } catch (next) {
             res.status(400).json({status: "Đơn vị này không có trong hệ thống"});
         }

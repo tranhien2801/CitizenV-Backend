@@ -2,16 +2,9 @@ const { multipleMongooseToObject } = require('../../util/mongoose');
 const { mongooseToObject } = require('../../util/mongoose');
 const Unit = require('../models/Unit');
 const Citizen = require('../models/Citizen');
+const dateFormat = require('../../util/formatDate');
 
-const dateFormat = (date) => {
-    var day = date.getDate();
-    if (day < 10) day = '0' + day;
-    var month = date.getMonth() + 1;
-    if ( month < 10) month = '0' + month;
-    var year = date.getFullYear();
-    const dateFormat = day + '/' + month + '/' + year;
-    return dateFormat;
-}
+
 
 const filterItems = (arr, perResidence, name) => {
     return arr.filter(el => {
@@ -67,9 +60,8 @@ class SearchController {
      // [GET] /search/:CCCD
      showByCCCD(req, res, next) {
         Citizen.findOne({ CCCD: req.params.CCCD})
-            .then((citizen) =>   {
-                var date = dateFormat(citizen.dob);              
-                citizen.date = date;
+            .then((citizen) =>   {             
+               // citizen.date = dateFormat(citizen.dob);   
                 res.json(citizen);     
             })
             .catch(next=> res.status(404).json( {message: "Không tìm thấy công dân phù hợp"}));

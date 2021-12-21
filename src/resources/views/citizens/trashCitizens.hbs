@@ -1,6 +1,6 @@
 <div class="mt-4">
     <div>
-      <a href="/citizens" type="button" class="btn btn-outline-info">
+      <a id="list-citizens-1" type="button" class="btn btn-outline-info">
         Danh sách người dân
       </a>
       <h3>Người dân đã xóa</h3>
@@ -62,7 +62,7 @@
             <tr>
               <td colspan="5" class="text-center">
                 Thùng rác trống
-                <a href="/citizens">Danh sách người dân</a>
+                <a id="list-citizens-2">Danh sách người dân</a>
               </td>
             </tr>
             {{/each}}
@@ -125,6 +125,12 @@
       restoreForm.action = '/citizens/' + citizenId + '/restore?_method=PATCH';
       restoreForm.submit();
   })
+
+  var code = localStorage.getItem('code');
+  var listCitizens1 = document.getElementById('list-citizens-1');
+    listCitizens1.href = "/citizens/" + code;
+  var listCitizens2 = document.getElementById('list-citizens-2');
+  listCitizens2.href = "/citizens/" + code;
 
 })
 </script>

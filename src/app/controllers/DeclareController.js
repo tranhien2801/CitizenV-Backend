@@ -1,16 +1,7 @@
-
+const {dateFormat} = require('../../util/formatDate');
 const Unit = require('../models/Unit');
 
-const dateFormat = (date) => {
-    if (date == null)   return "00/00/0000";
-    var day = date.getDate();
-    if (day < 10) day = '0' + day;
-    var month = date.getMonth() + 1;
-    if ( month < 10) month = '0' + month;
-    var year = date.getFullYear();
-    const dateFormat = day + '/' + month + '/' + year;
-    return dateFormat;
-}
+
 
 class DeclareController {
 
@@ -35,6 +26,7 @@ class DeclareController {
             if (req.query.code == '') req.query.code = null;
             const unit = await Unit.findOne({ code: req.query.code});
             const date = dateFormat(unit.timeEnd);
+            const dateStart = dateFormat(unit.timeStart);
             Unit.find({idParent: req.query.code})
                 .then(units => {
                     var dateEnds = [];
@@ -56,15 +48,17 @@ class DeclareController {
                                 break;
                         }
                     }
-                    res.json({unit, date, unleaded, declaring, declared,  units, dateEnds});
+                    res.json({unit, date, dateStart, unleaded, declaring, declared,  units, dateEnds});
                 })
-                .catch(() => res.json({unit, date, unleaded: 0, declaring: 0, declared: 0,  units: null, dateEnds: null}));
+                .catch(() => res.json({unit, date, dateStart, unleaded: 0, declaring: 0, declared: 0,  units: null, dateEnds: null}));
     }
 
     // [PUT] /declare/close/:code
     async closeDeclaration(req, res) {
         try {
-            switch(req.params.code.length) {
+            var active = req.body.active;
+            var timeEnd = req.body.timeEnd;
+            switch(req.params.code.length) {  
                 case 8: // B2
                     await Unit.updateOne({code: req.params.code}, 
                         {$set: {progress: "Đã khai báo", active: "Không", timeEnd: Date.now()}});
@@ -94,7 +88,7 @@ class DeclareController {
                     break;
             }
             res.json({
-                status: "Success", 
+                message: "Đóng khai báo thành công", 
                 code: req.params.code,
             })
         } catch (error) {

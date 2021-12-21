@@ -2,6 +2,7 @@
 const Unit = require('../models/Unit');
 const Citizen = require('../models/Citizen')
 const bcrypt = require('bcryptjs');
+const {yearFormat} = require('../../util/formatDate');
 
 
 class UnitController {
@@ -13,7 +14,7 @@ class UnitController {
     show(req, res, next) {
         Unit.findOne({code: req.params.code})
             .then((unit) => {
-                res.json({unit})            
+                res.json({unit});            
             })
             .catch(next => res.status(400).json({message: "Đơn vị này không tồn tại trong hệ thống"}))
     }

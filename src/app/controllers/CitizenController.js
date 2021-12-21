@@ -2,16 +2,9 @@ const { multipleMongooseToObject } = require('../../util/mongoose');
 const { mongooseToObject } = require('../../util/mongoose');
 const Citizen = require('../models/Citizen')
 const Unit = require('../models/Unit');
+const {dateFormat} = require('../../util/formatDate');
 
-const dateFormat = (date) => {
-    var day = date.getDate();
-    if (day < 10) day = '0' + day;
-    var month = date.getMonth() + 1;
-    if ( month < 10) month = '0' + month;
-    var year = date.getFullYear();
-    const dateFormat = day + '/' + month + '/' + year;
-    return dateFormat;
-}
+
 class CitizenController {
 
     /*---------------------------------------------------------------------------------------------------------------------
@@ -97,20 +90,9 @@ class CitizenController {
                         {CCCD: 1, name: 1, dob: 1, sex: 1, phone: 1, perResidence: 1, curResidence: 1,
                         ethnic: 1, religion: 1, eduLevel: 1, job: 1})
             .then((citizen) => {   
-                var day = citizen.dob.getDate();
-                if (day < 10) day = '0' + day;
-                var month = citizen.dob.getMonth() + 1;
-                if ( month < 10) month = '0' + month;
-                var year = citizen.dob.getFullYear();
-                var date = year + '-' + month + '-' + day;
-                // res.json({
-                //     citizen, 
-                //     date,
-                // });
-                           
+                var date = yearFormat(citizen.dob);
                 res.render('citizens/editPerson', {
                     citizen: mongooseToObject(citizen), 
-                    date,
                 });   
             })
             .catch(next=> res.status(404).json( {message: "Không tìm thấy công dân phù hợp"}));
@@ -135,8 +117,7 @@ class CitizenController {
         citizen.addressID = req.params.addressID;
         citizen.save()
             .then(() => {
-               // res.json(mongooseToObject(citizen))
-                res.redirect('/citizens/' + addressID);
+               res.json({message: "Thêm người dân thành công"});
             })
             .catch(next => res.status(400).json({message: "Lỗi tạo công dân do CCCD đã tồn tại hoặc ngày sinh không phù hợp"}));
     }

@@ -1,12 +1,11 @@
 <div class="row">
     <div id="info" class="col-md-9 mt-4 mb-4 shadow">
-     <table class="table table-striped">
+     <table class="table table-hover">
       <thead>
         <tr>
           <th>Mã đơn vị</th>
           <th>Tên đơn vị</th>
           <th>Hạn cuối</th>
-          <th>Tiến độ</th>
           <th>Trạng thái</th>
           <th>Quyền</th>
         </tr>
@@ -30,11 +29,93 @@
     </div>
 </div>
 
-<form name="allocate-unit-form" method="GET"></form>
+<div id="close-declaration-modal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Thay đổi quyền khai báo?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="nameUnit" class="h5">Tên đơn vị: </p>
+        <label for="timeStart">Thời gian bắt đầu</label>
+        <input type="date" class="form-control mb-4" id="timeStart" name="timeStart" required="true">
+        <label for="timeEnd">Thời gian kết thúc</label>
+        <input type="date" class="form-control mb-4" id="timeEnd" name="timeEnd" required="true">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="inputGroupSelect01">Quyền</label>
+          </div>
+          <select class="form-control custom-select" id="active" name="active">
+            <option>Có</option>
+            <option>Không</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-close-declaration" type="button" class="btn btn-danger"  data-bs-dismiss="modal">Đóng khai báo</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+      </div>
+    </div>
+  </div>
+</div>
 
+<form name="allocate-unit-form" method="GET"></form>
+<form name="close-declaration-form" method="POST"></form>
 
 <script>
+  var codeChild;
+  var code = localStorage.getItem('code');
+  var allocateForm = document.forms['allocate-unit-form'];
+  var closeDeclaration = document.forms['close-declaration-form'];
+  var btnAllocateUnit = document.getElementById('allocate');
+  var btnCloseDeclaration = document.getElementById('btn-close-declaration');
   
+  
+
+  // when dialog confirm clicked
+    $('#close-declaration-modal').on('show.bs.modal', async function (event) {
+     // $('.modal-title').children().remove();
+     // $('.modal-body').children().remove();
+      var button = $(event.relatedTarget);
+      codeChild = button.data('id');
+
+      let myObject = await fetch('/units/' + codeChild);
+      let myText = await myObject.json();
+     // $('#nameUnit').
+      $('#timeStart input').val(myText.unit.timeStart.slice(0,10));
+      $('#timeEnd input').val(myText.unit.timeEnd.slice(0,10));
+
+
+
+
+
+
+    });
+
+  btnAllocateUnit.onclick = function () {
+    allocateForm.action = '/allocate/' + code;
+    allocateForm.submit();
+  }
+
+  btnCloseDeclaration.onclick = function() {
+   var url_post = "/declare/close/" + codeChild;
+
+        fetch(url_post, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', },
+            body: JSON.stringify({})
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                alert(data.message);
+            })
+            .catch((error) => {
+                alert(error);
+            });
+  }
 
   getData();
   
@@ -50,17 +131,29 @@
     $('.toast-body').append('<p class="h5" style="color: #400485">' + data.unit.nameUnit + '</p>');
     $('.toast-body').append('<p>Hạn cuối: ' + data.date + '</p>')
     $('.toast-body').append('<p>Tiến độ: ' + rate + '%</p>');
+    if (code.length < 6) {
+      $('.toast-body').append('<div class="progress"><div class="progress-bar" style="width:' 
+                          + rate + '%">' + rate +'%</div></div>');
+    }
     $('.toast-body').append('<p>Trạng thái: ' + data.unit.progress + '</p>');
+    
+    for (let i = 0; i < data.units.length; i++) {
+      $('tbody').append('<tr>' +
+          '<td class="code">' + data.units[i].code + '</td>' +
+          '<td class="nameUnit">' + data.units[i].nameUnit + '</td>' +
+          '<td class="timeEnd">' + data.units[i].timeEnd.slice(0,10) + '</td>' +
+          '<td class="progres">' + data.units[i].progress + '</td>' +
+          '<td class="active">' + data.units[i].active + 
+          ' <a href=""  data-bs-toggle="modal"' + 
+          ' data-bs-target="#close-declaration-modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Đóng khai báo">' + 
+          '<i class="far fa-edit text-warning"></i></a></td>' +
+        '</tr>')
+    }
+    
+
   }
 
-  
-  var allocateForm = document.forms['allocate-unit-form'];
-  var btnAllocateUnit = document.getElementById('allocate');
 
-  btnAllocateUnit.onclick = function () {
-    var code = localStorage.getItem('code');
-    allocateForm.action = '/allocate/' + code;
-    allocateForm.submit();
-  }
 
 </script>
+

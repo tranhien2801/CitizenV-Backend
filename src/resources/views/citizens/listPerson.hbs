@@ -130,6 +130,7 @@
 
 {{!-- Delete hidden form --}}
 <form name="delete-citizen-form" method="POST"></form>
+<form name="allocate-unit-form" method="GET"></form>
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -167,6 +168,7 @@
         rate = data.declared * 100/ (data.declared + data.declaring); 
       $('.toast-header').append("<p>Mã địa phương " + data.unit.code + '</p>');
       $('.toast-body').append('<p class="h5" style="color: #400485">' + data.unit.nameUnit + '</p>');
+      $('.toast-body').append('<p>Ngày bắt đầu: ' + data.dateStart + '</p>')
       $('.toast-body').append('<p>Hạn cuối: ' + data.date + '</p>')
       $('.toast-body').append('<p>Tiến độ: ' + rate + '%</p>');
       $('.toast-body').append('<p>Trạng thái: ' + data.unit.progress + '</p>');
@@ -184,7 +186,7 @@
       $('.modal-body').append('<p class="h6">CCCD: ' + myText.CCCD + '</p>');
       $('.modal-body').append('<p>Họ tên: ' + myText.name + '</p>');
       if (myText.phone != null)  $('.modal-body').append('<p>SĐT: ' + myText.phone + '</p>');
-      if (myText.date != null) $('.modal-body').append('<p>Ngày sinh: ' + myText.date + '</p>');
+      if (myText.dob != null) $('.modal-body').append('<p>Ngày sinh: ' + myText.dob.slice(0,10) + '</p>');
       if (myText.sex != null) $('.modal-body').append('<p>Giới tính: ' + myText.sex + '</p>');
       if (myText.perResidence != null) $('.modal-body').append('<p>Nơi thường trú: ' + myText.perResidence + '</p>');
       if (myText.curResidence != null) $('.modal-body').append('<p>Nơi tạm trú: ' + myText.curResidence + '</p>');
@@ -195,6 +197,14 @@
       if (myText.sex != null) $('.modal-body').append('<p>Giới tính: ' + myText.sex + '</p>');
     });        
     
+    var allocateForm = document.forms['allocate-unit-form'];
+    var btnAllocateUnit = document.getElementById('allocate');
+
+    btnAllocateUnit.onclick = function () {
+      var code = localStorage.getItem('code');
+      allocateForm.action = '/allocate/' + code;
+      allocateForm.submit();
+    }
 
   });
 </script>

@@ -1,6 +1,10 @@
-<form class='mt-4 mb-4' method="POST" action="../citizens/store/010101"> 
+<form class='mt-4 mb-4'> 
     <fieldset>
         <legend>Thông tin chi tiết</legend>
+        <div class="form-floating mb-4 mt-4">
+            <input type="text" class="form-control" id="CCCD" name="CCCD" placeholder="Số CCCD/CMND">
+            <label for="CCCD">Số CCCD/CMND</label>
+        </div>
         <div class="form-floating mb-4 mt-4">
             <input type="text" class="form-control" id="name" name="name" placeholder="Họ tên">
             <label for="name">Họ tên</label>
@@ -15,10 +19,6 @@
                 <option>Nữ</option>
             </select>
             <label for="sex">Giới tính</label>
-        </div>
-        <div class="form-floating mb-4 mt-4">
-            <input type="text" class="form-control" id="CCCD" name="CCCD" placeholder="Số CCCD/CMND">
-            <label for="CCCD">Số CCCD/CMND</label>
         </div>
         <div class="form-floating mb-4 mt-4">
             <input type="text" class="form-control" id="phone" name="phone" placeholder="Số điện thoại">
@@ -59,6 +59,54 @@
             </select>
             <label for="job">Nghề nghiệp</label>
         </div>
-        <button type="submit" class="btn btn-primary mt-4">Hoàn thành</button>
+        <button type="submit" class="btn btn-primary mt-4" onclick="addCitizen()">Hoàn thành</button>
     </fieldset>
 </form>
+
+<script>
+
+function addCitizen() {
+        var code = localStorage.getItem('code');
+        var CCCD = document.getElementById('CCCD').value
+        var name = document.getElementById('name').value;
+        var dob = document.getElementById('dob').value;
+        var sex = document.getElementById('sex').value;
+        var phone = document.getElementById('phone').value;
+        var perResidence = document.getElementById('perResidence').value;
+        var curResidence = document.getElementById('curResidence').value;
+        var ethnic = document.getElementById('ethnic').value;
+        var religion = document.getElementById('religion').value;
+        var eduLevel = document.getElementById('eduLevel').value;
+        var job = document.getElementById('job').value;
+
+        var url_post = '/citizens/store/' + code;
+
+            fetch(url_post, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', },
+                body: JSON.stringify({
+                    CCCD: CCCD,
+                    name: name,
+                    dob: dob,
+                    sex: sex,
+                    phone: phone,
+                    perResidence: perResidence,
+                    curResidence: curResidence,
+                    ethnic: ethnic,
+                    religion: religion,
+                    eduLevel: eduLevel,
+                    job: job,
+                })
+            })
+            .then((res) => res.json())
+            .then((data) => {
+                alert(data.message);
+                document.location.pathname = "/citizens/" + code;
+            })
+            .catch((error) => {
+                console.log('Error: ', error);
+            })
+            ;
+    }
+
+</script>
