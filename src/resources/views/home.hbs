@@ -14,19 +14,11 @@
 
       </tbody>
      </table>
+     
+          <button type="button" id="allocate" class="btn border-primary text-primary" >Cấp tài khoản <i class="far fa-edit"></i></button>
+      
     </div>
-    <div class="col-md-3">
-      <div class="toast show m-4">
-        <div class="toast-header">
-        </div>
-        <div class="toast-body">
-        </div>
-        <div class="toast-footer list-group list-group-horizontal">
-          <a href="/statistic" class="list-group-item border-success text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Thống kê"><i class="far fa-chart-bar"></i></a>
-          <button type="button" id="allocate" class="list-group-item border-primary text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Chỉnh sửa"><i class="far fa-edit"></i></button>
-        </div>
-      </div>
-    </div>
+    {{> myUnit}}
 </div>
 
 <div id="close-declaration-modal" class="modal fade" tabindex="-1" role="dialog">
@@ -73,7 +65,10 @@
   var btnAllocateUnit = document.getElementById('allocate');
   var btnCloseDeclaration = document.getElementById('btn-close-declaration');
   
-  
+  btnAllocateUnit.onclick = function () {
+    allocateForm.action = '/allocate/' + code;
+    allocateForm.submit();
+  }
 
   // when dialog confirm clicked
     $('#close-declaration-modal').on('show.bs.modal', async function (event) {
@@ -95,10 +90,6 @@
 
     });
 
-  btnAllocateUnit.onclick = function () {
-    allocateForm.action = '/allocate/' + code;
-    allocateForm.submit();
-  }
 
   btnCloseDeclaration.onclick = function() {
    var url_post = "/declare/close/" + codeChild;
@@ -123,20 +114,7 @@
     var code = localStorage.getItem('code');
     var path = '/declare/progress?code=' + code;
     let myObject = await fetch(path);
-    let data = await myObject.json();
-    var rate = 0;
-    if (data.declared + data.declaring != 0)
-       rate = data.declared * 100/ (data.declared + data.declaring); 
-    $('.toast-header').append("<p>Mã địa phương " + data.unit.code + '</p>');
-    $('.toast-body').append('<p class="h5" style="color: #400485">' + data.unit.nameUnit + '</p>');
-    $('.toast-body').append('<p>Hạn cuối: ' + data.date + '</p>')
-    $('.toast-body').append('<p>Tiến độ: ' + rate + '%</p>');
-    if (code.length < 6) {
-      $('.toast-body').append('<div class="progress"><div class="progress-bar" style="width:' 
-                          + rate + '%">' + rate +'%</div></div>');
-    }
-    $('.toast-body').append('<p>Trạng thái: ' + data.unit.progress + '</p>');
-    
+    let data = await myObject.json();   
     for (let i = 0; i < data.units.length; i++) {
       $('tbody').append('<tr>' +
           '<td class="code">' + data.units[i].code + '</td>' +

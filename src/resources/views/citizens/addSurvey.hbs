@@ -1,14 +1,42 @@
-<form class='mt-4 mb-4' method="POST">
+<div class="mt-4" id="active">
+    Hiện không thể tạo cuộc khảo sát
+    <button class="btn btn-primary m-4">Yêu cầu tạo cuộc khảo sát</button>
+</div>
+<form name="add-survey-form" class='mt-4 mb-4' method="POST">
     <fieldset>
         <legend>Cuộc khảo sát mới</legend>
-        <div class="form-group mt-4">
-            <label for="timeStart">Thời gian bắt đầu</label>
-            <input type="date" class="form-control" id="timeStart">
-        </div>
-        <div class="form-group mt-4">
-            <label for="timeEnd">Thời gian kết thúc</label>
-            <input type="date" class="form-control" id="timeEnd">
+        <div id="flex-container">
+            <div class="form-floating m-4 divInput">
+                <input type="date" class="form-control" id="timeStart" name="timeStart" placeholder="Thời gian bắt đầu">
+                <label for="timeStart">Thời gian bắt đầu</label>
+            </div>
+            <div class="form-floating m-4 divInput">
+                <input type="date" class="form-control" id="timeEnd" name="timeStart" placeholder="Thời gian kết thúc">
+                <label for="timeEnd">Thời gian kết thúc</label>
+            </div>
         </div>
         <button type="submit" class="btn btn-primary mt-4">Tạo</button>
     </fieldset>
 </form>
+
+<style>
+    #flex-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    #flex-container div {
+        width: 500px;
+    }
+
+    fieldset {
+        text-align: center;
+    }
+</style>
+<script>
+    var code = localStorage.getItem('code');
+    var addSurveyForm = document.forms['add-survey-form'];
+    addSurveyForm.action = "../" + code;
+    //addSurveyForm.style.display = "none";
+    document.getElementById("active").style.display = "none";
+</script>

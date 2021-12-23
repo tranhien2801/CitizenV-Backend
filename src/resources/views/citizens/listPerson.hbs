@@ -7,6 +7,32 @@
       </a>
     </div>
     <h4 class="mt-4 mb-4 text-center">Danh sách người dân</h4>
+    <div id="selectArea"><!--Chọn khu vực danh sách hiển thị-->
+      <div class="form-floating m-4" id="provinceDiv">
+        <select class="form-control" name="province" id="province">
+          
+        </select>
+        <label for="province">Tỉnh</label>
+      </div>
+      <div class="form-floating m-4" id="districtDiv">
+        <select class="form-control" name="district" id="district">
+          
+        </select>
+        <label for="district">Quận/Huyện</label>
+      </div>
+      <div class="form-floating m-4" id="townDiv">
+        <select class="form-control" name="town" id="town">
+          
+        </select>
+        <label for="town">Xã/Thị Trấn</label>
+      </div>
+      <div class="form-floating m-4" id="villageDiv">
+        <select class="form-control" name="village" id="village">
+          
+        </select>
+        <label for="village">Thôn/Bản/Tổ</label>
+      </div>
+    </div> 
     <table class="table table-striped table-hover">
       <thead>
         <tr>
@@ -19,7 +45,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
+        <tr><!--Tìm kiếm người dựa trên một hoặc nhiều thuộc tính -->
           <form action="/search/citizens">
             <td>
               <input type="text" class="form-control" name="CCCD" placeholder="035301002587" />
@@ -41,7 +67,7 @@
           </form>
         </tr>
         {{#each citizen}}
-        <tr>
+        <tr><!--Thông tin từng người-->
           <td>{{this.CCCD}}</td>
           <td>{{this.name}}</td>
           <td>{{this.date}}</td>
@@ -66,18 +92,7 @@
       </tbody>
     </table>
   </div>
-  <div class="col-md-3">
-    <div class="toast show m-4">
-      <div class="toast-header">
-      </div>
-      <div class="toast-body">
-      </div>
-      <div class="toast-footer list-group list-group-horizontal">
-          <a href="/statistic" class="list-group-item border-success text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Thống kê"><i class="far fa-chart-bar"></i></a>
-          <button type="button" id="allocate" class="list-group-item border-primary text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Chỉnh sửa"><i class="far fa-edit"></i></button>
-      </div>
-    </div>
-  </div>
+  {{> myUnit}}
 </div>
 
 
@@ -132,7 +147,94 @@
 <form name="delete-citizen-form" method="POST"></form>
 <form name="allocate-unit-form" method="GET"></form>
 
+<style>
+  #selectArea {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  #selectArea div{
+    width: 150px;
+    display: none;
+  }
+</style>
+
 <script>
+  getDataToSelectArea();
+  function getDataToSelectArea() {
+    var code = localStorage.getItem('code');
+    switch(code.length) {
+      case 6: {
+        document.getElementById("villageDiv").style.display = "block";
+        $('#village').append('<option selected>Tất cả</option>');
+        //thêm các thôn vào #village
+        $("#village").append('<option>khac</option>');
+      } break;
+      case 4: {
+        document.getElementById("townDiv").style.display = "block";
+        $('#town').append('<option selected>Tất cả</option>');
+        //thêm các xã vào #town
+        $("#town").append('<option>khac</option>');
+      } break;
+      case 2: {
+        document.getElementById("districtDiv").style.display = "block";
+        $('#district').append('<option selected>Tất cả</option>');
+        //thêm các huyện vào #district
+        $("#district").append('<option>khac</option>');
+      } break;
+      default: {
+        document.getElementById("provinceDiv").style.display = "block";
+        $('#province').append('<option selected>Tất cả</option>');
+        //thêm các tỉnh vào #province
+        $("#province").append('<option>khac</option>');
+      }
+    }
+    $('#province').on('change', function (e) {
+      if(this.value !== 'Tất cả') {
+        document.getElementById("districtDiv").style.display = "block";       
+        $("#district").append('<option selected>Tất cả</option>');
+        //thêm các huyện của tỉnh this.value
+        $("#district").append('<option>khac</option>');
+
+      }
+      else {
+        document.getElementById("districtDiv").style.display = "none";
+        document.getElementById("townDiv").style.display = "none";
+        document.getElementById("villageDiv").style.display = "none";
+        $("#district").children().remove();
+        $("#town").children().remove();
+        $("#village").children().remove();
+      }
+    });
+
+    $('#district').on('change', function (e) {
+      if(this.value !== 'Tất cả') {
+        document.getElementById("townDiv").style.display = "block";       
+        $("#town").append('<option selected>Tất cả</option>');
+        //thêm các huyện của tỉnh this.value
+        $("#town").append('<option>khac</option>');
+      }
+      else {
+        document.getElementById("townDiv").style.display = "none";
+        document.getElementById("villageDiv").style.display = "none";
+        $("#town").children().remove();
+        $("#village").children().remove();
+      }
+    });
+
+    $('#town').on('change', function (e) {
+      if(this.value !== 'Tất cả') {
+        document.getElementById("villageDiv").style.display = "block";       
+        $("#village").append('<option selected>Tất cả</option>');
+        //thêm các huyện của tỉnh this.value
+        $("#village").append('<option>khac</option>');
+      }
+      else {
+        document.getElementById("villageDiv").style.display = "none";
+        $("#village").children().remove();
+      }
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     var CCCD;
     var deleteForm = document.forms['delete-citizen-form'];
@@ -157,22 +259,6 @@
     var trashCitizens = document.getElementById('citizens-deleted');
     trashCitizens.href = '/citizens/trash/' + code;    
 
-    getText();
-
-    async function getText() {
-      var codeUnit = localStorage.getItem('code');
-      let myObject = await fetch('/declare/progress?code=' + codeUnit);
-      let data = await myObject.json();
-      var rate = 0;
-      if (data.declared + data.declaring != 0)
-        rate = data.declared * 100/ (data.declared + data.declaring); 
-      $('.toast-header').append("<p>Mã địa phương " + data.unit.code + '</p>');
-      $('.toast-body').append('<p class="h5" style="color: #400485">' + data.unit.nameUnit + '</p>');
-      $('.toast-body').append('<p>Ngày bắt đầu: ' + data.dateStart + '</p>')
-      $('.toast-body').append('<p>Hạn cuối: ' + data.date + '</p>')
-      $('.toast-body').append('<p>Tiến độ: ' + rate + '%</p>');
-      $('.toast-body').append('<p>Trạng thái: ' + data.unit.progress + '</p>');
-    }
 
      $('#myModal').on('show.bs.modal', async function (event) {
       var button = $(event.relatedTarget);
@@ -188,23 +274,14 @@
       if (myText.phone != null)  $('.modal-body').append('<p>SĐT: ' + myText.phone + '</p>');
       if (myText.dob != null) $('.modal-body').append('<p>Ngày sinh: ' + myText.dob.slice(0,10) + '</p>');
       if (myText.sex != null) $('.modal-body').append('<p>Giới tính: ' + myText.sex + '</p>');
+      if (myText.hometown != null) $('.modal-body').append('<p>Quê quán: ' + myText.hometown + '</p>');
       if (myText.perResidence != null) $('.modal-body').append('<p>Nơi thường trú: ' + myText.perResidence + '</p>');
       if (myText.curResidence != null) $('.modal-body').append('<p>Nơi tạm trú: ' + myText.curResidence + '</p>');
       if (myText.ethnic != null) $('.modal-body').append('<p>Dân tộc: ' + myText.ethnic + '</p>');
       if (myText.religion != null) $('.modal-body').append('<p>Tôn giáo: ' + myText.religion + '</p>');
       if (myText.eduLevel != null) $('.modal-body').append('<p>Trình độ văn hóa: ' + myText.eduLevel + '</p>');
-      if (myText.job != null) $('.modal-body').append('<p>Nghề nghiệp: ' + myText.job + '</p>');
-      if (myText.sex != null) $('.modal-body').append('<p>Giới tính: ' + myText.sex + '</p>');
+      if (myText.job != null) $('.modal-body').append('<p>Nghề nghiệp: ' + myText.job + '</p>');	
     });        
-    
-    var allocateForm = document.forms['allocate-unit-form'];
-    var btnAllocateUnit = document.getElementById('allocate');
-
-    btnAllocateUnit.onclick = function () {
-      var code = localStorage.getItem('code');
-      allocateForm.action = '/allocate/' + code;
-      allocateForm.submit();
-    }
 
   });
 </script>
