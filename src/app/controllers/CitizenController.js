@@ -2,6 +2,7 @@ const { multipleMongooseToObject } = require('../../util/mongoose');
 const { mongooseToObject } = require('../../util/mongoose');
 const Citizen = require('../models/Citizen')
 const Unit = require('../models/Unit');
+const {yearFormat} = require('../../util/formatDate');
 const {dateFormat} = require('../../util/formatDate');
 
 
@@ -93,6 +94,7 @@ class CitizenController {
                 var date = yearFormat(citizen.dob);
                 res.render('citizens/editPerson', {
                     citizen: mongooseToObject(citizen), 
+                    date
                 });   
             })
             .catch(next=> res.status(404).json( {message: "Không tìm thấy công dân phù hợp"}));
@@ -112,6 +114,7 @@ class CitizenController {
             return res.status(400).json({message: "Đơn vị không tồn tại trong hệ thống"});
         }
         if (unit.timeEnd < Date.now())  return res.status(400).json({message: "Đã hết thời hạn khai báo"});
+        if (unit.timeStart > Date.now())    return res.status(400).json({message: "Chưa đến thời gian khai báo"});
         console.log(req.body);
         const citizen = new Citizen(req.body);
         citizen.addressID = req.params.addressID;

@@ -4,7 +4,7 @@ const Auth = require('../app/middleware/Auth');
 
 const citizenController = require('../app/controllers/CitizenController');
 
-router.get('/:CCCD/edit', Auth.auth, Auth.authB1B2, citizenController.editPerson);
+router.get('/:CCCD/edit',  citizenController.editPerson);
 router.get('/addPerson', Auth.auth, Auth.authB1B2, citizenController.addPerson);
 router.get('/unit/:code', Auth.auth, Auth.authA123B1, citizenController.findByUnit);
 router.get('/survey-card', Auth.auth, citizenController.surveyCard);

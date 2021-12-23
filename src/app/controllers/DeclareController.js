@@ -56,35 +56,33 @@ class DeclareController {
     // [PUT] /declare/close/:code
     async closeDeclaration(req, res) {
         try {
-            var active = req.body.active;
-            var timeEnd = req.body.timeEnd;
             switch(req.params.code.length) {  
                 case 8: // B2
                     await Unit.updateOne({code: req.params.code}, 
-                        {$set: {progress: "Đã khai báo", active: "Không", timeEnd: Date.now()}});
+                        {$set: {active: req.body.active, timeEnd: req.body.timeEnd, timeStart: req.body.timeStart}});
                     break;
                 case 6: // B1
                     await Unit.updateMany({$or: [{code: req.params.code}, {idParent: req.params.code}]}, 
-                        {$set: {progress: "Đã khai báo", active: "Không", timeEnd: Date.now()}});
+                        {$set: {active: req.body.active, timeEnd: req.body.timeEnd, timeStart: req.body.timeStart}});
                     break;
                 case 4: // A3
                     const unit6 = await Unit.findOne({idParent: req.params.code});
                     // update A3, B1
                     await Unit.updateMany({$or: [{code: req.params.code}, {idParent: req.params.code}]}, 
-                        {$set: {progress: "Đã khai báo", active: "Không", timeEnd: Date.now()}});
+                        {$set: {active: req.body.active, timeEnd: req.body.timeEnd, timeStart: req.body.timeStart}});
                     // update B2
                     await Unit.updateMany({idParent: unit6.code}, 
-                        {$set: {progress: "Đã khai báo", active: "Không", timeEnd: Date.now()}});
+                        {$set: {active: req.body.active, timeEnd: req.body.timeEnd, timeStart: req.body.timeStart}});
                     break;
                 case 2: // A2
                     const unitA3 = await Unit.findOne({idParent: req.params.code});
                     const unitB1 = await Unit.findOne({idParent: unitA3.code});
                     // update A2, A3
                     await Unit.updateMany({$or: [{code: req.params.code}, {idParent: req.params.code}]}, 
-                        {$set: {progress: "Đã khai báo", active: "Không", timeEnd: Date.now()}});
+                        {$set: {active: req.body.active, timeEnd: req.body.timeEnd, timeStart: req.body.timeStart}});
                     // update B1, B2
                     await Unit.updateMany({$or: [{code: unitB1.code}, {idParent: unitB1.code}]}, 
-                        {$set: {progress: "Đã khai báo", active: "Không", timeEnd: Date.now()}});
+                        {$set: {active: req.body.active, timeEnd: req.body.timeEnd, timeStart: req.body.timeStart}});
                     break;
             }
             res.json({

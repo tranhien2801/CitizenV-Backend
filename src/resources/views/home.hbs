@@ -34,7 +34,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Thay đổi quyền khai báo?</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -56,7 +56,7 @@
       </div>
       <div class="modal-footer">
         <button id="btn-close-declaration" type="button" class="btn btn-danger"  data-bs-dismiss="modal">Đóng khai báo</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
       </div>
     </div>
   </div>
@@ -84,7 +84,7 @@
 
       let myObject = await fetch('/units/' + codeChild);
       let myText = await myObject.json();
-     // $('#nameUnit').
+      $('#nameUnit').val(myText.unit.nameUnit)
       $('#timeStart input').val(myText.unit.timeStart.slice(0,10));
       $('#timeEnd input').val(myText.unit.timeEnd.slice(0,10));
 
@@ -144,7 +144,7 @@
           '<td class="timeEnd">' + data.units[i].timeEnd.slice(0,10) + '</td>' +
           '<td class="progres">' + data.units[i].progress + '</td>' +
           '<td class="active">' + data.units[i].active + 
-          ' <a href=""  data-bs-toggle="modal"' + 
+          ' <a href="" data-bs-toggle="modal" data-id=' + data.units[i].code +
           ' data-bs-target="#close-declaration-modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Đóng khai báo">' + 
           '<i class="far fa-edit text-warning"></i></a></td>' +
         '</tr>')
