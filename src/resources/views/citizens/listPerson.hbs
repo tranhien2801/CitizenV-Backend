@@ -133,7 +133,7 @@
 <form name="allocate-unit-form" method="GET"></form>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
     var CCCD;
     var deleteForm = document.forms['delete-citizen-form'];
     var btnDeleteCitizen = document.getElementById('btn-delete-citizen');
@@ -174,7 +174,7 @@
       $('.toast-body').append('<p>Trạng thái: ' + data.unit.progress + '</p>');
     }
 
-     $('#myModal').on('show.bs.modal', async function (event) {
+    $('#myModal').on('show.bs.modal', async function (event) {
       var button = $(event.relatedTarget);
       CCCD = button.data('id');
       let myObject = await fetch('/search/' + CCCD);

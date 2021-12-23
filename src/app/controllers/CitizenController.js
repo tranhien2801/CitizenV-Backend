@@ -113,6 +113,7 @@ class CitizenController {
         if (unit == null) {
             return res.status(400).json({message: "Đơn vị không tồn tại trong hệ thống"});
         }
+        if (unit.active == "Không") return res.status(400).json({message: "Đơn vị đã bị đóng quyền khai báo"});
         if (unit.timeEnd < Date.now())  return res.status(400).json({message: "Đã hết thời hạn khai báo"});
         if (unit.timeStart > Date.now())    return res.status(400).json({message: "Chưa đến thời gian khai báo"});
         console.log(req.body);

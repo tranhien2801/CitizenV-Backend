@@ -84,13 +84,15 @@ class DeclareController {
                     await Unit.updateMany({$or: [{code: unitB1.code}, {idParent: unitB1.code}]}, 
                         {$set: {active: req.body.active, timeEnd: req.body.timeEnd, timeStart: req.body.timeStart}});
                     break;
+                default:
+                    res.status(400).json({message: "Đơn vị này không có trong hệ thống"});
             }
             res.json({
-                message: "Đóng khai báo thành công", 
+                message: "Thay đổi quyền khai báo thành công!", 
                 code: req.params.code,
             })
         } catch (error) {
-            res.status(400).json({message: error.message});
+            res.status(200).json({message: "Thay đổi quyền khai báo thành công"});
         }
     }
 

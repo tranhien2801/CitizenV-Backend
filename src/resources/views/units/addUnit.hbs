@@ -163,6 +163,7 @@
 
 
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
     function addUnit(a) {
         var code = localStorage.getItem('code');
         var nameUnit = document.getElementById('nameUnit' + a).value
@@ -171,8 +172,6 @@
         var timeEnd = document.getElementById('timeEnd' + a).value;
         var progress = document.getElementById('progress' + a).value;
         var active = document.getElementById('active' + a).value;
-
-        console.log(timeStart);
         var url_post = '/allocate?idParent=' + code;
 
         fetch(url_post, {
@@ -212,4 +211,5 @@
         $('.toast-body').append('<p>Tiến độ: ' + rate + '%</p>');
         $('.toast-body').append('<p>Trạng thái: ' + data.unit.progress + '</p>');
     }
+    });
 </script>
