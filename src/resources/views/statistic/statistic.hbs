@@ -34,10 +34,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script> 
     var token = localStorage.getItem("token");
-
-    var selected = $('#nameUnit').val();
-    console.log(selected);
-
+    var selected = [];
+    
     $(window).resize(function(){
         var chart = document.getElementById("chart").value;
         switch (chart) {
@@ -82,7 +80,7 @@
     }
     $('.info-body').append('<p>Trạng thái: ' + data.unit.progress + '</p>');
     for(var i = 0; i < data.units.length; i++) {
-        $('#nameUnit').append('<option>' + data.units[i].nameUnit + '</option>');
+        $('#nameUnit').append('<option value="' + data.units[i].code + '">' + data.units[i].nameUnit + '</option>');
         
     }
   }
@@ -91,10 +89,15 @@
     google.charts.setOnLoadCallback(drawPopulation);
 
     function statistic() {
+       
+        selected = $('#nameUnit option:selected')
+                    .toArray().map(item => item.value);
+        console.log(selected);
+
         var chart = document.getElementById("chart").value;
         switch (chart) {
             case 'population':
-                google.charts.setOnLoadCallback(drawPopulation);
+                google.charts.setOnLoadCallback(drawPopulation());
                 break;
             case 'ageTower':
                 google.charts.setOnLoadCallback(drawAgeTower);
@@ -116,7 +119,11 @@
 
     async function drawBirthRate() {
         const path = "/statistic/" + code  + "/birthRate";
-        fetch(path)
+        fetch(path, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', },
+            body: JSON.stringify({codes: selected})
+        })
             .then(response => response.json())
             .then(data => {
                 var name = data.name;
@@ -149,7 +156,11 @@
     async function drawCareer() {
         
         const path = "/statistic/" +  code  + "/career";
-        fetch(path)
+        fetch(path, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', },
+            body: JSON.stringify({codes: selected})
+        })
             .then(response => response.json())
             .then(data => {
                 var career = data.career;
@@ -180,7 +191,11 @@
 
     function drawGender() {
         const path = "/statistic/" + code  + "/gender";
-        fetch(path)
+        fetch(path, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', },
+            body: JSON.stringify({codes: selected})
+        })
             .then(response => response.json())
             .then(data => {
                 var nameUnit = data.nameUnit;
@@ -210,9 +225,13 @@
     
 
     function drawPopulation() {
-        const path = "/statistic/" + code  + "/population";
+        var path = "/statistic/" + code  + "/population";
         
-        fetch(path)
+        fetch(path, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', },
+            body: JSON.stringify({codes: selected})
+        })
             .then(response => response.json())
             .then(data => {
                 var nameUnit = data.nameUnit;
@@ -231,7 +250,7 @@
 
                 var options = {
                     'height': 500,
-                    title: 'Tháp dân số ' + name,
+                    title: 'Tháp dân số của ' + name,
                 };
 
                 var chart = new google.visualization.ColumnChart(document.getElementById('myChart'));
@@ -241,7 +260,11 @@
 
     function drawAgeTower() {
         const path = "/statistic/" + code  + "/ageTower";
-        fetch(path)
+        fetch(path, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', },
+            body: JSON.stringify({codes: selected})
+        })
             .then(response => response.json())
             .then(data => {
                 var male = data.male;

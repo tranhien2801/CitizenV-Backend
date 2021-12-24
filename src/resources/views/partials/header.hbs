@@ -24,7 +24,7 @@
                             </div>
                         </li>-->
                         <li class="nav-item" id="list-citizens-div">
-                            <a id="list-citizens" class="nav-link active" aria-current="page" style="color: #400485">Danh sách</a>
+                            <a id="list-citizens" class="nav-link active" aria-current="page" style="color: #400485">Danh sách người dân</a>
                         </li>
                         <li class="nav-item" id="statistic-div">
                             <a class="nav-link active" aria-current="page" href="/statistic" style="color: #400485">Thống kê</a>
@@ -51,7 +51,7 @@
 <script>
     var code = localStorage.getItem('code');
     var listCitizens = document.getElementById('list-citizens');
-    listCitizens.href = "/citizens/" + code;
+    listCitizens.href = "/citizens/";
     hiddenItem()
     
     function hiddenItem() {

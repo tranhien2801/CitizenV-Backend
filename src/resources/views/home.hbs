@@ -20,19 +20,7 @@
           <button type="button" id="allocate" class="btn border-primary text-primary" >Cấp tài khoản <i class="far fa-edit"></i></button>
       
     </div>
-    {{!-- <div class="col-md-3"> --}}
-      {{!-- <div class="toast show m-4">
-        <div class="toast-header">
-        </div>
-        <div class="toast-body">
-        </div>
-        <div class="toast-footer list-group list-group-horizontal">
-          <a href="/statistic" class="list-group-item border-success text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Thống kê"><i class="far fa-chart-bar"></i></a>
-          <button type="button" id="allocate" class="list-group-item border-primary text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Cấp phát"><i class="far fa-edit"></i></button>
-        </div>
-      </div> --}}
       {{> myUnit}}
-    {{!-- </div> --}}
 </div>
 
 <div id="close-declaration-modal" class="modal fade" tabindex="-1" role="dialog">
@@ -138,7 +126,7 @@
     $('.toast-body').children().remove();
     $('.toast-header').append("<p>Mã địa phương " + data.unit.code + '</p>');
     $('.toast-body').append('<p class="h5" style="color: #400485">' + data.unit.nameUnit + '</p>');
-    $('.toast-body').append('<p>Hạn cuối: ' + data.date + '</p>')
+    if (data.unit.code.length != 3) $('.toast-body').append('<p>Hạn cuối: ' + data.date + '</p>')
     $('.toast-body').append('<p>Tiến độ: ' + rate + '%</p>');
     if (code.length < 6) {
       $('.toast-body').append('<div class="progress"><div class="progress-bar" style="width:' 

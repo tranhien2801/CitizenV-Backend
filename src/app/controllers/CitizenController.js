@@ -4,7 +4,8 @@ const Citizen = require('../models/Citizen')
 const Unit = require('../models/Unit');
 const {yearFormat} = require('../../util/formatDate');
 const {dateFormat} = require('../../util/formatDate');
-
+const JWT_KEY = "UETcitizenV";
+const jwt = require('jsonwebtoken');
 
 class CitizenController {
 
@@ -26,9 +27,11 @@ class CitizenController {
         res.render('citizens/sheet');
     }
 
-    // [GET] /citizens/:code 
+    // [GET] /citizens
     showByUnit(req, res, next) {
-        let citizenQuery = Citizen.find({addressID: { $regex: '^' + req.params.code}}, 
+        var token = req.session.token; 
+        const data = jwt.verify(token, JWT_KEY);
+        let citizenQuery = Citizen.find({addressID: { $regex: '^' + data.code}}, 
             {CCCD: 1, name: 1, dob: 1, sex: 1, phone: 1, perResidence: 1, 
             curResidence: 1, ethnic: 1, religion: 1, eduLevel: 1, job: 1});
 
@@ -38,13 +41,13 @@ class CitizenController {
             });
         }
 
-        Promise.all([citizenQuery, Citizen.countDocumentsDeleted({addressID: { $regex: '^' + req.params.code}})])
+        Promise.all([citizenQuery, Citizen.countDocumentsDeleted({addressID: { $regex: '^' + data.code}})])
             .then(([citizens, deletedCount]) => {
                 for ( var i = 0; i < citizens.length; i++) {              
                     citizens[i].date = dateFormat(citizens[i].dob);
                 }   
                 res.render('citizens/listPerson', {
-                    citizen: multipleMongooseToObject(citizens),
+                    citizens: multipleMongooseToObject(citizens),
                     deletedCount
                 })   
                 // res.json({citizens, deletedCount})        
@@ -53,9 +56,11 @@ class CitizenController {
     }
 
 
-    // [GET] /citizens/trash/:code
+    // [GET] /citizens/trash/
     trashCitizens(req, res, next) {
-        Citizen.findDeleted({addressID: { $regex: '^' + req.params.code}}, {CCCD: 1, name: 1, dob: 1, sex: 1, phone: 1, perResidence: 1, curResidence: 1,
+        var token = req.session.token; 
+        const data = jwt.verify(token, JWT_KEY);
+        Citizen.findDeleted({addressID: { $regex: '^' + data.code}}, {CCCD: 1, name: 1, dob: 1, sex: 1, phone: 1, perResidence: 1, curResidence: 1,
             ethnic: 1, religion: 1, eduLevel: 1, job: 1, deletedAt: 1})
             .then((citizens) => {
             if (citizens != null) {               
@@ -132,8 +137,10 @@ class CitizenController {
 
     // [PUT] /citizens/CCCD
     update(req, res, next) {
+        var token = req.session.token; 
+        const data = jwt.verify(token, JWT_KEY);
         Citizen.updateOne({ CCCD: req.params.CCCD}, req.body)
-            .then(() => res.redirect('/citizens'))
+            .then(() => res.redirect('/citizens/' + data.code))
             .catch(next);
     }
 

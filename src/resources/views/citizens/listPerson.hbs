@@ -2,7 +2,7 @@
   <div class="col-md-9 shadow">
     <div class="end">
       <h5>Người dân đã xóa</h5>
-      <a id="citizens-deleted" class="btn btn-outline-info">
+      <a href="/citizens/trash/" class="btn btn-outline-info">
         Thùng rác <span class="badge bg-info">{{deletedCount}}</span>
       </a>
     </div>
@@ -46,7 +46,7 @@
       </thead>
       <tbody>
         <tr><!--Tìm kiếm người dựa trên một hoặc nhiều thuộc tính -->
-          <form action="/search/citizens">
+          <form name="search-form">
             <td>
               <input type="text" class="form-control" name="CCCD" placeholder="035301002587" />
             </td>
@@ -54,7 +54,7 @@
               <input type="text" class="form-control" name="name" placeholder="Nguyễn Văn A" />
             </td>
             <td>
-              <input type="text" class="form-control" name="dob" placeholder="29/02/2001" />
+              <input type="text" class="form-control" name="dob" placeholder="2001/06/23" />
             </td>
             <td>
               <input type="text" class="form-control" name="sex" placeholder="Nam" />
@@ -62,11 +62,11 @@
             <td>
               <input type="text" class="form-control" name="perResidence" placeholder="Việt Nam, Trái Đất" />
             </td>
-            <td><button type="submit" class="btn btn-outline-primary"><i class="fas fa-search"></i></button>
+            <td><button id="btn-search" type="submit" class="btn btn-outline-primary"><i class="fas fa-search"></i></button>
             </td>
           </form>
         </tr>
-        {{#each citizen}}
+        {{#each citizens}}
         <tr><!--Thông tin từng người-->
           <td>{{this.CCCD}}</td>
           <td>{{this.name}}</td>
@@ -240,9 +240,14 @@
     var CCCD;
     var deleteForm = document.forms['delete-citizen-form'];
     var btnDeleteCitizen = document.getElementById('btn-delete-citizen');
+    var searchForm = document.forms['search-form'];
+    var btnSearch = document.getElementById('btn-search');
     var code = localStorage.getItem('code');
 
-   
+    btnSearch.onclick = function () {
+        searchForm.action = '/search/unit/' + code;
+        searchForm.submit();
+    }
     // when dialog confirm clicked
     $('#delete-citizen-modal').on('show.bs.modal', function (event) {
       $('.modal-title').children().remove();
@@ -256,9 +261,6 @@
       deleteForm.action = '/citizens/' + CCCD + '?_method=DELETE';
       deleteForm.submit();
     };
-
-    var trashCitizens = document.getElementById('citizens-deleted');
-    trashCitizens.href = '/citizens/trash/' + code;    
 
 
     $('#myModal').on('show.bs.modal', async function (event) {

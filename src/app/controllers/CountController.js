@@ -181,7 +181,7 @@ class CountController {
             
                 
         } catch(err) {
-            res.render(err);
+            res.status(400).json(err);
         }
     }
 
@@ -215,7 +215,7 @@ class CountController {
             
             res.json({nameUnit, male, female, name: unitParent.nameUnit});
         } catch(err) {
-            res.json(err);
+            res.status(400).json(err);
         }
     }
 
@@ -226,8 +226,9 @@ class CountController {
             var units;
             var population = [];
             var nameUnit = [];
+            
             // Khi người dùng không chọn đơn vị con nào thì sẽ thống kê tất cả các đơn vị con
-            if (req.body.codes.length == 0) {
+            if (req.body.codes.length == 0 || req.body == null) {
                 units = await Unit.find({idParent: req.params.code});
             } else {
                 units = await Unit.find({code: {$in: req.body.codes}});
@@ -237,14 +238,15 @@ class CountController {
                 const popu = await Citizen.count({addressID: { $regex: '^' + units[i].code}});
                 population.push(popu);
             }
+            
              res.json({nameUnit, population, name: unitParent.nameUnit});
 
         } catch(err) {
-            res.render(err);
+            res.status(400).json(err);
         }
     }
 
-    // [GET] /statistic/:code/ageTower
+    // [POST] /statistic/:code/ageTower
     async filterAge(req, res) {
         try {
             const unitParent = await Unit.findOne({code: req.params.code});
@@ -295,47 +297,68 @@ class CountController {
                 female.push(femaleAge);      
                 res.json({male, female, name: unitParent.nameUnit});  
             } else {
+                var name = "";
+                var total = 0;
                 for ( var i = 0; i <= 75; i = i+5) {
-                    const maleAge = await Citizen.count({
-                            addressID: { $regex: '^' + req.params.code },
+                    total = 0;
+                    for (var j = 0; j < req.body.codes.length; j++) {
+                        const maleAge = await Citizen.count({
+                            addressID: { $regex: '^' + req.body.codes[j] },
                             sex: 'Nam',
                             dob: {
                                 $gte: new Date(yearNow - i - 4 , 1, 1),
                                 $lt: new Date(yearNow - i + 1, 1, 1)
                             }
                         });
-                    male.push(maleAge);
-                }
-                const maleAge = await Citizen.count({
-                    addressID: { $regex: '^' + req.params.code },
-                    sex: 'Nam',
-                    dob: {
-                        $gte: new Date(yearNow - 130 , 1, 1),
-                        $lt: new Date(yearNow - 79, 1, 1)
+                        total += maleAge;
                     }
-                });
-                male.push(maleAge);
+                    male.push(total);
+                }
+                total = 0;
+                for (var j = 0; j < req.body.codes.length; j++) {
+                    const unit = await Unit.findOne({code: req.body.codes[j]});
+                    name += " " + unit.nameUnit;
+                    const maleAge = await Citizen.count({
+                        addressID: { $regex: '^' + req.body.codes[j] },
+                        sex: 'Nam',
+                        dob: {
+                            $gte: new Date(yearNow - 130 , 1, 1),
+                            $lt: new Date(yearNow - 79, 1, 1)
+                        }
+                    });
+                    total += maleAge;
+                }
+                male.push(total);
     
                 for ( var i = 0; i <= 75; i = i+5) {
-                    const femaleAge = await Citizen.count({
-                            addressID: { $regex: '^' + req.params.code },
+                    total = 0;
+                    for (var j = 0; j < req.body.codes.length; j++) {
+                        const femaleAge = await Citizen.count({
+                            addressID: { $regex: '^' + req.body.codes[j] },
                             sex: 'Nữ',
                             dob: {
                                 $gte: new Date(yearNow - i - 4 , 1, 1),
                                 $lt: new Date(yearNow - i + 1, 1, 1)
                             }
                         });
-                    female.push(femaleAge);
-                }    
-                const femaleAge = await Citizen.count({
-                    addressID: { $regex: '^' + req.params.code },
-                    sex: 'Nữ',
-                    dob: {
-                        $gte: new Date(yearNow - 130 , 1, 1),
-                        $lt: new Date(yearNow - 79, 1, 1)
+                        total += femaleAge;
                     }
-                });
-                female.push(femaleAge); 
+                    female.push(total);
+                }  
+                total = 0;
+                for (var j = 0; j < req.body.codes.length; j++) {  
+                    const femaleAge = await Citizen.count({
+                        addressID: { $regex: '^' + req.body.codes[j] },
+                        sex: 'Nữ',
+                        dob: {
+                            $gte: new Date(yearNow - 130 , 1, 1),
+                            $lt: new Date(yearNow - 79, 1, 1)
+                        }
+                    });
+                    total += femaleAge;
+                }
+                female.push(total); 
+                res.json({male, female, name}); 
             }
         } catch (error) {
             res.status(400).json(error);
