@@ -20,8 +20,8 @@
           <button type="button" id="allocate" class="btn border-primary text-primary" >Cấp tài khoản <i class="far fa-edit"></i></button>
       
     </div>
-    <div class="col-md-3">
-      <div class="toast show m-4">
+    {{!-- <div class="col-md-3"> --}}
+      {{!-- <div class="toast show m-4">
         <div class="toast-header">
         </div>
         <div class="toast-body">
@@ -30,9 +30,9 @@
           <a href="/statistic" class="list-group-item border-success text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Thống kê"><i class="far fa-chart-bar"></i></a>
           <button type="button" id="allocate" class="list-group-item border-primary text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Cấp phát"><i class="far fa-edit"></i></button>
         </div>
-      </div>
-    </div>
-    {{> myUnit}}
+      </div> --}}
+      {{> myUnit}}
+    {{!-- </div> --}}
 </div>
 
 <div id="close-declaration-modal" class="modal fade" tabindex="-1" role="dialog">
@@ -132,7 +132,8 @@
     let data = await myObject.json();
     var rate = 0;
     if (data.declared + data.declaring != 0)
-       rate = data.declared * 100/ (data.declared + data.declaring); 
+       rate = Math.round((data.declared * 100/ (data.declared + data.declaring))*10000 / 10000); 
+    
     $('.toast-header').children().remove();
     $('.toast-body').children().remove();
     $('.toast-header').append("<p>Mã địa phương " + data.unit.code + '</p>');

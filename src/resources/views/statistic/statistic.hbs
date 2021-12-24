@@ -3,12 +3,12 @@
 <div class="row">
     <div id="myChart" class='col-md-9 shadow mt-4 mb-4'></div>
     <div class="col-md-3">
-      <div class="toast show m-4">
+      {{!-- <div class="toast show m-4">
         <div class="toast-header info-header"></div>
         <div class="toast-body info-body"></div>
         <div class="toast-footer list-group list-group-horizontal toast-footer-sm">
         </div>
-      </div>
+      </div> --}}
       <div class="toast show m-4">
         <div class="toast-header list-unit-header"></div>
         <div class="toast-body list-unit-body">
@@ -34,13 +34,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script> 
     var token = localStorage.getItem("token");
-    
-   /* var selected = [];
-    for (var option of document.getElementById('nameUnit').options){
-        if (option.selected) {
-            selected.push(option.value);
-        }
-    }*/
 
     var selected = $('#nameUnit').val();
     console.log(selected);

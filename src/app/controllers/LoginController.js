@@ -82,7 +82,7 @@ class LoginController {
             if (req.query.idParent == "") req.query.idParent = null;
             const checkExist = await Unit.findOne({idParent: req.query.idParent, nameUnit: req.body.nameUnit});
             if (checkExist != null) {
-                res.status(400).json({message: "Đã có đơn vị này trong hệ thống"});
+                res.status(400).json({status: "Đã có đơn vị này trong hệ thống"});
                 return;
             }
             const maxSibling = await Unit.find({idParent: req.query.idParent}).sort({ code: -1}).limit(1);
