@@ -13,7 +13,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav justify-content-center me-auto mb-2 mb-lg-0">                       
-                        <li class="nav-item dropdown">
+                        <!--<li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #400485">
                                 Người dân
@@ -22,17 +22,23 @@
                                 <a id="list-citizens" class="dropdown-item" aria-current="page"  style="color: #400485"><i class="fas fa-list-ul"></i> Danh sách người dân</a>
                                 <a class="dropdown-item" href="/citizens/addPerson" style="color: #400485"><i class="fas fa-user-plus"></i> Thêm người dân</a>
                             </div>
+                        </li>-->
+                        <li class="nav-item" id="list-citizens-div">
+                            <a id="list-citizens" class="nav-link active" aria-current="page" style="color: #400485">Danh sách</a>
                         </li>
-                        {{!-- <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/addUnit" style="color: #400485">Cấp tài khoản</a>
-                        </li> --}}
-                        <li class="nav-item">
+                        <li class="nav-item" id="statistic-div">
+                            <a class="nav-link active" aria-current="page" href="/statistic" style="color: #400485">Thống kê</a>
+                        </li>
+                        <li class="nav-item" id="add-person-div">
+                            <a class="nav-link active" aria-current="page" href="/citizens/addPerson" style="color: #400485">Thêm người dân</a>
+                        </li>
+                        <li class="nav-item" id="survey-card-div">
                             <a class="nav-link active" aria-current="page" href="/citizens/survey-card" style="color: #400485">In phiếu khảo sát</a>
                         </li>
 
                     </ul>
                     <div id="right">
-                        <a id="logout" ><i class="fas fa-sign-out-alt" style="color: #400485">Đăng suất</i></a>
+                        <a id="logout" href = "/logout"><i class="fas fa-sign-out-alt" style="color: #400485">Đăng suất</i></a>
                     </div>
 
                 </div>
@@ -46,6 +52,24 @@
     var code = localStorage.getItem('code');
     var listCitizens = document.getElementById('list-citizens');
     listCitizens.href = "/citizens/" + code;
-    var logout = document.getElementById('logout');
-    logout.href = "/logout";
+    hiddenItem()
+    
+    function hiddenItem() {
+        var listCitizensDiv = document.getElementById('list-citizens-div');
+        var statisticDiv = document.getElementById('statistic-div');
+        if(code.length <= 6) {
+            listCitizensDiv.style.display = "block";
+            statisticDiv.style.display = "block";
+        }
+        else {
+            listCitizensDiv.style.display = "none";
+            statisticDiv.style.display = "none";
+        }
+        var addPersonDiv = document.getElementById('add-person-div');
+        if (code.length >= 6) addPersonDiv.style.display = "block";
+        else addPersonDiv.style.display="none";
+        var surveyCardDiv = document.getElementById('survey-card-div');
+        if (code.length == 6) surveyCardDiv.style.display = "block";
+        else surveyCardDiv.style.display="none";
+    }
 </script>

@@ -16,6 +16,9 @@
 
       </tbody>
      </table>
+     
+          <button type="button" id="allocate" class="btn border-primary text-primary" >Cấp tài khoản <i class="far fa-edit"></i></button>
+      
     </div>
     <div class="col-md-3">
       <div class="toast show m-4">
@@ -29,6 +32,7 @@
         </div>
       </div>
     </div>
+    {{> myUnit}}
 </div>
 
 <div id="close-declaration-modal" class="modal fade" tabindex="-1" role="dialog">
@@ -77,11 +81,25 @@
   var btnCloseDeclaration = document.getElementById('btn-close-declaration');
   
 
-
   btnAllocateUnit.onclick = function () {
     allocateForm.action = '/allocate/' + code;
     allocateForm.submit();
   }
+
+  // when dialog confirm clicked
+    $('#close-declaration-modal').on('show.bs.modal', async function (event) {
+     // $('.modal-title').children().remove();
+     // $('.modal-body').children().remove();
+      var button = $(event.relatedTarget);
+      codeChild = button.data('id');
+
+      let myObject = await fetch('/units/' + codeChild);
+      let myText = await myObject.json();
+     // $('#nameUnit').
+      $('#timeStart input').val(myText.unit.timeStart.slice(0,10));
+      $('#timeEnd input').val(myText.unit.timeEnd.slice(0,10));
+    });
+
 
   btnCloseDeclaration.onclick = function() {
     var timeStart = $('#close-declaration-modal #timeStart').val().trim();
@@ -126,7 +144,7 @@
                           + rate + '%">' + rate +'%</div></div>');
     }
     $('.toast-body').append('<p>Trạng thái: ' + data.unit.progress + '</p>');
-    $('tbody').children().remove();
+    $('tbody').children().remove();  
     for (let i = 0; i < data.units.length; i++) {
       if (data.units[i].timeEnd == null) data.units[i].timeEnd = "null";
       if (data.units[i].timeStart == null) data.units[i].timeStart = "null";
