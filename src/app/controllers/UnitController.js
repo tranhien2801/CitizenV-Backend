@@ -37,7 +37,6 @@ class UnitController {
             var codeWard = req.params.code.slice(0,6);
             var codeDistrict = req.params.code.slice(0,4);
             var codeCity = req.params.code.slice(0,2);
-            console.log(req.params.code);
             var ward = await Unit.findOne({code: codeWard});
             var district = await Unit.findOne({code: codeDistrict});
             var city = await Unit.findOne({code: codeCity});

@@ -17,12 +17,13 @@ class CountController {
     async filterBirthRate(req, res) {
         try {
             const unitParent = await Unit.findOne({code: req.params.code});
+            if (req.params.code == "A01") req.params.code = "";
             const yearNow = new Date(Date.now()).getFullYear();
             var years = [];
             var numbers = [];
             // Khi người dùng không chọn đơn vị con nào thì sẽ thống kê tất cả các đơn vị con
             if (req.body.codes.length === 0) {
-                for (var i = 0; i < 30; i=i+5) {
+                for (var i = 30; i >= 0; i=i-5) {
                     const number = await Citizen.count({
                         addressID: { $regex: '^' + req.params.code },
                         dob: {
@@ -42,7 +43,7 @@ class CountController {
                 for (var i = 0; i < units.length; i++) {
                         name += ' ' + units[i].nameUnit;
                 }
-                for (var i = 0; i < 30; i=i+5) {
+                for (var i = 30; i >= 0; i=i-5) {
                     var total = 0;
                     for (var k = 0; k < req.body.codes.length; k++) {
                         var number = await Citizen.count({
@@ -74,6 +75,7 @@ class CountController {
             var number = [];
             if (req.body.codes.length == 0) {
                 const unit = await Unit.findOne({code: req.params.code});
+                if (req.params.code == "A01") req.params.code = "";
                 const numberCareer2 = await Citizen.count({
                     addressID: { $regex: '^' + req.params.code },
                     job: 'Công nhân',
@@ -230,16 +232,18 @@ class CountController {
             // Khi người dùng không chọn đơn vị con nào thì sẽ thống kê tất cả các đơn vị con
             if (req.body.codes.length == 0 || req.body == null) {
                 units = await Unit.find({idParent: req.params.code});
+                if (units == null) {
+                    var popu = await Citizen.count({addressID: req.params.code});
+                }
             } else {
                 units = await Unit.find({code: {$in: req.body.codes}});
             }
             for (var i = 0; i < units.length; i++) {
                 nameUnit.push(units[i].nameUnit);
-                const popu = await Citizen.count({addressID: { $regex: '^' + units[i].code}});
+                var popu = await Citizen.count({addressID: { $regex: '^' + units[i].code}});
                 population.push(popu);
             }
-            
-             res.json({nameUnit, population, name: unitParent.nameUnit});
+            res.json({nameUnit, population, name: unitParent.nameUnit});
 
         } catch(err) {
             res.status(400).json(err);
@@ -250,6 +254,7 @@ class CountController {
     async filterAge(req, res) {
         try {
             const unitParent = await Unit.findOne({code: req.params.code});
+            if (req.params.code == "A01") req.params.code = "";
             const yearNow = new Date(Date.now()).getFullYear();
             var male = [];
             var female = [];

@@ -27,7 +27,7 @@
         </div>
         <div class="form-group mt-4">
             <label for="perResidence">Địa chỉ thường trú</label>
-            <input type="text" class="form-control" value="{{citizen.perResidence}}" id="perResidence" name="perResidence">
+            <input type="text" class="form-control" id="perResidence" name="perResidence">
         </div>
         <div class="form-group mt-4">
             <label for="curResidence">Địa chỉ tạm trú</label>
@@ -65,3 +65,16 @@
         <button type="submit" class="btn btn-primary mt-4">Hoàn thành</button>
     </fieldset>
 </form>
+
+<script>
+
+    getData();
+    async function getData() {
+      var code = localStorage.getItem('code');
+      var path = '/units/perResidence/' + code;
+      let myObject = await fetch(path);
+      let data = await myObject.json();
+      $("#perResidence").val(data.perResidence);
+    }
+
+</script>
