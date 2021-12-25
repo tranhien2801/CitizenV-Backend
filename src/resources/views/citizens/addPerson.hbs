@@ -96,8 +96,15 @@
 
 
 <script>
+    getData();
+    async function getData() {
+      var code = localStorage.getItem('code');
+      var path = '/units/perResidence/' + code;
+      let myObject = await fetch(path);
+      let data = await myObject.json();
+      $("#perResidence").append('<option>' + data.perResidence + '</option>')
+    }
 
-    $("#perResidence").append('<option>Thành phố Hà Nội, Quận Ba Đình, Phường Phúc Xá, Thôn ...</option>')
 
 function addCitizen() {
         var code = localStorage.getItem('code');
@@ -137,7 +144,7 @@ function addCitizen() {
             .then((res) => res.json())
             .then((data) => {
                 alert(data.message);
-                if (data.message != "CCCD này đã có trong hệ thống, mời kiểm tra lại")
+                if (data.message != "CCCD này đã có trong hệ thống, mời kiểm tra lại" && code.length != 8)
                     document.location.pathname = "/citizens/";
             })
             .catch((error) => {

@@ -20,7 +20,8 @@ class CityController {
                     const city2 = await City.findOne({Name: unit2.nameUnit});
                     var districtName = [];
                     for (var i = 0; i < city2.Districts.length; i++ ) {
-                        districtName.push(city2.Districts[i].Name);
+                        var temp = await Unit.findOne({nameUnit: city2.Districts[i].Name});
+                        if (temp == null)   districtName.push(city2.Districts[i].Name);
                     }
                    res.render('units/addUnit',{code: req.params.code, listName: districtName, length: city2.Districts.length});
                 
@@ -31,7 +32,9 @@ class CityController {
                     const disFilter = filterItems(city4.Districts, unit4.nameUnit);
                     var wardName = [];
                     for (var i = 0; i < disFilter[disFilter.length - 1].Wards.length; i++ ) {
-                        wardName.push(disFilter[disFilter.length - 1].Wards[i].Name);
+                        var dis = disFilter[disFilter.length - 1].Wards[i].Name;
+                        var temp = await Unit.findOne({nameUnit: dis});
+                        if (temp == null)    wardName.push(dis);
                     }
                     res.render('units/addUnit',{code: req.params.code, listName: wardName});
                     break;
@@ -43,7 +46,8 @@ class CityController {
                         const cities = await City.find();
                         var cityName = [];
                         for (var i = 0; i < cities.length; i++) {
-                            cityName.push(cities[i].Name);
+                            var temp = await Unit.findOne({nameUnit: cities[i].Name});
+                            if (temp == null)   cityName.push(cities[i].Name);
                         }
                         res.render('units/addUnit',{code: req.params.code, listName: cityName});
                     } else res.status(400).json({message: "Tài khoản A1 này không đúng"});
@@ -57,6 +61,7 @@ class CityController {
             res.json(error);
         }
     }
+    
 
 
 }

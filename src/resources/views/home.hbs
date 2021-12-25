@@ -1,7 +1,7 @@
 <div class="row mt-4">
-   <p class="h4">Các đơn vị đang/ đã tham gia khai báo</p>
-    <div id="info" class="col-md-9 mt-4 mb-4 shadow">
-     <table class="table table-hover">
+  <p class="h4">Các đơn vị đang/ đã tham gia khai báo</p>
+  <div id="info" class="col-md-9 mt-4 mb-4 shadow">
+    <table class="table table-hover">
       <thead>
         <tr>
           <th>Mã đơn vị</th>
@@ -15,13 +15,14 @@
       <tbody>
 
       </tbody>
-     </table>
-        <button type="button" id="allocate" class="btn border-primary text-primary" >Cấp tài khoản <i class="far fa-edit"></i></button>
-        <button type="button" class="btn border-primary text-primary" data-bs-toggle="modal" data-id="all" 
-          data-bs-target="#start-all-unit-modal">Bắt đầu khai báo</button>
-    </div>
-    <div class="col-md-3">
-      {{> myUnit}}
+    </table>
+    <button type="button" id="allocate" class="btn border-primary text-primary">Cấp tài khoản <i
+        class="far fa-edit"></i></button>
+    <button type="button" class="btn border-primary text-primary" data-bs-toggle="modal" data-id="all"
+      data-bs-target="#start-all-unit-modal">Bắt đầu khai báo</button>
+  </div>
+  <div class="col-md-3">
+    {{> myUnit}}
   </div>
 </div>
 
@@ -51,7 +52,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button id="btn-close-declaration" type="button" class="btn btn-danger"  data-bs-dismiss="modal">Sửa đổi</button>
+        <button id="btn-close-declaration" type="button" class="btn btn-danger" data-bs-dismiss="modal">Sửa đổi</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
       </div>
     </div>
@@ -74,7 +75,8 @@
         <input type="date" class="form-control mb-4" id="timeEndAll" name="timeEndAll" required="true">
       </div>
       <div class="modal-footer">
-        <button id="btn-close-start-all-unit" type="button" class="btn btn-danger"  data-bs-dismiss="modal">Bắt đầu</button>
+        <button id="btn-close-start-all-unit" type="button" class="btn btn-danger" data-bs-dismiss="modal">Bắt
+          đầu</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
       </div>
     </div>
@@ -86,84 +88,100 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-  var codeChild;
-  var code = localStorage.getItem('code');
-  var allocateForm = document.forms['allocate-unit-form'];
-  var closeDeclaration = document.forms['close-declaration-form'];
-  var btnAllocateUnit = document.getElementById('allocate');
-  var btnCloseDeclaration = document.getElementById('btn-close-declaration');
-  var btnCloseStartAllUnit = document.getElementById('btn-close-start-all-unit');
-
-  btnAllocateUnit.onclick = function () {
-    allocateForm.action = '/allocate/' + code;
-    allocateForm.submit();
-  }
-
-
-
-  btnCloseDeclaration.onclick = function() {
-    var timeStart = $('#close-declaration-modal #timeStart').val().trim();
-    var timeEnd = $('#close-declaration-modal #timeEnd').val().trim();
-    var active = $('#close-declaration-modal #active').val().trim();
-   
-   var url_post = "/declare/close/" + codeChild;
-
-        fetch(url_post, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', },
-            body: JSON.stringify({timeStart: timeStart, timeEnd: timeEnd, active: active}),
-        })
-            .then((res) => res.json())
-            .then((data) => {
-              getData();
-                alert(data.message);
-            })
-            .catch((error) => {
-                //alert(error);
-            });
-  }
-
-  btnCloseStartAllUnit .onclick = function() {
-    var timeStartAll = $("#start-all-unit-modal #timeStartAll").val().trim();
-    var timeEndAll = $("start-all-unit-modal #timeEndAll").val().trim();
-    //submit đi đâu đấy
-  }
-
-  getData();
-
-  function reserverDate(date) {
-    return date.slice(6,10) + '-' + date.slice(3, 5) + '-' + date.slice(0, 2);
-  }
-  
-  async function getData() {
+    var codeChild;
     var code = localStorage.getItem('code');
-    var path = '/declare/progress?code=' + code;
-    let myObject = await fetch(path);
-    let data = await myObject.json();
-    $('#timeStartAll').val(reserverDate(data.dateStart));
-    $('#timeEndAll').val(reserverDate(data.date));
-    $('tbody').children().remove();  
-    for (let i = 0; i < data.units.length; i++) {
-      if (data.units[i].timeEnd == null) data.units[i].timeEnd = "null";
-      if (data.units[i].timeStart == null) data.units[i].timeStart = "null";
-      $('tbody').append('<tr>' +
-          '<td class="code">' + data.units[i].code + '</td>' +
-          '<td class="nameUnit">' + data.units[i].nameUnit + '</td>' +
-          '<td class="timeStart">' + data.units[i].timeStart.slice(0,10) + '</td>' +
-          '<td class="timeEnd">' + data.units[i].timeEnd.slice(0,10) + '</td>' +
-          '<td class="progres">' + data.units[i].progress + '</td>' +
-          '<td class="active">' + data.units[i].active + 
-          ' <a id="close-modal" data-bs-toggle="modal" data-id="' + data.units[i].code +
-          '" data-bs-target="#close-declaration-modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Đóng khai báo">' + 
-          '<i class="far fa-edit text-warning"></i></a></td>' +
-        '</tr>');
+    var allocateForm = document.forms['allocate-unit-form'];
+    var closeDeclaration = document.forms['close-declaration-form'];
+    var btnAllocateUnit = document.getElementById('allocate');
+    var btnCloseDeclaration = document.getElementById('btn-close-declaration');
+    var btnCloseStartAllUnit = document.getElementById('btn-close-start-all-unit');
+
+    btnAllocateUnit.onclick = function () {
+      allocateForm.action = '/allocate/' + code;
+      allocateForm.submit();
+    }
+
+
+
+    btnCloseDeclaration.onclick = function () {
+      var timeStart = $('#close-declaration-modal #timeStart').val().trim();
+      var timeEnd = $('#close-declaration-modal #timeEnd').val().trim();
+      var active = $('#close-declaration-modal #active').val().trim();
+
+      var url_post = "/declare/close/" + codeChild;
+
+      fetch(url_post, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', },
+        body: JSON.stringify({ timeStart: timeStart, timeEnd: timeEnd, active: active }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          getData();
+          alert(data.message);
+        })
+        .catch((error) => {
+          alert(error);
+        });
+    }
+
+    btnCloseStartAllUnit.onclick = function () {
+      var timeStartAll = $("#start-all-unit-modal #timeStartAll").val().trim();
+      var timeEndAll = $("#start-all-unit-modal #timeEndAll").val().trim();
+
+      var url_post = "/declare/open/" + code;
+
+      fetch(url_post, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', },
+        body: JSON.stringify({ timeStart: timeStartAll, timeEnd: timeEndAll }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          getData();
+          alert(data.message);
+        })
+        .catch((error) => {
+          alert(error);
+        });
 
     }
-    
 
-  }
+    getData();
 
-  // when dialog confirm clicked
+    function reserverDate(date) {
+      return date.slice(6, 10) + '-' + date.slice(3, 5) + '-' + date.slice(0, 2);
+    }
+
+    async function getData() {
+      var code = localStorage.getItem('code');
+      var path = '/declare/progress?code=' + code;
+      let myObject = await fetch(path);
+      let data = await myObject.json();
+      $('#timeStartAll').val(reserverDate(data.dateStart));
+      $('#timeEndAll').val(reserverDate(data.date));
+      $('tbody').children().remove();
+      for (let i = 0; i < data.units.length; i++) {
+        if (data.units[i].timeEnd == null) data.units[i].timeEnd = "null";
+        if (data.units[i].timeStart == null) data.units[i].timeStart = "null";
+        $('tbody').append('<tr>' +
+          '<td class="code">' + data.units[i].code + '</td>' +
+          '<td class="nameUnit">' + data.units[i].nameUnit + '</td>' +
+          '<td class="timeStart">' + data.units[i].timeStart.slice(0, 10) + '</td>' +
+          '<td class="timeEnd">' + data.units[i].timeEnd.slice(0, 10) + '</td>' +
+          '<td class="progres">' + data.units[i].progress + '</td>' +
+          '<td class="active">' + data.units[i].active +
+          ' <a id="close-modal" data-bs-toggle="modal" data-id="' + data.units[i].code +
+          '" data-bs-target="#close-declaration-modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Đóng khai báo">' +
+          '<i class="far fa-edit text-warning"></i></a></td>' +
+          '</tr>');
+
+      }
+
+
+    }
+
+    // when dialog confirm clicked
     $('#close-declaration-modal').on('shown.bs.modal', async function (event) {
       console.log("Modal successful!")
       var button = $(event.relatedTarget);
@@ -173,10 +191,9 @@
       let myText = await myObject.json();
       console.log(myText)
       $('#nameUnit').text(myText.unit.nameUnit);
-      $('#timeStart').val(myText.unit.timeStart.slice(0,10));
-      $('#timeEnd').val(myText.unit.timeEnd.slice(0,10));
+      $('#timeStart').val(myText.unit.timeStart.slice(0, 10));
+      $('#timeEnd').val(myText.unit.timeEnd.slice(0, 10));
     });
-    
+
   });
 </script>
-

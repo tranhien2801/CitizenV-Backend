@@ -115,8 +115,10 @@ class CitizenController {
         Các API POST của công dân
     ----------------------------------------------------------------------------------------------------------------------*/
 
+    // Khai báo người dân
     // [POST] /citizens/store/:addressID
     async store(req, res) { 
+        if (req.params.addressID.length == 8) req.params.addressID = req.params.addressID.slice(0,6);
         const unit = await Unit.findOne({ code: req.params.addressID});
         if (unit == null) {
             return res.status(400).json({message: "Đơn vị không tồn tại trong hệ thống"});

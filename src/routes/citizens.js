@@ -8,7 +8,7 @@ router.get('/:_id/edit', Auth.auth, Auth.authB1B2, citizenController.editPerson)
 router.get('/addPerson', Auth.auth, Auth.authB1B2, citizenController.addPerson);
 router.get('/unit/:code', Auth.auth, Auth.authA123B1, citizenController.findByUnit);
 router.get('/survey-card', Auth.auth, Auth.authB1B2, citizenController.surveyCard);
-router.get('/', Auth.auth, Auth.authA123B1, citizenController.showByUnit);
+router.get('/', Auth.auth, citizenController.showByUnit);
 router.get('/trash', Auth.auth, citizenController.trashCitizens);
 router.delete('/:_id/', Auth.auth, Auth.authB1B2, citizenController.destroy);
 router.delete('/:_id/force', Auth.auth, Auth.authB1B2, citizenController.forceDestroy);

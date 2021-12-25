@@ -20,7 +20,7 @@ class UnitController {
     }
 
     // [GET] /units/population/:code
-    async population(req, res, next) {
+    population(req, res, next) {
         Unit.findOne({code: req.params.code})
             .then((unit) => {
                 Citizen.count({addressID: { $regex: '^' + unit.code}})
@@ -29,6 +29,23 @@ class UnitController {
                     })
             })
             .catch(next => res.status(400).json({message: "Đơn vị này không tồn tại trong hệ thống"}))
+    }
+
+    // [GET] /units/perResidence/:code
+    async perResidence(req, res) {
+        try {
+            var codeWard = req.params.code.slice(0,6);
+            var codeDistrict = req.params.code.slice(0,4);
+            var codeCity = req.params.code.slice(0,2);
+            console.log(req.params.code);
+            var ward = await Unit.findOne({code: codeWard});
+            var district = await Unit.findOne({code: codeDistrict});
+            var city = await Unit.findOne({code: codeCity});
+            var perResidence = ward.nameUnit + ", " + district.nameUnit + ", " + city.nameUnit;
+            res.json({perResidence});
+        } catch (error) {
+            res.status(400).json({message: "Mã đơn vị không tồn tại trong hệ thống"});
+        }
     }
 
     
