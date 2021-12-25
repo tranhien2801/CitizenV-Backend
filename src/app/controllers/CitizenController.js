@@ -31,10 +31,11 @@ class CitizenController {
     showByUnit(req, res, next) {
         var token = req.session.token; 
         const data = jwt.verify(token, JWT_KEY);
-        let citizenQuery = Citizen.find({addressID: { $regex: '^' + data.code}}, 
-            {CCCD: 1, name: 1, dob: 1, sex: 1, phone: 1, perResidence: 1, 
-            curResidence: 1, ethnic: 1, religion: 1, eduLevel: 1, job: 1});
-
+        var citizenQuery;
+        if (data.code == "A01") data.code = "";
+            citizenQuery = Citizen.find({addressID: { $regex: '^' + data.code}}, 
+                {CCCD: 1, name: 1, dob: 1, sex: 1, phone: 1, perResidence: 1, 
+                curResidence: 1, ethnic: 1, religion: 1, eduLevel: 1, job: 1});
         if (req.query.hasOwnProperty('_sort')) {
             citizenQuery = citizenQuery.sort({
                 [req.query.column]: req.query.type,
@@ -60,7 +61,9 @@ class CitizenController {
     trashCitizens(req, res, next) {
         var token = req.session.token; 
         const data = jwt.verify(token, JWT_KEY);
-        Citizen.findDeleted({addressID: { $regex: '^' + data.code}}, {CCCD: 1, name: 1, dob: 1, sex: 1, phone: 1, perResidence: 1, curResidence: 1,
+        if (data.code == "A01") data.code = "";
+        Citizen.findDeleted({addressID: { $regex: '^' + data.code}}, 
+            {CCCD: 1, name: 1, dob: 1, sex: 1, phone: 1, perResidence: 1, curResidence: 1,
             ethnic: 1, religion: 1, eduLevel: 1, job: 1, deletedAt: 1})
             .then((citizens) => {
             if (citizens != null) {               
@@ -113,7 +116,7 @@ class CitizenController {
     ----------------------------------------------------------------------------------------------------------------------*/
 
     // [POST] /citizens/store/:addressID
-    async store(req, res, next) { 
+    async store(req, res) { 
         const unit = await Unit.findOne({ code: req.params.addressID});
         if (unit == null) {
             return res.status(400).json({message: "Đơn vị không tồn tại trong hệ thống"});
@@ -121,14 +124,16 @@ class CitizenController {
         if (unit.active == "Không") return res.status(400).json({message: "Đơn vị đã bị đóng quyền khai báo"});
         if (unit.timeEnd < Date.now())  return res.status(400).json({message: "Đã hết thời hạn khai báo"});
         if (unit.timeStart > Date.now())    return res.status(400).json({message: "Chưa đến thời gian khai báo"});
-        console.log(req.body);
+        var checkExist = null;
+        if (req.body.CCCD != "") checkExist = await Citizen.findOne({CCCD: req.body.CCCD});
+        if (checkExist != null)  return res.status(400).json({message: "CCCD này đã có trong hệ thống, mời kiểm tra lại"});
         const citizen = new Citizen(req.body);
         citizen.addressID = req.params.addressID;
         citizen.save()
             .then(() => {
                res.json({message: "Thêm người dân thành công"});
             })
-            .catch(next => res.status(400).json({message: "Lỗi tạo công dân do CCCD đã tồn tại hoặc ngày sinh không phù hợp"}));
+            .catch(() => res.status(400).json({message: "Ngày sinh không phù hợp"}));
     }
 
     /*---------------------------------------------------------------------------------------------------------------------

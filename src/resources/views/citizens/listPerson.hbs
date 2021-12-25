@@ -54,7 +54,7 @@
               <input type="text" class="form-control" name="name" placeholder="Nguyễn Văn A" />
             </td>
             <td>
-              <input type="text" class="form-control" name="dob" placeholder="2001/06/23" />
+              <input type="text" class="form-control" name="dob" placeholder="23-06-2001" />
             </td>
             <td>
               <input type="text" class="form-control" name="sex" placeholder="Nam" />
@@ -272,9 +272,8 @@
 
       $('.modal-title').children().remove();
       $('.modal-body').children().remove();
-      if (myText.CCCD != null) myText.CCCD = "Chưa có CCCD";
       $('.modal-title').append('<p class="h4">Thông tin người dân chi tiết</p>');
-      $('.modal-body').append('<p class="h6">CCCD: ' + myText.CCCD + '</p>');
+      if (myText.CCCD != null) $('.modal-body').append('<p class="h6">CCCD: ' + myText.CCCD + '</p>');
       $('.modal-body').append('<p>Họ tên: ' + myText.name + '</p>');
       if (myText.phone != null)  $('.modal-body').append('<p>SĐT: ' + myText.phone + '</p>');
       if (myText.dob != null) $('.modal-body').append('<p>Ngày sinh: ' + myText.dob.slice(0,10) + '</p>');

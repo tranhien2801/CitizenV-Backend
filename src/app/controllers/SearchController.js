@@ -1,11 +1,7 @@
 const { multipleMongooseToObject } = require('../../util/mongoose');
-const { mongooseToObject } = require('../../util/mongoose');
-const Unit = require('../models/Unit');
 const Citizen = require('../models/Citizen');
-const dateFormat = require('../../util/formatDate');
-const {filterPerResidence} = require('../../util/filter');
-const {filterName} = require('../../util/filter');
-const {filterDoB} = require('../../util/filter');
+const {dateFormat} = require('../../util/formatDate');
+
 
 
 class SearchController {
@@ -13,6 +9,7 @@ class SearchController {
     // [GET] /search/unit/:code?CCCD=&name=&dob=&sex=&perResidence=
     async find(req, res, next) {    
         try {
+            if (req.params.code == "A01") req.params.code = "";
             const deletedCount = await Citizen.countDocumentsDeleted({addressID: { $regex: '^' + req.params.code}});
             if (req.query.CCCD.trim() != "") {
                 var citizens = await Citizen.find({
@@ -27,20 +24,29 @@ class SearchController {
                 
             } else {
                 var citizens;
-                if (req.query.sex.trim() != "") {
-                    citizens = await Citizen.find({
-                        sex: req.query.sex.trim(),
-                        addressID : { $regex: '^' + req.params.code }
+                if (req.query.dob.trim() == "") {
+                    citizens = await Citizen.find({ 
+                        addressID : { $regex: '^' + req.params.code },
+                        sex: { $regex: '^' + req.query.sex.trim()},
+                        name: { $regex: '^' + req.query.name.trim()},
+                        perResidence: { $regex: '^' + req.query.perResidence.trim()},
                     });
                 } else {
-                    citizens = await Citizen.find({addressID : { $regex: '^' + req.params.code }});
+                    var day = req.query.dob.slice(0, 2);
+                    var month = req.query.dob.slice(3, 5);
+                    var year = req.query.dob.slice(6, 10);
+                    var date = year + '-' + month + '-' + day;
+                    citizens = await Citizen.find({ 
+                        addressID : { $regex: '^' + req.params.code },
+                        sex: { $regex: '^' + req.query.sex.trim()},
+                        name: { $regex: '^' + req.query.name.trim()},
+                        perResidence: { $regex: '^' + req.query.perResidence.trim()},
+                        dob: new Date(date)
+                    });
                 }
-                if (req.query.name.trim() != "")  citizens = filterName(citizens, req.query.name);
-                console.log(req.query.dob);
-                console.log(new Date("2001-06-23"));
-                if (req.query.dob.trim() != "")   citizens = filterDoB(citizens, req.query.dob);
-                if (req.query.perResidence.trim() != "") citizens = filterName(citizens, req.query.perResidence);
-
+                for (var i = 0; i < citizens.length; i++) {
+                    citizens[i].date = dateFormat(citizens[i].dob);
+                }
                 res.render('citizens/listPerson', {
                     citizens: multipleMongooseToObject(citizens),
                     deletedCount

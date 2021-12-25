@@ -137,10 +137,11 @@ function addCitizen() {
             .then((res) => res.json())
             .then((data) => {
                 alert(data.message);
-                document.location.pathname = "/citizens/";
+                if (data.message != "CCCD này đã có trong hệ thống, mời kiểm tra lại")
+                    document.location.pathname = "/citizens/";
             })
             .catch((error) => {
-                console.log('Error: ', error);
+                alert(data.message);
             })
             ;
     }
