@@ -58,6 +58,7 @@
     var path = '/declare/progress?code=' + code;
     let myObject = await fetch(path);
     let data = await myObject.json();
+    localStorage.setItem('progress', data.unit.progress);
     var rate = 0;
     if (data.declared + data.declaring != 0)
       rate = Math.round((data.declared * 100 / (data.declared + data.declaring)) * 10000 / 10000);
@@ -70,7 +71,7 @@
         + rate + '%">' + rate + '%</div></div>');
     }
     $('.info-body').append('<p>Trạng thái: ' + data.unit.progress + '</p>');
-    if (code.length != 6 || data.unit.progress == "Đã khai báo") document.getElementById('complete').style.display = "none";
+    if (code.length < 6 || data.unit.progress == "Đã khai báo") document.getElementById('complete').style.display = "none";
     else document.getElementById('complete').style.display = "block";
   }
 </script>

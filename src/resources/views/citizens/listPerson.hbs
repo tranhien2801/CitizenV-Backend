@@ -32,6 +32,7 @@
         </select>
         <label for="village">Thôn/Bản/Tổ</label>
       </div>
+      <button id="btn-filter" class="btn btn-outline-primary"><i class="fas fa-filter"></i></button>
     </div> 
     <table class="table table-striped table-hover">
       <thead>
@@ -147,6 +148,7 @@
 
 {{!-- Delete hidden form --}}
 <form name="delete-citizen-form" method="POST"></form>
+<form name="filter-form" method="GET"></form>
 
 <style>
   #selectArea {
@@ -160,92 +162,93 @@
 </style>
 
 <script>
-   
+  var addressIDFilter = localStorage.getItem('code');
+  
+  function addOption(position, data, idParent) {
+    $(position).children().remove();
+    $(position).append('<option value="' + idParent + '" selected>Tất cả</option>');
+    for(let i = 0; i < data.length; i++) {
+      $(position).append('<option value="' + data[i].code + '">' + data[i].nameUnit + '</option>');
+    }
+  }
+  
   getDataToSelectArea();
   async function getDataToSelectArea() {
-    console.log('lala');
     var code = localStorage.getItem('code');
     var resultFetch = await fetch('/declare/progress?code=' + code);
     var data = await resultFetch.json();
-    console.log(data);
     switch(code.length) {
       case 6: {
         document.getElementById("villageDiv").style.display = "block";
-        $('#village').append('<option selected>Tất cả</option>');
-        //thêm các thôn vào #village
-        $("#village").append('<option>khac</option>');
+        addOption('#village', data.units, data.unit.code);
       } break;
       case 4: {
         document.getElementById("townDiv").style.display = "block";
-        $('#town').append('<option selected>Tất cả</option>');
-        //thêm các xã vào #town
-        $("#town").append('<option>khac</option>');
+        addOption('#town', data.units, data.unit.code);
       } break;
       case 2: {
         document.getElementById("districtDiv").style.display = "block";
-        $('#district').append('<option selected>Tất cả</option>');
-        //thêm các huyện vào #district
-        $("#district").append('<option>khac</option>');
+        addOption('#district', data.units, data.unit.code);
       } break;
       default: {
         document.getElementById("provinceDiv").style.display = "block";
-        $('#province').append('<option selected>Tất cả</option>');
-        //thêm các tỉnh vào #province
-        $("#province").append('<option>khac</option>');
+        addOption('#province', data.units, data.unit.code);
       }
     }
-    $('#province').on('change', function (e) {
-      if(this.value !== 'Tất cả') {
-        document.getElementById("districtDiv").style.display = "block";       
-        $("#district").append('<option selected>Tất cả</option>');
-        //thêm các huyện của tỉnh this.value
-        $("#district").append('<option>khac</option>');
-
+    $('#province').on('change', async function (e) {
+      addressIDFilter = this.value;
+      document.getElementById("townDiv").style.display = "none";
+      document.getElementById("villageDiv").style.display = "none";
+      if(this.value.length == 2) {
+        var resultFetch = await fetch('/declare/progress?code=' + this.value);
+        var data = await resultFetch.json();
+        addOption('#district', data.units, data.unit.code);
+        document.getElementById("districtDiv").style.display = "block";  
       }
       else {
         document.getElementById("districtDiv").style.display = "none";
-        document.getElementById("townDiv").style.display = "none";
-        document.getElementById("villageDiv").style.display = "none";
-        $("#district").children().remove();
-        $("#town").children().remove();
-        $("#village").children().remove();
       }
     });
 
-    $('#district').on('change', function (e) {
-      if(this.value !== 'Tất cả') {
-        document.getElementById("townDiv").style.display = "block";       
-        $("#town").append('<option selected>Tất cả</option>');
-        //thêm các huyện của tỉnh this.value
-        $("#town").append('<option>khac</option>');
+    $('#district').on('change', async function (e) {
+      addressIDFilter = this.value;
+      document.getElementById("villageDiv").style.display = "none";
+      if(this.value.length == 4) {      
+        var resultFetch = await fetch('/declare/progress?code=' + this.value);
+        var data = await resultFetch.json();
+        addOption('#town', data.units, data.unit.code);
+        document.getElementById("townDiv").style.display = "block";
       }
       else {
         document.getElementById("townDiv").style.display = "none";
-        document.getElementById("villageDiv").style.display = "none";
-        $("#town").children().remove();
-        $("#village").children().remove();
       }
     });
 
-    $('#town').on('change', function (e) {
-      if(this.value !== 'Tất cả') {
+    $('#town').on('change', async function (e) {
+      addressIDFilter = this.value;
+      if(this.value.length == 6) {
         document.getElementById("villageDiv").style.display = "block";       
-        $("#village").append('<option selected>Tất cả</option>');
-        //thêm các huyện của tỉnh this.value
-        $("#village").append('<option>khac</option>');
+        var resultFetch = await fetch('/declare/progress?code=' + this.value);
+        var data = await resultFetch.json();
+        addOption('#village', data.units, data.unit.code);
       }
       else {
         document.getElementById("villageDiv").style.display = "none";
-        $("#village").children().remove();
       }
     });
-  }
+    
+    $('#village').on('change', async function (e) {
+      addressIDFilter = this.value;
+    });
+  }  
 
   document.addEventListener('DOMContentLoaded', function () {
     var _id;
     var deleteForm = document.forms['delete-citizen-form'];
     var btnDeleteCitizen = document.getElementById('btn-delete-citizen');
+    var filterForm = document.forms['filter-form'];
     var searchForm = document.forms['search-form'];
+    var btnFilter = document.getElementById('btn-filter');
     var btnSearch = document.getElementById('btn-search');
     var code = localStorage.getItem('code');
 
@@ -253,6 +256,12 @@
       $("#trash").hide();
       $(".deleteCitizen").hide();
       $(".fixCitizen").hide();
+    }
+
+    btnFilter.onclick = function() {
+      alert(addressIDFilter);
+      filterForm.action = "/citizens/unit/" + addressIDFilter;
+      filterForm.submit();
     }
 
     btnSearch.onclick = function () {

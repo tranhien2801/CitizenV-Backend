@@ -68,6 +68,8 @@
         var addPersonDiv = document.getElementById('add-person-div');
         if (code.length >= 6) addPersonDiv.style.display = "block";
         else addPersonDiv.style.display="none";
+        var progress = localStorage.getItem('progress');
+        if (code.length >= 6 && progress != "Đã khai báo") addPersonDiv.style.display = "block"; - 70
         var surveyCardDiv = document.getElementById('survey-card-div');
         if (code.length == 6) surveyCardDiv.style.display = "block";
         else surveyCardDiv.style.display="none";

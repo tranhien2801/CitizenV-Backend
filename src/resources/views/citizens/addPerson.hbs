@@ -99,10 +99,21 @@
     getData();
     async function getData() {
       var code = localStorage.getItem('code');
-      var path = '/units/perResidence/' + code;
-      let myObject = await fetch(path);
-      let data = await myObject.json();
-      $("#perResidence").append('<option>' + data.perResidence + '</option>')
+      var constPath = '/units/perResidence/' + code;
+      let constObject = await fetch(constPath);
+      let constData = await constObject.json();
+      if (code.length == 8) {
+          $("#perResidence").append('<option value="' + code + '">' + constData.perResidence + '</option>');
+      }
+      else {
+        var optionPath = '/declare/progress?code=' + code;;
+        let optionObject = await fetch(optionPath);
+        let optionData = await optionObject.json();
+        for (let i = 0; i < optionData.units.length; i++) {
+            $("#perResidence").append('<option value="' + optionData.units[i].code + '">' + optionData.units[i].nameUnit + ', ' 
+                + constData.perResidence + '</option>');
+        }
+      }
     }
 
 
