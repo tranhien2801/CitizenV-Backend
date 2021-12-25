@@ -5,36 +5,40 @@
     <div class="col-md-3">
         <div class="row">
             <div class="toast show m-4">
-               {{!-- <div class="toast-header list-unit-header">Thống kê</div> --}}
+                {{!-- <div class="toast-header list-unit-header">Thống kê</div> --}}
                 <div class="toast-body list-unit-body" style="height: 230px">
                     <select multiple class="form-select" id="nameUnit" name="nameUnitList" style="height: 200px">
 
                     </select>
                 </div>
+
                 <div class="toast-footer list-group list-group-horizontal toast-footer-sm">
                     <select id="chart" class="form-select list-group-item form-select-sm">
-                        <option value="population">Dân số</option>
-                        <option value="ageTower">Tháp tuổi</option>
-                        <option value="career">Tỉ lệ nghề nghiệp</option>
+                        <option value="ageTower" id="optionAgeTower">Tháp tuổi</option>
+                        <option value="population" id="optionPopulation">Dân số</option>
+                        <option value="career" id="optionCareer">Tỉ lệ nghề nghiệp</option>
                         {{!-- <option value="4">Trình độ văn hóa</option> --}}
-                        <option value="gender">Giới tính</option>
-                        <option value="birthRate">Tỉ suất sinh</option>
+                        <option value="gender" id="optionGender">Giới tính</option>
+                        <option value="birthRate" id="optionBirthRate">Tỉ suất sinh</option>
                     </select>
                     <button type="button" class="btn btn-outline-success list-group-item btn-sm border-success"
                         data-bs-placement="top" title="Thống kê" onclick="statistic()"><i
                             class="far fa-chart-bar"></i></button>
                 </div>
-
             </div>
-            {{> myUnit}}
         </div>
-
     </div>
 
 </div>
 
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
+    var code = localStorage.getItem('code');
+    if (code.length == 6) {
+        $('#optionPopulation').hide();
+        $('#optionGender').hide();
+    }
     var token = localStorage.getItem("token");
     var selected = [];
 
@@ -69,7 +73,6 @@
         var path = '/declare/progress?code=' + code;
         let myObject = await fetch(path);
         let data = await myObject.json();
-       // $('.list-unit-header').append(data.unit.nameUnit);
         for (var i = 0; i < data.units.length; i++) {
             $('#nameUnit').append('<option value="' + data.units[i].code + '">' + data.units[i].nameUnit + '</option>');
         }
