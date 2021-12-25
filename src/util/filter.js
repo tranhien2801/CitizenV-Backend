@@ -6,7 +6,11 @@ module.exports = {
         return arr.filter(el =>  el.name.toLowerCase().indexOf(name.toLowerCase()) !== -1)
     },
     filterDoB: (arr, dob) => {
-        return arr.filter(el =>  el.dob == new Date(dob))
+        return arr.filter(el => {
+            console.log(el.dob);
+            console.log(new Date(dob));
+             el.dob == new Date(dob)
+        })
     },
 
 

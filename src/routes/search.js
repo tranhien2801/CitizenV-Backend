@@ -6,7 +6,7 @@ const searchController = require('../app/controllers/SearchController');
 
 
 router.get('/unit/:code', Auth.auth, searchController.find);
-router.get('/:CCCD', Auth.auth, searchController.showByCCCD);
+router.get('/:_id', Auth.auth, searchController.showByCCCD);
 
 
 module.exports = router;

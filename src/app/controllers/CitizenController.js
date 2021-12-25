@@ -90,9 +90,9 @@ class CitizenController {
             .catch(next => res.status(400).json({message: "Đơn vị này không tồn tại trong hệ thống"}))
     }
 
-    // [GET] /citizens/:CCCD/edit
+    // [GET] /citizens/:_id/edit
     editPerson(req, res, next) {
-        Citizen.findOne({ CCCD: req.params.CCCD}, 
+        Citizen.findOne({ _id: req.params._id}, 
                         {CCCD: 1, name: 1, dob: 1, sex: 1, phone: 1, perResidence: 1, curResidence: 1,
                         ethnic: 1, religion: 1, eduLevel: 1, job: 1})
             .then((citizen) => {   
@@ -135,12 +135,10 @@ class CitizenController {
         Các API PUT của công dân
     ----------------------------------------------------------------------------------------------------------------------*/
 
-    // [PUT] /citizens/CCCD
+    // [PUT] /citizens/:_id
     update(req, res, next) {
-        var token = req.session.token; 
-        const data = jwt.verify(token, JWT_KEY);
-        Citizen.updateOne({ CCCD: req.params.CCCD}, req.body)
-            .then(() => res.redirect('/citizens/' + data.code))
+        Citizen.updateOne({ _id: req.params._id}, req.body)
+            .then(() => res.redirect('/citizens/'))
             .catch(next);
     }
 
@@ -148,9 +146,9 @@ class CitizenController {
         Các API DELETE của công dân
     ----------------------------------------------------------------------------------------------------------------------*/
 
-    // [DELETE] /citizens/:CCCD
+    // [DELETE] /citizens/:_id
     destroy(req, res, next) {
-        Citizen.delete({ CCCD: req.params.CCCD })
+        Citizen.delete({ _id: req.params._id })
             .then(() => 
            // res.json({ message: "Delete Citizen Successfull"})
             res.redirect('back')
@@ -158,9 +156,9 @@ class CitizenController {
             .catch(next);
     }
 
-    // [DELETE] /citizens/:CCCD/force
+    // [DELETE] /citizens/:_id/force
     forceDestroy(req, res, next) {
-        Citizen.deleteOne({ CCCD: req.params.CCCD })
+        Citizen.deleteOne({ _id: req.params._id })
             .then(() => res.redirect('back'))
             .catch(next);
     }
@@ -169,9 +167,9 @@ class CitizenController {
         Các API PATCH của công dân
     ----------------------------------------------------------------------------------------------------------------------*/
 
-    // [PATCH] /citizens/:CCCD/restore
+    // [PATCH] /citizens/:_id/restore
     restore(req, res, next) {
-        Citizen.restore({ CCCD: req.params.CCCD })
+        Citizen.restore({ _id: req.params._id })
             .then(() => res.redirect('back'))
             .catch(next);
     }

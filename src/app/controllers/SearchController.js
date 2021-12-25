@@ -51,27 +51,11 @@ class SearchController {
         }
     }
 
-    // find(req, res) {
-    //     Citizen.find({CCCD: req.query.CCCD.trim()})
-    //         .then(citizen => {
-    //             if (citizen != '')
-    //             return res.json(multipleMongooseToObject(citizen));
-    //             Citizen.find({})
-    //                 .then(citizens => {
-    //                     const filterCitizen = filterItems(citizens, req.query.perResidence, req.query.name);
-    //                     res.json(multipleMongooseToObject(filterCitizen));
-    //                 })
-    //         })
-    //         .catch(() => {
-                
-    //         })
-    // }
 
-     // [GET] /search/:CCCD
+     // [GET] /search/:_id
      showByCCCD(req, res, next) {
-        Citizen.findOne({ CCCD: req.params.CCCD})
+        Citizen.findOne({ _id: req.params._id})
             .then((citizen) =>   {             
-               // citizen.date = dateFormat(citizen.dob);   
                 res.json(citizen);     
             })
             .catch(next=> res.status(404).json( {message: "Không tìm thấy công dân phù hợp"}));

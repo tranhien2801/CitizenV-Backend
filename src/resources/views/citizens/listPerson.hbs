@@ -75,13 +75,13 @@
           <td>{{this.perResidence}}</td>
           <td>
             <div class="list-group list-group-horizontal">
-              <a href="citizens/{{this.CCCD}}" data-id="{{this.CCCD}}"
+              <a href="citizens/{{this._id}}" data-id="{{this._id}}"
                 data-bs-toggle="modal" data-bs-target="#myModal" data-bs-toggle="tooltip" data-bs-placement="top"
                 title="Xem chi tiết"><i class="far fa-eye text-primary" style="padding: 5px;"></i></a>
-              <a href=""  data-toggle="modal" data-id="{{this.CCCD}}"
+              <a href=""  data-toggle="modal" data-id="{{this._id}}"
                 data-target="#delete-citizen-modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa"><i
                   class="fas fa-trash text-danger" style="padding: 5px;"></i></a>
-              <a href="/citizens/{{this.CCCD}}/edit"  data-bs-toggle="tooltip"
+              <a href="/citizens/{{this._id}}/edit"  data-bs-toggle="tooltip"
                 data-bs-placement="top" title="Sửa"><i class="far fa-edit text-success" style="padding: 5px;"></i></a>
             </div>
           </td>
@@ -237,7 +237,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    var CCCD;
+    var _id;
     var deleteForm = document.forms['delete-citizen-form'];
     var btnDeleteCitizen = document.getElementById('btn-delete-citizen');
     var searchForm = document.forms['search-form'];
@@ -253,24 +253,26 @@
       $('.modal-title').children().remove();
       $('.modal-body').children().remove();
       var button = $(event.relatedTarget);
-      CCCD = button.data('id');
+      _id = button.data('id');
     });
 
     //when delete citizen btn clicked
     btnDeleteCitizen.onclick = function () {
-      deleteForm.action = '/citizens/' + CCCD + '?_method=DELETE';
+      deleteForm.action = '/citizens/' + _id + '?_method=DELETE';
       deleteForm.submit();
     };
 
 
     $('#myModal').on('show.bs.modal', async function (event) {
       var button = $(event.relatedTarget);
-      CCCD = button.data('id');
-      let myObject = await fetch('/search/' + CCCD);
+      _id = button.data('id');
+      let myObject = await fetch('/search/' +  _id);
       let myText = await myObject.json();
     
+
       $('.modal-title').children().remove();
       $('.modal-body').children().remove();
+      if (myText.CCCD != null) myText.CCCD = "Chưa có CCCD";
       $('.modal-title').append('<p class="h4">Thông tin người dân chi tiết</p>');
       $('.modal-body').append('<p class="h6">CCCD: ' + myText.CCCD + '</p>');
       $('.modal-body').append('<p>Họ tên: ' + myText.name + '</p>');

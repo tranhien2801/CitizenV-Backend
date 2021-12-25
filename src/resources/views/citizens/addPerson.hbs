@@ -137,7 +137,7 @@ function addCitizen() {
             .then((res) => res.json())
             .then((data) => {
                 alert(data.message);
-                document.location.pathname = "/citizens/" + code;
+                document.location.pathname = "/citizens/";
             })
             .catch((error) => {
                 console.log('Error: ', error);

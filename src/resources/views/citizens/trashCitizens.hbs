@@ -53,8 +53,8 @@
                 <td>{{this.dateDeleted}}</td>
                 <td>
                   <div class="list-group list-group-horizontal">
-                    <a href="" class="btn btn-link btn-restore" data-id="{{this.CCCD}}" data-bs-toggle="tooltip" data-bs-placement="top" title="Khôi phục"><i class="fas fa-trash-restore text-success"></i></a>
-                    <a href="" class="btn btn-link" data-toggle="modal" data-id="{{this.CCCD}}" data-target="#delete-citizen-modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa vĩnh viễn"><i class="fas fa-user-slash text-danger"></i></a>
+                    <a href="" class="btn btn-link btn-restore" data-id="{{this._id}}" data-bs-toggle="tooltip" data-bs-placement="top" title="Khôi phục"><i class="fas fa-trash-restore text-success"></i></a>
+                    <a href="" class="btn btn-link" data-toggle="modal" data-id="{{this._id}}" data-target="#delete-citizen-modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa vĩnh viễn"><i class="fas fa-user-slash text-danger"></i></a>
                   </div>
                 </td>
             </tr>
@@ -99,7 +99,7 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-      var CCCD;
+      var _id;
       var deleteForm = document.forms['delete-citizen-form'];
       var restoreForm = document.forms['delete-citizen-form'];
       var btnDeletecitizen = document.getElementById('btn-delete-citizen');
@@ -108,13 +108,13 @@
       // when dialog confirm clicked
       $('#delete-citizen-modal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget)
-      CCCD = button.data('id') 
+      _id = button.data('id') 
       
   });
   
   //when delete citizen btn clicked
   btnDeletecitizen.onclick = function () {
-      deleteForm.action = '/citizens/' + CCCD + '/force?_method=DELETE';
+      deleteForm.action = '/citizens/' + _id + '/force?_method=DELETE';
       deleteForm.submit();
   }
 
