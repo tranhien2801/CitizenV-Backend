@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-md-9 shadow">
-    <div class="end">
+    <div class="end" id="trash">
       <h5>Người dân đã xóa</h5>
       <a href="/citizens/trash/" class="btn btn-outline-info">
         Thùng rác <span class="badge bg-info">{{deletedCount}}</span>
@@ -78,10 +78,10 @@
               <a href="citizens/{{this._id}}" data-id="{{this._id}}"
                 data-bs-toggle="modal" data-bs-target="#myModal" data-bs-toggle="tooltip" data-bs-placement="top"
                 title="Xem chi tiết"><i class="far fa-eye text-primary" style="padding: 5px;"></i></a>
-              <a href=""  data-toggle="modal" data-id="{{this._id}}"
+              <a href="" class="deleteCitizen" data-toggle="modal" data-id="{{this._id}}"
                 data-target="#delete-citizen-modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Xóa"><i
                   class="fas fa-trash text-danger" style="padding: 5px;"></i></a>
-              <a href="/citizens/{{this._id}}/edit"  data-bs-toggle="tooltip"
+              <a href="/citizens/{{this._id}}/edit" class="fixCitizen" data-bs-toggle="tooltip"
                 data-bs-placement="top" title="Sửa"><i class="far fa-edit text-success" style="padding: 5px;"></i></a>
             </div>
           </td>
@@ -92,7 +92,9 @@
       </tbody>
     </table>
   </div>
-  {{> myUnit}}
+  <div class="col-md-3">
+    {{> myUnit}}
+  </div>
 </div>
 
 
@@ -145,7 +147,6 @@
 
 {{!-- Delete hidden form --}}
 <form name="delete-citizen-form" method="POST"></form>
-<form name="allocate-unit-form" method="GET"></form>
 
 <style>
   #selectArea {
@@ -161,8 +162,12 @@
 <script>
    
   getDataToSelectArea();
-  function getDataToSelectArea() {
+  async function getDataToSelectArea() {
+    console.log('lala');
     var code = localStorage.getItem('code');
+    var resultFetch = await fetch('/declare/progress?code=' + code);
+    var data = await resultFetch.json();
+    console.log(data);
     switch(code.length) {
       case 6: {
         document.getElementById("villageDiv").style.display = "block";
@@ -243,6 +248,12 @@
     var searchForm = document.forms['search-form'];
     var btnSearch = document.getElementById('btn-search');
     var code = localStorage.getItem('code');
+
+    if (code.length < 6) {
+      $("#trash").hide();
+      $(".deleteCitizen").hide();
+      $(".fixCitizen").hide();
+    }
 
     btnSearch.onclick = function () {
         searchForm.action = '/search/unit/' + code;

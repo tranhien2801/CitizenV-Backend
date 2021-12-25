@@ -3,12 +3,8 @@
 <div class="row">
     <div id="myChart" class='col-md-9 shadow mt-4 mb-4'></div>
     <div class="col-md-3">
-      {{!-- <div class="toast show m-4">
-        <div class="toast-header info-header"></div>
-        <div class="toast-body info-body"></div>
-        <div class="toast-footer list-group list-group-horizontal toast-footer-sm">
-        </div>
-      </div> --}}
+      <div class="row">
+      {{> myUnit}}
       <div class="toast show m-4">
         <div class="toast-header list-unit-header"></div>
         <div class="toast-body list-unit-body">
@@ -27,6 +23,7 @@
             </select>
             <button type="button" class="btn btn-outline-success list-group-item btn-sm border-success" data-bs-placement="top" title="Thống kê" onclick="statistic()"><i class="far fa-chart-bar"></i></button>
         </div>
+      </div>
       </div>
     </div>
 </div>
@@ -67,18 +64,6 @@
     var path = '/declare/progress?code=' + code;
     let myObject = await fetch(path);
     let data = await myObject.json();
-    var rate = 0;
-    if (data.declared + data.declaring != 0)
-       rate = data.declared * 100/ (data.declared + data.declaring); 
-    $('.info-header').append("<p>Mã địa phương " + data.unit.code + '</p>');
-    $('.info-body').append('<p class="h5" style="color: #400485">' + data.unit.nameUnit + '</p>');
-    $('.info-body').append('<p>Hạn cuối: ' + data.date + '</p>')
-    $('.info-body').append('<p>Tiến độ: ' + rate + '%</p>');
-    if (code.length < 6) {
-      $('.info-body').append('<div class="progress"><div class="progress-bar" style="width:' 
-                          + rate + '%">' + rate +'%</div></div>');
-    }
-    $('.info-body').append('<p>Trạng thái: ' + data.unit.progress + '</p>');
     for(var i = 0; i < data.units.length; i++) {
         $('#nameUnit').append('<option value="' + data.units[i].code + '">' + data.units[i].nameUnit + '</option>');
         
