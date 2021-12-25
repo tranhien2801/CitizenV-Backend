@@ -16,11 +16,13 @@
 
       </tbody>
      </table>
-     
-          <button type="button" id="allocate" class="btn border-primary text-primary" >Cấp tài khoản <i class="far fa-edit"></i></button>
-      
+        <button type="button" id="allocate" class="btn border-primary text-primary" >Cấp tài khoản <i class="far fa-edit"></i></button>
+        <button type="button" class="btn border-primary text-primary" data-bs-toggle="modal" data-id="all" 
+          data-bs-target="#start-all-unit-modal">Bắt đầu khai báo</button>
     </div>
+    <div class="col-md-3">
       {{> myUnit}}
+  </div>
 </div>
 
 <div id="close-declaration-modal" class="modal fade" tabindex="-1" role="dialog">
@@ -33,7 +35,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <p id="nameUnit" class="h5">Tên đơn vị: </p>
+        <p class="h5">Tên đơn vị: <span id="nameUnit"></span></p>
         <label for="timeStart">Thời gian bắt đầu</label>
         <input type="date" class="form-control mb-4" id="timeStart" name="timeStart" required="true">
         <label for="timeEnd">Thời gian kết thúc</label>
@@ -56,6 +58,29 @@
   </div>
 </div>
 
+<div id="start-all-unit-modal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Bắt đầu khai báo cho tất cả các đơn vị con</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <label for="timeStartAll">Thời gian bắt đầu</label>
+        <input type="date" class="form-control mb-4" id="timeStartAll" name="timeStartAll" required="true">
+        <label for="timeEndAll">Thời gian kết thúc</label>
+        <input type="date" class="form-control mb-4" id="timeEndAll" name="timeEndAll" required="true">
+      </div>
+      <div class="modal-footer">
+        <button id="btn-close-start-all-unit" type="button" class="btn btn-danger"  data-bs-dismiss="modal">Bắt đầu</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <form name="allocate-unit-form" method="GET"></form>
 <form name="close-declaration-form" method="POST"></form>
 
@@ -67,27 +92,12 @@
   var closeDeclaration = document.forms['close-declaration-form'];
   var btnAllocateUnit = document.getElementById('allocate');
   var btnCloseDeclaration = document.getElementById('btn-close-declaration');
-  
+  var btnCloseStartAllUnit = document.getElementById('btn-close-start-all-unit');
 
   btnAllocateUnit.onclick = function () {
     allocateForm.action = '/allocate/' + code;
     allocateForm.submit();
   }
-
-  // when dialog confirm clicked
-    $('#close-declaration-modal').on('show.bs.modal', async function (event) {
-     // $('.modal-title').children().remove();
-     // $('.modal-body').children().remove();
-      var button = $(event.relatedTarget);
-      codeChild = button.data('id');
-
-      let myObject = await fetch('/units/' + codeChild);
-      let myText = await myObject.json();
-     // $('#nameUnit').
-      $('#timeStart input').val(myText.unit.timeStart.slice(0,10));
-      $('#timeEnd input').val(myText.unit.timeEnd.slice(0,10));
-    });
-
 
   btnCloseDeclaration.onclick = function() {
     var timeStart = $('#close-declaration-modal #timeStart').val().trim();
@@ -111,28 +121,25 @@
             });
   }
 
+  btnCloseStartAllUnit .onclick = function() {
+    var timeStartAll = $("#start-all-unit-modal #timeStartAll").val().trim();
+    var timeEndAll = $("start-all-unit-modal #timeEndAll").val().trim();
+    //submit đi đâu đấy
+  }
+
   getData();
+
+  function reserverDate(date) {
+    return date.slice(6,10) + '-' + date.slice(3, 5) + '-' + date.slice(0, 2);
+  }
   
   async function getData() {
     var code = localStorage.getItem('code');
     var path = '/declare/progress?code=' + code;
     let myObject = await fetch(path);
     let data = await myObject.json();
-    var rate = 0;
-    if (data.declared + data.declaring != 0)
-       rate = Math.round((data.declared * 100/ (data.declared + data.declaring))*10000 / 10000); 
-    
-    $('.toast-header').children().remove();
-    $('.toast-body').children().remove();
-    $('.toast-header').append("<p>Mã địa phương " + data.unit.code + '</p>');
-    $('.toast-body').append('<p class="h5" style="color: #400485">' + data.unit.nameUnit + '</p>');
-    if (data.unit.code.length != 3) $('.toast-body').append('<p>Hạn cuối: ' + data.date + '</p>')
-    $('.toast-body').append('<p>Tiến độ: ' + rate + '%</p>');
-    if (code.length < 6) {
-      $('.toast-body').append('<div class="progress"><div class="progress-bar" style="width:' 
-                          + rate + '%">' + rate +'%</div></div>');
-    }
-    $('.toast-body').append('<p>Trạng thái: ' + data.unit.progress + '</p>');
+    $('#timeStartAll').val(reserverDate(data.dateStart));
+    $('#timeEndAll').val(reserverDate(data.date));
     $('tbody').children().remove();  
     for (let i = 0; i < data.units.length; i++) {
       if (data.units[i].timeEnd == null) data.units[i].timeEnd = "null";
@@ -154,7 +161,7 @@
 
   }
 
-// when dialog confirm clicked
+  // when dialog confirm clicked
     $('#close-declaration-modal').on('shown.bs.modal', async function (event) {
       console.log("Modal successful!")
       var button = $(event.relatedTarget);
@@ -162,13 +169,12 @@
 
       let myObject = await fetch('/units/' + codeChild);
       let myText = await myObject.json();
-      $('#nameUnit').val(myText.unit.nameUnit)
+      console.log(myText)
+      $('#nameUnit').text(myText.unit.nameUnit);
       $('#timeStart').val(myText.unit.timeStart.slice(0,10));
       $('#timeEnd').val(myText.unit.timeEnd.slice(0,10));
     });
-
     
-
   });
 </script>
 

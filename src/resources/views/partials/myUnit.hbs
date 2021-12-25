@@ -1,43 +1,76 @@
-  <div class="col-md-3">
-    <div class="toast show m-4">
-      <div class="toast-header">
+<div class="toast show m-4">
+  <div class="toast-header info-header"></div>
+  <div class="toast-body info-body"></div>
+  <div class="toast-footer list-group list-group-horizontal toast-footer-sm">
+    <button type="button" id="complete" class="btn btn-danger" data-bs-toggle="modal" data-id="all" 
+          data-bs-target="#complete-modal" >Hoàn thành nhập liệu</button>
+  </div>
+</div>
+
+<div id="complete-modal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xác nhận hoàn thành nhập liệu</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-      <div class="toast-body">
+      <div class="modal-body">
+        <p>Bạn có chắc chắn đã hoàn thành nhập liệu?</p>
+        <p>Sau khi xác nhận bạn sẽ không thể thay đổi nội dung.</p>
       </div>
-      <div class="toast-footer list-group list-group-horizontal">
-          <!--<a href="/statistic" class="list-group-item border-success text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Thống kê"><i class="far fa-chart-bar"></i></a>
-          <button type="button" id="allocate" class="list-group-item border-primary text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Chỉnh sửa"><i class="far fa-edit"></i></button>-->
-          <button type="button" class="btn btn-danger" id="complete">Hoàn thành nhập liệu</button>
+      <div class="modal-footer">
+        <button id="btn-close-complete" type="button" class="btn btn-danger"  data-bs-dismiss="modal">Xác nhận</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
       </div>
     </div>
   </div>
 </div>
+
+
 <script>
+  var code = localStorage.getItem('code');
+  
+  $('#btn-close-complete').click(function() {
+    var url_post = "/declare/" + code;
+    fetch(url_post, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', },
+        body: JSON.stringify({}),
+    })
+        .then((res) => res.json())
+        .then((data) => {
+          getData();
+            alert(data.message);
+        })
+        .catch((error) => {
+            //alert(error);
+        });
+    document.getElementById('complete').style.display = "none";
+  })
+  
+  
+  getDataMyUnit();
+  
+  async function getDataMyUnit() {
     var code = localStorage.getItem('code');
-    getDataMyUnit();
-    if(code.length != 6) document.getElementById('complete').style.display="none";
-    else {
-      document.getElementById('complete').style.display="block";
-      $("#complete").click(function() {
-        alert("Kết thúc quá trình nhập liệu");//Báo cáo hoàn thành
-      })
+    var path = '/declare/progress?code=' + code;
+    let myObject = await fetch(path);
+    let data = await myObject.json();
+    var rate = 0;
+    if (data.declared + data.declaring != 0)
+      rate = Math.round((data.declared * 100 / (data.declared + data.declaring)) * 10000 / 10000);
+    $('.info-header').append("<p>Mã địa phương " + data.unit.code + '</p>');
+    $('.info-body').append('<p class="h5" style="color: #400485">' + data.unit.nameUnit + '</p>');
+    $('.info-body').append('<p>Hạn cuối: ' + data.date + '</p>')
+    $('.info-body').append('<p>Tiến độ: ' + rate + '%</p>');
+    if (code.length < 6) {
+      $('.info-body').append('<div class="progress"><div class="progress-bar" style="width:'
+        + rate + '%">' + rate + '%</div></div>');
     }
-    async function getDataMyUnit() {
-        var code = localStorage.getItem('code');
-        var path = '/declare/progress?code=' + code;
-        let myObject = await fetch(path);
-        let data = await myObject.json();
-        var rate = 0;
-        if (data.declared + data.declaring != 0)
-          rate = Math.round((data.declared * 100/ (data.declared + data.declaring))*10000 / 10000); 
-        $('.toast-header').append("<p>Mã địa phương " + data.unit.code + '</p>');
-        $('.toast-body').append('<p class="h5" style="color: #400485">' + data.unit.nameUnit + '</p>');
-        $('.toast-body').append('<p>Hạn cuối: ' + data.date + '</p>')
-        $('.toast-body').append('<p>Tiến độ: ' + rate + '%</p>');
-        if (code.length < 6) {
-        $('.toast-body').append('<div class="progress"><div class="progress-bar" style="width:' 
-                            + rate + '%">' + rate +'%</div></div>');
-        }
-        $('.toast-body').append('<p>Trạng thái: ' + data.unit.progress + '</p>');
-    }
+    $('.info-body').append('<p>Trạng thái: ' + data.unit.progress + '</p>');
+    if (code.length != 6 || data.unit.progress == "Đã khai báo") document.getElementById('complete').style.display = "none";
+    else document.getElementById('complete').style.display = "block";
+  }
 </script>
