@@ -83,14 +83,26 @@ class CitizenController {
 
     // [GET] /citizens/unit/:code
     findByUnit(req, res, next) {
-        Citizen.find({addressID: { $regex: '^' + req.params.code}})
-            .then((citizens) => {
+        if (req.params.code == "A01") req.params.code = "";
+        var citizenQuery = Citizen.find({addressID: { $regex: '^' + req.params.code}});
+        if (req.query.hasOwnProperty('_sort')) {
+            citizenQuery = citizenQuery.sort({
+                [req.query.column]: req.query.type,
+            });
+        }
+
+        Promise.all([citizenQuery, Citizen.countDocumentsDeleted({addressID: { $regex: '^' + req.params.code}})])
+            .then(([citizens, deletedCount]) => {
+                for ( var i = 0; i < citizens.length; i++) {              
+                    citizens[i].date = dateFormat(citizens[i].dob);
+                }   
                 res.render('citizens/listPerson', {
-                    citizen: multipleMongooseToObject(citizens),
-                });
-                //res.json(citizens)
+                    citizens: multipleMongooseToObject(citizens),
+                    deletedCount
+                })   
+                // res.json({citizens, deletedCount})        
             })
-            .catch(next => res.status(400).json({message: "Đơn vị này không tồn tại trong hệ thống"}))
+            .catch(next);
     }
 
     // [GET] /citizens/:_id/edit

@@ -1,57 +1,59 @@
 <form class='mt-4 mb-4' method="POST" action="/citizens/{{citizen._id}}?_method=PUT"> 
     <fieldset>
         <legend>Thông tin chi tiết</legend>
-        <div class="form-group mt-4">
-            <label for="CCCD">Số CCCD/CMND</label>
+        <div id="flex-container">
+        <div class="form-floating m-4">
             <input type="text" class="form-control" value="{{citizen.CCCD}}" id="CCCD" name="CCCD" >
+            <label for="CCCD">Số CCCD/CMND</label>
         </div>
-        <div class="form-group mt-4">
-            <label for="name">Họ tên</label>
+        <div class="form-floating m-4">
             <input type="text" class="form-control" value="{{citizen.name}}" id="name" name="name">
+            <label for="name">Họ tên</label>
         </div>
-        <div class="form-group mt-4">
-            <label for="dob">Ngày sinh</label>
+        <div class="form-floating m-4">
             <input type="date" class="form-control" value="{{date}}" id="dob" name="dob">
+            <label for="dob">Ngày sinh</label>
         </div>
-        <div class="form-group mt-4">
-            <label for="sex">Giới tính</label>
+        <div class="form-floating m-4">
             <select class="form-control" id='sex' name="sex">
                 <option>{{citizen.sex}}</option>
                 if ({{citizen.sex}} <option>Nam</option>
                 <option>Nữ</option>
             </select>
+            <label for="sex">Giới tính</label>
         </div>
-        <div class="form-group mt-4">
-            <label for="phone">Số điện thoại</label>
+        <div class="form-floating m-4">
             <input type="text" class="form-control" value="{{citizen.phone}}" id="phone" name="phone" >
+            <label for="phone">Số điện thoại</label>
         </div>
-        <div class="form-group mt-4">
+        <div class="form-floating m-4">
+            <select class="form-control" id="perResidence" name="perResidence">
+                <option>{{citizen.perResidence}}</option>  
+            </select>
             <label for="perResidence">Địa chỉ thường trú</label>
-            <input type="text" class="form-control" id="perResidence" name="perResidence">
         </div>
-        <div class="form-group mt-4">
-            <label for="curResidence">Địa chỉ tạm trú</label>
+        <div class="form-floating m-4">
             <input type="text" class="form-control" value="{{citizen.curResidence}}" id="curResidence" name="curResidence">
+            <label for="curResidence">Địa chỉ tạm trú</label>
         </div>
-        <div class="form-group mt-4">
-            <label for="ethnic">Dân tộc</label>
+        <div class="form-floating m-4">
             <input type="text" class="form-control" value="{{citizen.ethnic}}" id="ethnic" name="ethnic">
+            <label for="ethnic">Dân tộc</label>
         </div>
-        <div class="form-group mt-4">
-            <label for="religion">Tôn giáo</label>
+        <div class="form-floating m-4">
             <input type="text" class="form-control" value="{{citizen.religion}}" id="religion" name="religion">
+            <label for="religion">Tôn giáo</label>
         </div>
-        <div class="form-group mt-4">
-            <label for="eduLevel">Trình độ văn hóa</label>
+        <div class="form-floating m-4">
             <select class="form-control" id='eduLevel' name='eduLevel'>
                 <option>{{citizen.eduLevel}}</option> 
                 <option>6/12</option>
                 <option>10/12</option>
                 <option>12/12</option>
             </select>
+            <label for="eduLevel">Trình độ văn hóa</label>
         </div>
-        <div class="form-group mt-4">
-            <label for="job">Nghề nghiệp</label>
+        <div class="form-floating m-4">
             <select class="form-control" id='job' name='job'>
                 <option>{{citizen.job}}</option>
                 <option value="Công chức">Công chức</option>
@@ -61,6 +63,8 @@
                 <option value="Nông dân">Nông dân</option>
                 <option value="Tự do">Tự do</option>   
             </select>
+            <label for="job">Nghề nghiệp</label>
+        </div>
         </div>
         <button type="submit" class="btn btn-primary mt-4">Hoàn thành</button>
     </fieldset>
@@ -71,10 +75,22 @@
     getData();
     async function getData() {
       var code = localStorage.getItem('code');
-      var path = '/units/perResidence/' + code;
-      let myObject = await fetch(path);
-      let data = await myObject.json();
-      $("#perResidence").val(data.perResidence);
+        var constPath = '/units/perResidence/' + code;
+        let constObject = await fetch(constPath);
+        let constData = await constObject.json();
+        var optionPath = '/declare/progress?code=' + code;;
+        let optionObject = await fetch(optionPath);
+        let optionData = await optionObject.json();
+        if (code.length == 8) {
+            $("#perResidence").append('<option value="' + code + '">' + optionData.unit.nameUnit + ', ' + 
+                constData.perResidence + '</option>');
+        }
+        else {
+            for (let i = 0; i < optionData.units.length; i++) {
+                $("#perResidence").append('<option value="' + optionData.units[i].code + '">' + 
+                    optionData.units[i].nameUnit + ', ' + constData.perResidence + '</option>');
+            }
+        }
     }
 
 </script>
