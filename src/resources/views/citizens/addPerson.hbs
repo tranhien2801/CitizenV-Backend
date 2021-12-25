@@ -102,14 +102,12 @@
       var constPath = '/units/perResidence/' + code;
       let constObject = await fetch(constPath);
       let constData = await constObject.json();
-      if (code.length == 8) {
-          $("#perResidence").append('<option value="' + code + '">' + constData.perResidence + '</option>');
-      }
-      else {
-        var optionPath = '/declare/progress?code=' + code;;
+      var optionPath = '/declare/progress?code=' + code;;
         let optionObject = await fetch(optionPath);
         let optionData = await optionObject.json();
-        for (let i = 0; i < optionData.units.length; i++) {
+        $("#perResidence").append('<option value="' + code + '">' + constData.perResidence + '</option>');
+      if (code.length == 6) {
+          for (let i = 0; i < optionData.units.length; i++) {
             $("#perResidence").append('<option value="' + optionData.units[i].code + '">' + optionData.units[i].nameUnit + ', ' 
                 + constData.perResidence + '</option>');
         }
