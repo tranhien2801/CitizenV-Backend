@@ -1,6 +1,11 @@
 <div class="row mt-4">
-  <p class="h4">Các đơn vị đang/ đã tham gia khai báo</p>
-  <div id="info" class="col-md-9 mt-4 mb-4 shadow">
+  <p class="h4 units">Các đơn vị đang/ đã tham gia khai báo</p>
+  <div id="info" class="col-md-9 mt-4 mb-4 shadow units">
+    <div>
+        <button type="button" id="allocate" class="btn border-primary text-primary" >Cấp tài khoản <i class="far fa-edit"></i></button>
+        <button type="button" id="startAllUnit" class="btn border-primary text-primary" data-bs-toggle="modal" data-id="all" 
+          data-bs-target="#start-all-unit-modal">Bắt đầu khai báo</button>
+      </div>
     <table class="table table-hover">
       <thead>
         <tr>
@@ -16,10 +21,6 @@
 
       </tbody>
     </table>
-    <button type="button" id="allocate" class="btn border-primary text-primary">Cấp tài khoản <i
-        class="far fa-edit"></i></button>
-    <button type="button" class="btn border-primary text-primary" data-bs-toggle="modal" data-id="all"
-      data-bs-target="#start-all-unit-modal">Bắt đầu khai báo</button>
   </div>
   <div class="col-md-3">
     {{> myUnit}}
@@ -86,6 +87,15 @@
 <form name="allocate-unit-form" method="GET"></form>
 <form name="close-declaration-form" method="POST"></form>
 
+<style>
+  #allocate {
+    float: left;
+  }
+  #startAllUnit {
+    float: right;
+  }
+</style>
+
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     var codeChild;
@@ -95,6 +105,10 @@
     var btnAllocateUnit = document.getElementById('allocate');
     var btnCloseDeclaration = document.getElementById('btn-close-declaration');
     var btnCloseStartAllUnit = document.getElementById('btn-close-start-all-unit');
+
+    if(code.length == 8) {
+      $('.units').hide();
+    }
 
     btnAllocateUnit.onclick = function () {
       allocateForm.action = '/allocate/' + code;
