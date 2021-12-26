@@ -86,6 +86,7 @@
                 constData.perResidence + '</option>');
         }
         else {
+            $("#perResidence").append('<option value="' + code + '">' + constData.perResidence + '</option>');
             for (let i = 0; i < optionData.units.length; i++) {
                 $("#perResidence").append('<option value="' + optionData.units[i].code + '">' + 
                     optionData.units[i].nameUnit + ', ' + constData.perResidence + '</option>');
