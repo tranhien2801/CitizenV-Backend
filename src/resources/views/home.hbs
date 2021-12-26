@@ -37,7 +37,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <p class="h5">Tên đơn vị: <span id="nameUnit"></span></p>
+        <p class="h5">Tên đơn vị: <span id="name-unit"></span></p>
         <label for="timeStart">Thời gian bắt đầu</label>
         <input type="date" class="form-control mb-4" id="timeStart" name="timeStart" required="true">
         <label for="timeEnd">Thời gian kết thúc</label>
@@ -188,7 +188,7 @@
           '<td class="progres">' + data.units[i].progress + '</td>' +
           '<td class="active">' + data.units[i].active +
           ' <a id="close-modal" data-bs-toggle="modal" data-id="' + data.units[i].code +
-          '" data-bs-target="#close-declaration-modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Đóng khai báo">' +
+          '" data-bs-target="#close-declaration-modal" data-bs-toggle="tooltip" data-bs-placement="top" title="Thay đổi quyền khai báo">' +
           '<i class="far fa-edit text-warning"></i></a></td>' +
           '</tr>');
 
@@ -205,8 +205,8 @@
 
       let myObject = await fetch('/units/' + codeChild);
       let myText = await myObject.json();
-      console.log(myText)
-      $('#nameUnit').text(myText.unit.nameUnit);
+      console.log(myText.unit.nameUnit)
+      $('#name-unit').text(myText.unit.nameUnit);
       $('#timeStart').val(myText.unit.timeStart.slice(0, 10));
       $('#timeEnd').val(myText.unit.timeEnd.slice(0, 10));
     });

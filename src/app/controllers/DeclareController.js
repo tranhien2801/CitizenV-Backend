@@ -56,6 +56,14 @@ class DeclareController {
     // [PUT] /declare/close/:code
     async closeDeclaration(req, res) {
         try {
+            var codeParent;
+            if (req.params.code.length == 2) codeParent = "A01";
+            else    codeParent = req.params.code.slice(0, req.params.code.length - 2);
+             
+            console.log(codeParent);
+            var unitParent = await Unit.findOne({code: codeParent});
+            if (unitParent.active == "Không") 
+                return res.status(400).json({message: "Đơn vị cấp trên của đơn vị này đã bị khóa quyền khai báo"});
             switch(req.params.code.length) {  
                 case 8: // B2
                     await Unit.updateOne({code: req.params.code}, 

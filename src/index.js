@@ -25,7 +25,7 @@ const hbs = handlebars.create({
             const icon = icons[sortType];
             const type = types[sortType];
 
-            return `<a href="?_sort&column=${field}&type=${type}">
+            return `<a href="/citizens?_sort&column=${field}&type=${type}">
                         <span class="${icon}"></span>
                     </a>`;
         },

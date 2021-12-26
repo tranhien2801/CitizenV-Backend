@@ -75,23 +75,23 @@
     getData();
     async function getData() {
       var code = localStorage.getItem('code');
-        var constPath = '/units/perResidence/' + code;
-        let constObject = await fetch(constPath);
-        let constData = await constObject.json();
-        var optionPath = '/declare/progress?code=' + code;;
+      var constPath = '/units/perResidence/' + code;
+      let constObject = await fetch(constPath);
+      let constData = await constObject.json();
+      var optionPath = '/declare/progress?code=' + code;;
         let optionObject = await fetch(optionPath);
         let optionData = await optionObject.json();
-        if (code.length == 8) {
-            $("#perResidence").append('<option>' + optionData.unit.nameUnit + ', ' + 
-                constData.perResidence + '</option>');
+        if(code.length == 8) {
+        $("#perResidence").append('<option>' + optionData.unit.nameUnit + ', ' + constData.perResidence + '</option>');
         }
-        else {
-            $("#perResidence").append('<option value="' + code + '">' + constData.perResidence + '</option>');
-            for (let i = 0; i < optionData.units.length; i++) {
-                $("#perResidence").append('<option>' + optionData.units[i].nameUnit + ', ' + 
-                    constData.perResidence + '</option>');
-            }
+      if (code.length == 6) {
+          $("#perResidence").append('<option>' + constData.perResidence + '</option>');
+          for (let i = 0; i < optionData.units.length; i++) {  
+            $("#perResidence").append('<option>' + optionData.units[i].nameUnit + ', ' 
+                + constData.perResidence + '</option>');
         }
+      }
+      
     }
 
 </script>

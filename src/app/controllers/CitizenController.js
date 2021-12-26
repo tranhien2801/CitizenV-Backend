@@ -28,10 +28,11 @@ class CitizenController {
     }
 
     // [GET] /citizens
-    showByUnit(req, res, next) {
+    async showByUnit(req, res, next) {
         var token = req.session.token; 
         const data = jwt.verify(token, JWT_KEY);
         var citizenQuery;
+        var unit = await Unit.findOne({code: data.code});
         if (data.code == "A01") data.code = "";
             citizenQuery = Citizen.find({addressID: { $regex: '^' + data.code}}, 
                 {CCCD: 1, name: 1, dob: 1, sex: 1, phone: 1, perResidence: 1, 
@@ -49,9 +50,9 @@ class CitizenController {
                 }   
                 res.render('citizens/listPerson', {
                     citizens: multipleMongooseToObject(citizens),
-                    deletedCount
-                })   
-                // res.json({citizens, deletedCount})        
+                    deletedCount,
+                    name: unit.nameUnit
+                })         
             })
             .catch(next);
     }
@@ -82,7 +83,8 @@ class CitizenController {
     }
 
     // [GET] /citizens/unit/:code
-    findByUnit(req, res, next) {
+    async findByUnit(req, res, next) {
+        var unit = await Unit.findOne({code: req.params.code});
         if (req.params.code == "A01") req.params.code = "";
         if (req.params.code.length == 8) req.params.code = req.params.code.slide(0, 6);
         var citizenQuery = Citizen.find({addressID: { $regex: '^' + req.params.code}});
@@ -99,9 +101,9 @@ class CitizenController {
                 }   
                 res.render('citizens/listPerson', {
                     citizens: multipleMongooseToObject(citizens),
-                    deletedCount
-                })   
-                // res.json({citizens, deletedCount})        
+                    deletedCount,
+                    name: unit.nameUnit
+                })       
             })
             .catch(next);
     }
@@ -131,7 +133,6 @@ class CitizenController {
     // Khai báo người dân
     // [POST] /citizens/store/:addressID
     async store(req, res) { 
-        if (req.params.addressID.length == 8) req.params.addressID = req.params.addressID.slice(0,6);
         const unit = await Unit.findOne({ code: req.params.addressID});
         if (unit == null) {
             return res.status(400).json({message: "Đơn vị không tồn tại trong hệ thống"});
@@ -139,6 +140,7 @@ class CitizenController {
         if (unit.active == "Không") return res.status(400).json({message: "Đơn vị đã bị đóng quyền khai báo"});
         if (unit.timeEnd < Date.now())  return res.status(400).json({message: "Đã hết thời hạn khai báo"});
         if (unit.timeStart > Date.now())    return res.status(400).json({message: "Chưa đến thời gian khai báo"});
+        if (req.params.addressID.length == 8) req.params.addressID = req.params.addressID.slice(0,6);
         var checkExist = null;
         if (req.body.CCCD != "") checkExist = await Citizen.findOne({CCCD: req.body.CCCD});
         if (checkExist != null)  return res.status(400).json({message: "CCCD này đã có trong hệ thống, mời kiểm tra lại"});

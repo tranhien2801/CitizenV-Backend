@@ -6,7 +6,7 @@
         Thùng rác <span class="badge bg-info">{{deletedCount}}</span>
       </a>
     </div>
-    <h4 class="mt-4 mb-4 text-center">Danh sách người dân</h4>
+    <h4 class="mt-4 mb-4 text-center">Danh sách người dân {{name}}</h4>
     <div id="selectArea"><!--Chọn khu vực danh sách hiển thị-->
       <div class="form-floating m-4" id="provinceDiv">
         <select class="form-control" name="province" id="province">
@@ -26,12 +26,12 @@
         </select>
         <label for="town">Xã/Thị Trấn</label>
       </div>
-      <!--<div class="form-floating m-4" id="villageDiv">
+      <div class="form-floating m-4" id="villageDiv">
         <select class="form-control" name="village" id="village">
           
         </select>
         <label for="village">Thôn/Bản/Tổ</label>
-      </div>-->
+      </div>
       <button id="btn-filter" class="btn btn-outline-primary"><i class="fas fa-filter"></i></button>
     </div> 
     <table class="table table-striped table-hover">
@@ -179,11 +179,10 @@
     var data = await resultFetch.json();
     switch(code.length) {
       case 6: {
-        //document.getElementById("villageDiv").style.display = "block";
+        document.getElementById("villageDiv").style.display = "block";
         //addOption('#village', data.units, data.unit.code);
-        //$('#village').children().remove();
-        //$('#village').append('<option value="' + data.units + '" selected>Tất cả</option>');  
-        $('#btn-filter').hide();
+        $('#village').children().remove();
+        $('#village').append('<option value="' + data.units + '" selected>Tất cả</option>');  
       } break;
       case 4: {
         document.getElementById("townDiv").style.display = "block";
@@ -201,7 +200,7 @@
     $('#province').on('change', async function (e) {
       addressIDFilter = this.value;
       document.getElementById("townDiv").style.display = "none";
-      //document.getElementById("villageDiv").style.display = "none";
+      document.getElementById("villageDiv").style.display = "none";
       if(this.value.length == 2) {
         var resultFetch = await fetch('/declare/progress?code=' + this.value);
         var data = await resultFetch.json();
@@ -215,7 +214,7 @@
 
     $('#district').on('change', async function (e) {
       addressIDFilter = this.value;
-      //document.getElementById("villageDiv").style.display = "none";
+      document.getElementById("villageDiv").style.display = "none";
       if(this.value.length == 4) {      
         var resultFetch = await fetch('/declare/progress?code=' + this.value);
         var data = await resultFetch.json();
@@ -229,7 +228,7 @@
 
     $('#town').on('change', async function (e) {
       addressIDFilter = this.value;
-      /*if(this.value.length == 6) {
+      if(this.value.length == 6) {
         document.getElementById("villageDiv").style.display = "block";       
         var resultFetch = await fetch('/declare/progress?code=' + this.value);
         var data = await resultFetch.json();
@@ -237,12 +236,12 @@
       }
       else {
         document.getElementById("villageDiv").style.display = "none";
-      }*/
+      }
     });
     
-    /*$('#village').on('change', async function (e) {
+    $('#village').on('change', async function (e) {
       addressIDFilter = this.value;
-    });*/
+    });
   }  
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -316,7 +315,7 @@
        $('.modal-body').append('<p>Tôn giáo: ' + myText.religion + '</p>');
       if (myText.eduLevel != null && myText.eduLevel != "")
        $('.modal-body').append('<p>Trình độ văn hóa: ' + myText.eduLevel + '</p>');
-      if (myText.job != null && myText.job != "")
+      if (myText.job != null && myText.job != "") 
        $('.modal-body').append('<p>Nghề nghiệp: ' + myText.job + '</p>');	
     });        
 
