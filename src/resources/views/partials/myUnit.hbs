@@ -58,11 +58,13 @@
 
 <script>
   var code = localStorage.getItem('code');
+  getDataMyUnit();
   
-  $('#btn-change-password').click = function () {
+  $('#btn-change-password').click(function () {
       var password = $('#change-password #password').val().trim();
       var newPass = $('#change-password #newPass').val().trim();
       var confirmPass = $('#change-password #confirmPass').val().trim();
+      alert('ex: ' + password + '--> new: ' + newPass + '---' + confirmPass);
 
       var url_post = "/units/changePassword/" + code;
 
@@ -79,7 +81,7 @@
         .catch((error) => {
           alert(error);
         });
-    }
+    })
 
   $('#btn-close-complete').click(function() {
     var url_post = "/declare/" + code;
@@ -98,9 +100,6 @@
         });
     getDataMyUnit();
   })
-  
-  
-  getDataMyUnit();
   
   async function getDataMyUnit() {
     $('.info-header').children().remove();
