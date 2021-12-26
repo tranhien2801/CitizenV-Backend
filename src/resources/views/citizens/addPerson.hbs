@@ -86,10 +86,10 @@
       var optionPath = '/declare/progress?code=' + code;;
         let optionObject = await fetch(optionPath);
         let optionData = await optionObject.json();
-        $("#perResidence").append('<option value="' + code + '">' + optionData.unit.nameUnit + ', ' + constData.perResidence + '</option>');
+        $("#perResidence").append('<option>' + optionData.unit.nameUnit + ', ' + constData.perResidence + '</option>');
       if (code.length == 6) {
           for (let i = 0; i < optionData.units.length; i++) {
-            $("#perResidence").append('<option value="' + optionData.units[i].code + '">' + optionData.units[i].nameUnit + ', ' 
+            $("#perResidence").append('<option>' + optionData.units[i].nameUnit + ', ' 
                 + constData.perResidence + '</option>');
         }
       }

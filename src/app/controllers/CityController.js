@@ -18,6 +18,9 @@ class CityController {
                 case 2:
                     const unit2 = await Unit.findOne({code: req.params.code});
                     const city2 = await City.findOne({Name: unit2.nameUnit});
+                    if(city2 == null ) {
+                        return res.render('units/addUnit',{code: req.params.code, listName: null});
+                    }
                     var districtName = [];
                     for (var i = 0; i < city2.Districts.length; i++ ) {
                         var temp = await Unit.findOne({nameUnit: city2.Districts[i].Name});
@@ -29,7 +32,10 @@ class CityController {
                 case 4:
                     const unit4 = await Unit.findOne({code: req.params.code});
                     const city4 = await City.findOne({'Districts.Name': unit4.nameUnit});
-                    const disFilter = filterItems(city4.Districts, unit4.nameUnit);
+                    if(city4 == null ) {
+                        return res.render('units/addUnit',{code: req.params.code, listName: null});
+                    }
+                    var disFilter = filterItems(city4.Districts, unit4.nameUnit);
                     var wardName = [];
                     for (var i = 0; i < disFilter[disFilter.length - 1].Wards.length; i++ ) {
                         var dis = disFilter[disFilter.length - 1].Wards[i].Name;
@@ -39,7 +45,7 @@ class CityController {
                     res.render('units/addUnit',{code: req.params.code, listName: wardName});
                     break;
                 case 6:
-                    res.render('units/addUnit',{});
+                    res.render('units/addUnit',{code: req.params.code, listName: null});
                     break;
                 case 3:
                     if (req.params.code === 'A01') {

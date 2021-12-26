@@ -54,6 +54,11 @@
                             name='password' placeholder="Mật khẩu" required="true">
                         <label for="password">Mật khẩu</label>
                     </div>
+                    <div class="form-floating mb-4 mt-4">
+                        <input type="password" class="form-control mt-4 mb-4" id="{{sum 'confirmPass' @index}}"
+                            name='confirmPass' placeholder="Mật khẩu" required="true">
+                        <label for="confirmPass">Nhập lại mật khẩu</label>
+                    </div>
                     <label for="timeStart">Thời gian bắt đầu</label>
                     <input type="date" class="form-control mb-4" id="{{sum 'timeStart' @index}}" name="timeStart">
                     <label for="timeEnd">Thời gian kết thúc</label>
@@ -109,6 +114,11 @@
                             name='password' placeholder="Mật khẩu" required="true">
                         <label for="password">Mật khẩu</label>
                     </div>
+                    <div class="form-floating mb-4 mt-4">
+                        <input type="password" class="form-control mt-4 mb-4" id="{{sum 'confirmPass' '-1'}}"
+                            name='confirmPass' placeholder="Mật khẩu" required="true">
+                        <label for="confirmPass">Nhập lại mật khẩu</label>
+                    </div>
                     <label for="timeStart">Thời gian bắt đầu</label>
                     <input type="date" class="form-control mb-4" id="{{sum 'timeStart' '-1'}}" name="timeStart"
                         required="true">
@@ -129,7 +139,7 @@
                         <div class="input-group-prepend">
                             <label class="input-group-text" for="inputGroupSelect01">Quyền</label>
                         </div>
-                        <select class="form-control custom-select" id="{{sum 'active' -1}}" name="active">
+                        <select class="form-control custom-select" id="{{sum 'active' '-1'}}" name="active">
                             <option>Có</option>
                             <option>Không</option>
                         </select>
@@ -155,6 +165,7 @@
         var code = localStorage.getItem('code');
         var nameUnit = document.getElementById('nameUnit' + a).value
         var password = document.getElementById('password' + a).value;
+        var confirmPass = document.getElementById('confirmPass' + a).value;
         var timeStart = document.getElementById('timeStart' + a).value;
         var timeEnd = document.getElementById('timeEnd' + a).value;
         var progress = document.getElementById('progress' + a).value;
@@ -167,6 +178,7 @@
             body: JSON.stringify({
                 nameUnit: nameUnit,
                 password: password,
+                confirmPass: confirmPass,
                 timeStart: timeStart,
                 timeEnd: timeEnd,
                 progress: progress,
@@ -176,7 +188,8 @@
             .then((res) => res.json())
             .then((data) => {
                 alert(data.status);
-                document.location.pathname = "/allocate/" + code;
+                if (data.status == "Thêm đơn vị con thành công!")
+                    document.location.pathname = "/allocate/" + code;
             })
             .catch((error) => {
                 alert(error);

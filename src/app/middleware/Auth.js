@@ -5,7 +5,6 @@ const JWT_KEY = "UETcitizenV";
 class Auth {
     async auth (req, res, next) {
         if (!req.session.token) { 
-           // return res.status(400).json('Chưa có token');
            return res.redirect('/login');
         }
         try {

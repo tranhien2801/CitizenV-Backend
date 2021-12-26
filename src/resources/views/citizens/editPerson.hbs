@@ -82,13 +82,13 @@
         let optionObject = await fetch(optionPath);
         let optionData = await optionObject.json();
         if (code.length == 8) {
-            $("#perResidence").append('<option value="' + code + '">' + optionData.unit.nameUnit + ', ' + 
+            $("#perResidence").append('<option>' + optionData.unit.nameUnit + ', ' + 
                 constData.perResidence + '</option>');
         }
         else {
             for (let i = 0; i < optionData.units.length; i++) {
-                $("#perResidence").append('<option value="' + optionData.units[i].code + '">' + 
-                    optionData.units[i].nameUnit + ', ' + constData.perResidence + '</option>');
+                $("#perResidence").append('<option>' + optionData.units[i].nameUnit + ', ' + 
+                    constData.perResidence + '</option>');
             }
         }
     }

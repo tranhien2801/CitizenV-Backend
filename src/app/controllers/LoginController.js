@@ -59,8 +59,10 @@ class LoginController {
     // [POST] /allocate?idParent= 
     async allocate(req, res, next) {
         try {
+            if (req.body.password != req.body.confirmPass) 
+                return res.status(400).json({status: "Mật khẩu xác nhận không trùng khớp"});
             if (new Date(req.body.timeEnd) < Date.now()) 
-                return res.status(400).json({message: "Thời gian hết hạn khai báo không hợp lệ"});
+                return res.status(400).json({status: "Thời gian hết hạn khai báo không hợp lệ"});
             if (req.body.password) await req.body.password.trim();
             const unit = new Unit(req.body);
             if (req.query.idParent == "") req.query.idParent = null;
