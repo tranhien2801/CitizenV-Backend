@@ -72,7 +72,7 @@ class UnitController {
             if ( unit == "Mã đơn vị không tồn tại trong hệ thống" || unit == "Mật khẩu không đúng") {
                 return res.status(401).json({message: unit});
             }
-            if (req.body.newPass != req.body.confirmPass) res.status(400).json({message:"Mật khẩu xác nhận sai"});
+            if (req.body.newPass != req.body.confirmPass) return res.status(400).json({message:"Mật khẩu xác nhận không trùng khớp"});
             await Unit.updateOne({code: req.params.code}, {$set: {password: await bcrypt.hash(req.body.newPass, 8)}});
             res.json({message: "Thay đổi mật khẩu thành công!"});
         } catch(error) {

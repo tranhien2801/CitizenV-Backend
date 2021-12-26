@@ -64,7 +64,6 @@
       var password = $('#change-password #password').val().trim();
       var newPass = $('#change-password #newPass').val().trim();
       var confirmPass = $('#change-password #confirmPass').val().trim();
-      alert('ex: ' + password + '--> new: ' + newPass + '---' + confirmPass);
 
       var url_post = "/units/changePassword/" + code;
 
@@ -75,7 +74,6 @@
       })
         .then((res) => res.json())
         .then((data) => {
-          getData();
           alert(data.message);
         })
         .catch((error) => {
