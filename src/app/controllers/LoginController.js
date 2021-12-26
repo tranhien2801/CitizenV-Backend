@@ -34,21 +34,6 @@ class LoginController {
         Các API POST của đơn vị
     ----------------------------------------------------------------------------------------------------------------------*/
 
-    // [POST] /signup
-    async signup(req, res) {
-        try {
-            if (req.body.code == 'A01') {
-                const unit = Unit.findOne({code: req.body.code});
-                if (unit != null) {
-                    await unit.save();
-                    res.redirect('units/login', {layout: 'loginLayout'});
-                } 
-            } 
-            res.redirect('units/register', {layout: 'loginLayout'});
-        } catch (error) {
-            res.status(400).json({message: error.message});
-        }
-    }
 
     // [POST] /
     login(req, res) {
@@ -56,9 +41,8 @@ class LoginController {
             const { code, password } = req.body;
             Unit.findByCredentials(code.trim(), password.trim())
                 .then(unit => {
-                    if ( unit == null) {
-                        res.status(401).json({status: "Mã đơn vị hoặc mật khẩu không đúng"});
-                        return;
+                    if ( unit == "Mã đơn vị không tồn tại trong hệ thống" || unit == "Mật khẩu không đúng") {
+                        return res.status(401).json({status: unit});
                     }
                     unit.generateAuthToken()
                         .then(token => {
@@ -90,8 +74,9 @@ class LoginController {
             if (maxSibling.length != 0) {
                 countSibling = parseInt(maxSibling[0].code.substring(maxSibling[0].code.length - 2, maxSibling[0].code.length)) + 1;
             }
-            const idPar = await Unit.findOne({code: req.query.idParent});
-            if (idPar != null) {
+            var idPar = "";
+            if (req.query.idParent != 'A01')  idPar = await Unit.findOne({code: req.query.idParent});
+            if (idPar != "") {
                 if (countSibling >= 10)    unit.code = idPar.code + countSibling;
                 else unit.code = idPar.code + '0' + countSibling;
             } else {
@@ -104,7 +89,7 @@ class LoginController {
                     unit,
                     status: "Thêm đơn vị con thành công!",
                 }))
-                .catch(() => res.status(400).json({status: "Mật khẩu phải có độ dài ngắn nhất là 7"}))
+                .catch(() => res.status(400).json({status: "Mật khẩu phải có độ dài ngắn nhất là 8"}))
         } catch (next) {
             res.status(400).json({status: "Đơn vị này không có trong hệ thống"});
         }

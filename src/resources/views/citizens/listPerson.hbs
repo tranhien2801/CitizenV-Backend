@@ -180,7 +180,9 @@
     switch(code.length) {
       case 6: {
         document.getElementById("villageDiv").style.display = "block";
-        addOption('#village', data.units, data.unit.code);
+        //addOption('#village', data.units, data.unit.code);
+        $('#village').children().remove();
+        $('#village').append('<option value="' + data.units + '" selected>Tất cả</option>');  
       } break;
       case 4: {
         document.getElementById("townDiv").style.display = "block";

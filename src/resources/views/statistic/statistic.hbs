@@ -26,6 +26,7 @@
                             class="far fa-chart-bar"></i></button>
                 </div>
             </div>
+            {{>myUnit}}
         </div>
     </div>
 
@@ -79,7 +80,7 @@
     }
 
     google.charts.load('current', { 'packages': ['corechart'] });
-    google.charts.setOnLoadCallback(drawPopulation);
+    google.charts.setOnLoadCallback(drawCareer);
 
     function statistic() {
 
@@ -105,7 +106,7 @@
                 google.charts.setOnLoadCallback(drawBirthRate);
                 break;
             default:
-                google.charts.setOnLoadCallback(drawPopulation);
+                google.charts.setOnLoadCallback(drawCareer);
                 break;
         }
     }

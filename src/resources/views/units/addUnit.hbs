@@ -176,6 +176,7 @@
             .then((res) => res.json())
             .then((data) => {
                 alert(data.status);
+                document.location.pathname = "/allocate/" + code;
             })
             .catch((error) => {
                 alert(error);

@@ -68,12 +68,12 @@ UnitShema.statics.findByCredentials = async (code, password) => {
     const unit = await Unit.findOne({ code } );
     if (!unit) {
        // throw new Error({ error: 'Invalid login credentials' });
-       return null;
+       return "Mã đơn vị không tồn tại trong hệ thống";
     }
     const isPasswordMatch = await bcrypt.compare(password, unit.password);
     if (!isPasswordMatch) {
         //throw new Error({ error: 'Invalid login credentials' });
-        return null;
+        return "Mật khẩu không đúng";
     }
     return unit;
 }

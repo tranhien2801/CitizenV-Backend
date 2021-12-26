@@ -84,6 +84,7 @@ class CitizenController {
     // [GET] /citizens/unit/:code
     findByUnit(req, res, next) {
         if (req.params.code == "A01") req.params.code = "";
+        if (req.params.code.length == 8) req.params.code = req.params.code.slide(0, 6);
         var citizenQuery = Citizen.find({addressID: { $regex: '^' + req.params.code}});
         if (req.query.hasOwnProperty('_sort')) {
             citizenQuery = citizenQuery.sort({

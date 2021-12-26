@@ -28,10 +28,59 @@
   </div>
 </div>
 
+<div id="change-password" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Thay đổi mật khẩu?</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="h5">Tên đơn vị: <span id="nameUnit"></span></p>
+        <label for="password">Mật khẩu cũ</label>
+        <input type="password" class="form-control mb-4" id="password" name="password" required="true">
+        <label for="newPass">Mật khẩu mới</label>
+        <input type="password" class="form-control mb-4" id="newPass" name="newPass" required="true">
+        <label for="confirmPass">Nhập lại mật khẩu</label>
+        <input type="password" class="form-control mb-4" id="confirmPass" name="confirmPass" required="true">
+      </div>
+      <div class="modal-footer">
+        <button id="btn-change-password" type="button" class="btn btn-danger" data-bs-dismiss="modal">Sửa đổi</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 <script>
   var code = localStorage.getItem('code');
   
+  $('#btn-change-password').click = function () {
+      var password = $('#change-password #password').val().trim();
+      var newPass = $('#change-password #newPass').val().trim();
+      var confirmPass = $('#change-password #confirmPass').val().trim();
+
+      var url_post = "/units/changePassword/" + code;
+
+      fetch(url_post, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', },
+        body: JSON.stringify({ password: password, newPass: newPass, confirmPass: confirmPass }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          getData();
+          alert(data.message);
+        })
+        .catch((error) => {
+          alert(error);
+        });
+    }
+
   $('#btn-close-complete').click(function() {
     var url_post = "/declare/" + code;
     fetch(url_post, {
@@ -45,7 +94,7 @@
             alert(data.message);
         })
         .catch((error) => {
-            //alert(error);
+            alert(error);
         });
     document.getElementById('complete').style.display = "none";
   })
@@ -62,7 +111,10 @@
     var rate = 0;
     if (data.declared + data.declaring != 0)
       rate = Math.round((data.declared * 100 / (data.declared + data.declaring)) * 10000 / 10000);
-    $('.info-header').append("<p>Mã địa phương " + data.unit.code + '</p>');
+    $('.info-header').append('<a data-bs-toggle="modal"' + 
+                ' data-bs-target="#change-password" data-bs-toggle="tooltip" data-bs-placement="top"' +
+                'title="Thay đổi mật khẩu"><i class="fas fa-cog"></i></a>');
+    $('.info-header').append("<p>   Mã địa phương " + data.unit.code + '</p>');
     $('.info-body').append('<p class="h5" style="color: #400485">' + data.unit.nameUnit + '</p>');
     $('.info-body').append('<p>Hạn cuối: ' + data.date + '</p>')
     $('.info-body').append('<p>Tiến độ: ' + rate + '%</p>');

@@ -63,6 +63,23 @@ class UnitController {
             .catch(next => res.status(400).json({message: "Đơn vị này không tồn tại trong hệ thống"}));
     }
 
+    // [PUT] /units/changePassword/:code
+    async changePassword(req, res) {
+        try {
+            const code = req.params.code;
+            const password = req.body.password;
+            const unit = await Unit.findByCredentials(code.trim(), password.trim());
+            if ( unit == "Mã đơn vị không tồn tại trong hệ thống" || unit == "Mật khẩu không đúng") {
+                return res.status(401).json({message: unit});
+            }
+            if (req.body.newPass != req.body.confirmPass) res.status(400).json({message:"Mật khẩu xác nhận sai"});
+            await Unit.updateOne({code: req.params.code}, {$set: {password: await bcrypt.hash(req.body.newPass, 8)}});
+            res.json({message: "Thay đổi mật khẩu thành công!"});
+        } catch(error) {
+            res.status(400).json({message:"Mật khẩu phải có độ dài ngắn nhất là 8"});
+        }
+    }
+
     /*---------------------------------------------------------------------------------------------------------------------
         Các API DELETE của đơn vị
     ----------------------------------------------------------------------------------------------------------------------*/

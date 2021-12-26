@@ -15,13 +15,7 @@ class SearchController {
                 var citizens = await Citizen.find({
                     CCCD: req.query.CCCD.trim(),
                     addressID : { $regex: '^' + req.params.code }
-                });
-                
-                res.render('citizens/listPerson', {
-                    citizens: multipleMongooseToObject(citizens),
-                    deletedCount
-                })  
-                
+                });                
             } else {
                 var citizens;
                 if (req.query.dob.trim() == "") {
@@ -44,14 +38,14 @@ class SearchController {
                         dob: new Date(date)
                     });
                 }
-                for (var i = 0; i < citizens.length; i++) {
-                    citizens[i].date = dateFormat(citizens[i].dob);
-                }
-                res.render('citizens/listPerson', {
-                    citizens: multipleMongooseToObject(citizens),
-                    deletedCount
-                })  
             }
+            for (var i = 0; i < citizens.length; i++) {
+                citizens[i].date = dateFormat(citizens[i].dob);
+            }
+            res.render('citizens/listPerson', {
+                citizens: multipleMongooseToObject(citizens),
+                deletedCount
+            })  
         } catch (error) {
             res.status(400).json({message: "Không tìm thấy công dân phù hợp"});
         }
