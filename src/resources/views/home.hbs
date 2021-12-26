@@ -47,8 +47,8 @@
             <label class="input-group-text" for="inputGroupSelect01">Quyền</label>
           </div>
           <select class="form-control custom-select" id="active" name="active">
-            <option>Có</option>
             <option>Không</option>
+            <option class="activeOption">Có</option>
           </select>
         </div>
       </div>
@@ -172,7 +172,6 @@
       var path = '/declare/progress?code=' + code;
       let myObject = await fetch(path);
       let data = await myObject.json();
-      console.log(data);
       if(data.unit.active == "Không") $("#startAllUnit").hide();
       $('#timeStartAll').val(reserverDate(data.dateStart));
       $('#timeEndAll').val(reserverDate(data.date));
@@ -205,7 +204,7 @@
 
       let myObject = await fetch('/units/' + codeChild);
       let myText = await myObject.json();
-      console.log(myText.unit.nameUnit)
+      if (localStorage.getItem('active') == 'Không') $('.activeOption').hide();
       $('#name-unit').text(myText.unit.nameUnit);
       $('#timeStart').val(myText.unit.timeStart.slice(0, 10));
       $('#timeEnd').val(myText.unit.timeEnd.slice(0, 10));

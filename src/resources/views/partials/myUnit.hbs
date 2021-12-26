@@ -107,6 +107,7 @@
     let myObject = await fetch(path);
     let data = await myObject.json();
     localStorage.setItem('progress', data.unit.progress);
+    localStorage.setItem('active', data.unit.active);
     var rate = 0;
     if (data.declared + data.declaring != 0)
       rate = Math.round((data.declared * 100 / (data.declared + data.declaring)) * 10000 / 10000);
