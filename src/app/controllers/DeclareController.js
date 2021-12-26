@@ -1,7 +1,24 @@
 const {dateFormat} = require('../../util/formatDate');
 const Unit = require('../models/Unit');
 
+var openDeclaration = async function(unit, timeEnd, timeStart) {
+    await Unit.updateMany({unit: unit.code}, 
+        {$set: {timeEnd: timeEnd, timeStart: timeStart, progress: "Đang khai báo", active: "Có"}});
 
+    var units = await Unit.find({idParent: unit.code});
+    for (var i = 0; i < units.length; i++) {
+        openDeclaration(units[i], timeEnd, timeStart);
+    }
+}
+
+var closeDeclaration = async function(unit, active, timeStart, timeEnd) {
+    await Unit.updateOne({code: unit.code}, 
+        {$set: {active: active, timeEnd: timeEnd, timeStart: timeStart}});
+    var units = await Unit.find({idParent: unit.code});
+    for (var i = 0; i < units.length; i++) {
+        closeDeclaration(units[i], active, timeStart, timeEnd);
+    }
+}
 
 class DeclareController {
 
@@ -64,40 +81,8 @@ class DeclareController {
             var unitParent = await Unit.findOne({code: codeParent});
             if (unitParent.active == "Không") 
                 return res.status(400).json({message: "Đơn vị cấp trên của đơn vị này đã bị khóa quyền khai báo"});
-            switch(req.params.code.length) {  
-                case 8: // B2
-                    await Unit.updateOne({code: req.params.code}, 
-                        {$set: {active: req.body.active, timeEnd: req.body.timeEnd, timeStart: req.body.timeStart}});
-                    break;
-                case 6: // B1
-                    await Unit.updateMany({$or: [{code: req.params.code}, {idParent: req.params.code}]}, 
-                        {$set: {active: req.body.active, timeEnd: req.body.timeEnd, timeStart: req.body.timeStart}});
-                    break;
-                case 4: // A3
-                    var unit6 = await Unit.findOne({idParent: req.params.code});
-                    // update A3, B1
-                    await Unit.updateMany({$or: [{code: req.params.code}, {idParent: req.params.code}]}, 
-                        {$set: {active: req.body.active, timeEnd: req.body.timeEnd, timeStart: req.body.timeStart}});
-                    // update B2
-                    if (unit6.code != null)
-                        await Unit.updateMany({idParent: unit6.code}, 
-                            {$set: {active: req.body.active, timeEnd: req.body.timeEnd, timeStart: req.body.timeStart}});
-                    break;
-                case 2: // A2
-                    var unitB1 = null; 
-                    var unitA3 = await Unit.findOne({idParent: req.params.code});
-                    if (unitA3 != null)   unitB1 = await Unit.findOne({idParent: unitA3.code});
-                    // update A2, A3
-                    await Unit.updateMany({$or: [{code: req.params.code}, {idParent: req.params.code}]}, 
-                        {$set: {active: req.body.active, timeEnd: req.body.timeEnd, timeStart: req.body.timeStart}});
-                    // update B1, B2
-                    if (unitB1 != null)
-                        await Unit.updateMany({$or: [{code: unitB1.code}, {idParent: unitB1.code}]}, 
-                            {$set: {active: req.body.active, timeEnd: req.body.timeEnd, timeStart: req.body.timeStart}});
-                    break;
-                default:
-                    res.status(400).json({message: "Đơn vị này không có trong hệ thống"});
-            }
+            var unit = await Unit.findOne({code: req.params.code});
+            closeDeclaration(unit, req.body.active, req.body.timeStart, req.body.timeEnd);
             res.json({
                 message: "Thay đổi quyền khai báo thành công!", 
                 code: req.params.code,
@@ -110,62 +95,13 @@ class DeclareController {
     // [PUT] /declare/open/:code
     async openDeclaration(req, res) {
         try {
-            switch(req.params.code.length) {  
-                case 8: // B2
-                    await Unit.updateOne({code: req.params.code}, 
-                        {$set: {timeEnd: req.body.timeEnd, timeStart: req.body.timeStart, progress: "Đang khai báo", active: "Có"}});
-                    break;
-                case 6: // B1
-                    await Unit.updateMany({$or: [{code: req.params.code}, {idParent: req.params.code}]}, 
-                        {$set: {timeEnd: req.body.timeEnd, timeStart: req.body.timeStart, progress: "Đang khai báo", active: "Có"}});
-                    break;
-                case 4: // A3
-                    var unit6 = await Unit.findOne({idParent: req.params.code});
-                    // update A3, B1
-                    await Unit.updateMany({$or: [{code: req.params.code}, {idParent: req.params.code}]}, 
-                        {$set: {timeEnd: req.body.timeEnd, timeStart: req.body.timeStart, progress: "Đang khai báo", active: "Có"}});
-                    // update B2
-                    if (unit6 != null)
-                        await Unit.updateMany({idParent: unit6.code}, 
-                            {$set: {timeEnd: req.body.timeEnd, timeStart: req.body.timeStart, progress: "Đang khai báo", active: "Có"}});
-                    break;
-                case 2: // A2
-                    var unitB1 = null;
-                    var unitA3 = await Unit.findOne({idParent: req.params.code});
-                    if(unitA3 != null) unitB1 = await Unit.findOne({idParent: unitA3.code});
-                    // update A2, A3
-                    await Unit.updateMany({$or: [{code: req.params.code}, {idParent: req.params.code}]}, 
-                        {$set: {timeEnd: req.body.timeEnd, timeStart: req.body.timeStart, progress: "Đang khai báo", active: "Có"}});
-                    // update B1, B2
-                    if (unitB1 != null)
-                        await Unit.updateMany({$or: [{code: unitB1.code}, {idParent: unitB1.code}]}, 
-                            {$set: {timeEnd: req.body.timeEnd, timeStart: req.body.timeStart, progress: "Đang khai báo", active: "Có"}});
-                    break;
-                case 3: // A1
-                    var unitA3 = null;
-                    var unitB1 = null;
-                    var unitA2 = await Unit.findOne({idParent: req.params.code});
-                    if  (unitA2 != null) unitA3 = await Unit.findOne({idParent: unitA2.code});
-                    if (unitA3 != null) unitB1 = await Unit.findOne({idParent: unitA3.code});
-                    // update A1, A2
-                    await Unit.updateMany({$or: [{code: req.params.code}, {idParent: req.params.code}]}, 
-                        {$set: {timeEnd: req.body.timeEnd, timeStart: req.body.timeStart, progress: "Đang khai báo", active: "Có"}});
-                    // update A3, B1
-                    if (unitA3 != null)
-                        await Unit.updateMany({$or: [{code: unitA3.code}, {idParent: unitA3.code}]}, 
-                            {$set: {timeEnd: req.body.timeEnd, timeStart: req.body.timeStart, progress: "Đang khai báo", active: "Có"}});
-                    // update B2
-                    if (unitB1 != null)
-                        await Unit.updateMany({idParent: unitB1.code}, 
-                            {$set: {timeEnd: req.body.timeEnd, timeStart: req.body.timeStart, progress: "Đang khai báo", active: "Có"}});
-                    break;
-                default:
-                    res.status(400).json({message: "Đơn vị này không có trong hệ thống"});
-            }
+            var unit = await Unit.findOne({code: req.params.code});
+            openDeclaration(unit, req.body.timeEnd, req.body.timeStart)
             res.json({
                 message: "Mở đợt khai báo thành công!", 
                 code: req.params.code,
             })
+
         } catch (error) {
             res.status(400).json({message: "Mở đợt khai báo thành công"});
         }

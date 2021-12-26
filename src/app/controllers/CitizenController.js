@@ -138,6 +138,8 @@ class CitizenController {
             return res.status(400).json({message: "Đơn vị không tồn tại trong hệ thống"});
         }
         if (unit.active == "Không") return res.status(400).json({message: "Đơn vị đã bị đóng quyền khai báo"});
+        if (unit.progress == "Đã khai báo" || unit.progress == "Chưa khai báo") 
+            return res.status(400).json({message: "Đơn vị đã hoàn thành khai báo"});
         if (unit.timeEnd < Date.now())  return res.status(400).json({message: "Đã hết thời hạn khai báo"});
         if (unit.timeStart > Date.now())    return res.status(400).json({message: "Chưa đến thời gian khai báo"});
         if (req.params.addressID.length == 8) req.params.addressID = req.params.addressID.slice(0,6);

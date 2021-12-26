@@ -13,7 +13,7 @@ router.post('/logout', loginController.logout);
 router.get('/register', loginController.g_register);
 router.get('/', Auth.auth, loginController.home);
 router.get('/allocate',  Auth.auth, loginController.g_allocate);
-router.post('/allocate',  loginController.allocate);
+router.post('/allocate', Auth.auth, loginController.allocate);
 router.get('/allocate/:code',  Auth.auth, allocateController.showUnit);
 
 
