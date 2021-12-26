@@ -123,6 +123,7 @@
         + rate + '%">' + rate + '%</div></div>');
     }
     $('.info-body').append('<p>Trạng thái: ' + data.unit.progress + '</p>');
+    $('.info-body').append('<p>Quyền: ' + data.unit.active + '</p>');
     if (code.length < 6 || data.unit.progress == "Đã khai báo") document.getElementById('complete').style.display = "none";
     else document.getElementById('complete').style.display = "block";
   }
