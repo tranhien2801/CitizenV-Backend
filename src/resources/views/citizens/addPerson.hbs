@@ -86,10 +86,13 @@
       var optionPath = '/declare/progress?code=' + code;;
         let optionObject = await fetch(optionPath);
         let optionData = await optionObject.json();
-        $("#perResidence").append('<option>' + optionData.unit.nameUnit + ', ' + constData.perResidence + '</option>');
+        if(code.length == 8) {
+        $("#perResidence").append('<option value="' + code + '">' + optionData.unit.nameUnit + ', ' + constData.perResidence + '</option>');
+        }
       if (code.length == 6) {
-          for (let i = 0; i < optionData.units.length; i++) {
-            $("#perResidence").append('<option>' + optionData.units[i].nameUnit + ', ' 
+          $("#perResidence").append('<option value="' + code + '">' + constData.perResidence + '</option>');
+          for (let i = 0; i < optionData.units.length; i++) {  
+            $("#perResidence").append('<option value="' + optionData.units[i].code + '">' + optionData.units[i].nameUnit + ', ' 
                 + constData.perResidence + '</option>');
         }
       }
@@ -106,7 +109,8 @@ function addCitizen() {
         var sex = document.getElementById('sex').value;
         var phone = document.getElementById('phone').value;
         var hometown = document.getElementById('hometown').value;
-        var perResidence = document.getElementById('perResidence').value;
+        var perResidence = $("#perResidence option:selected" ).text();
+        var idAdress = document.getElementById('perResidence').value;
         var curResidence = document.getElementById('curResidence').value;
         var ethnic = document.getElementById('ethnic').value;
         var religion = document.getElementById('religion').value;
@@ -131,6 +135,7 @@ function addCitizen() {
                     religion: religion,
                     eduLevel: eduLevel,
                     job: job,
+                    idAdress: idAdress
                 })
             })
             .then((res) => res.json())

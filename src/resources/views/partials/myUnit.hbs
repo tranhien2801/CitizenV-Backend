@@ -58,11 +58,13 @@
 
 <script>
   var code = localStorage.getItem('code');
+  getDataMyUnit();
   
-  $('#btn-change-password').click = function () {
+  $('#btn-change-password').click(function () {
       var password = $('#change-password #password').val().trim();
       var newPass = $('#change-password #newPass').val().trim();
       var confirmPass = $('#change-password #confirmPass').val().trim();
+      alert('ex: ' + password + '--> new: ' + newPass + '---' + confirmPass);
 
       var url_post = "/units/changePassword/" + code;
 
@@ -79,7 +81,7 @@
         .catch((error) => {
           alert(error);
         });
-    }
+    })
 
   $('#btn-close-complete').click(function() {
     var url_post = "/declare/" + code;
@@ -96,13 +98,12 @@
         .catch((error) => {
             alert(error);
         });
-    document.getElementById('complete').style.display = "none";
+    getDataMyUnit();
   })
   
-  
-  getDataMyUnit();
-  
   async function getDataMyUnit() {
+    $('.info-header').children().remove();
+    $('.info-body').children().remove();
     var code = localStorage.getItem('code');
     var path = '/declare/progress?code=' + code;
     let myObject = await fetch(path);
@@ -117,8 +118,9 @@
     $('.info-header').append("<p>   Mã địa phương " + data.unit.code + '</p>');
     $('.info-body').append('<p class="h5" style="color: #400485">' + data.unit.nameUnit + '</p>');
     $('.info-body').append('<p>Hạn cuối: ' + data.date + '</p>')
-    $('.info-body').append('<p>Tiến độ: ' + rate + '%</p>');
-    if (code.length < 6) {
+    
+    if (code.length <= 6) {
+      $('.info-body').append('<p>Tiến độ: ' + rate + '%</p>');
       $('.info-body').append('<div class="progress"><div class="progress-bar" style="width:'
         + rate + '%">' + rate + '%</div></div>');
     }
