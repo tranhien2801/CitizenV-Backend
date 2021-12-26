@@ -172,6 +172,8 @@
       var path = '/declare/progress?code=' + code;
       let myObject = await fetch(path);
       let data = await myObject.json();
+      console.log(data);
+      if(data.unit.active == "Không") $("#startAllUnit").hide();
       $('#timeStartAll').val(reserverDate(data.dateStart));
       $('#timeEndAll').val(reserverDate(data.date));
       $('tbody').children().remove();
